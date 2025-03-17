@@ -1,0 +1,29 @@
+{
+	"linter": {
+		"rules": {
+			"suspicious": {
+				"noExplicitAny": "off"
+			},
+			"style": {
+				"noNonNullAssertion": "off"
+			}
+		}
+	},
+	"formatter": {
+		"enabled": true,
+		"formatWithErrors": false,
+		"ignore": [
+			"**/node_modules/**",
+			"**/dist/**",
+			"**/.next/**",
+			"**/tmp/**",
+			"**/*.min.js",
+			"**/*.css"
+		],
+		"attributePosition": "auto",
+		"indentStyle": "tab",
+		"indentWidth": 2,
+		"lineWidth": 80,
+		"lineEnding": "lf"
+	}
+}

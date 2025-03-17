@@ -1,0 +1,32 @@
+{
+	"name": "sotsial",
+	"version": "0.1.0",
+	"main": "./dist/index.js",
+	"devDependencies": {
+		"@types/bun": "latest",
+		"typescript": "^5.0.0",
+		"tsc-alias": "^1.8.8"
+	},
+	"peerDependencies": {
+		"typescript": "^5.0.0"
+	},
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js",
+			"default": "./dist/index.js"
+		},
+		"./utils": {
+			"types": "./dist/utils/index.d.ts",
+			"import": "./dist/utils/index.js",
+			"default": "./dist/utils/index.js"
+		}
+	},
+	"files": ["dist"],
+	"scripts": {
+		"bundle": "rm -rf dist && tsc && tsc-alias",
+		"prepublishOnly": "bun bundle"
+	},
+	"type": "module",
+	"types": "./dist/index.d.ts"
+}
