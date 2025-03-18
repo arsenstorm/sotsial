@@ -7,6 +7,6 @@ import type { ThreadsConfig } from "@/types/providers";
 export interface SotsialConfig {
 	threads?: {
 		config: ThreadsConfig;
-		account?: Account;
+		accounts?: Account | Account[];
 	};
 }
