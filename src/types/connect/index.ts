@@ -67,4 +67,9 @@ export interface ExchangeResponse
 		access_token: string;
 		account_id: string;
 		expiry: Date;
+		details?: {
+			name: string | null;
+			username: string | null;
+			avatar_url: string | null;
+		} | null;
 	}> {}

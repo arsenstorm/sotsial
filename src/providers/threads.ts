@@ -182,7 +182,7 @@ export class Threads extends Provider<ThreadsConfig, Account> {
 
 			// Step 4: Get user ID - This is required due to an issue with the access token endpoint
 			const userResponse = await fetch(
-				`https://graph.threads.net/me?fields=id&access_token=${access_token}`,
+				`https://graph.threads.net/me?fields=id,name,username,threads_profile_picture_url&access_token=${access_token}`,
 			);
 
 			if (!userResponse.ok) {
@@ -190,14 +190,19 @@ export class Threads extends Provider<ThreadsConfig, Account> {
 				throw new Error("Failed to get Threads user id");
 			}
 
-			const { id: user_id } = await userResponse.json();
+			const data = await userResponse.json();
 
 			return {
 				data: {
 					refresh_token,
 					access_token,
-					account_id: user_id,
+					account_id: data.id,
 					expiry: timestamp(expires_in),
+					details: {
+						name: data.name ?? null,
+						username: data.username ?? null,
+						avatar_url: data.threads_profile_picture_url ?? null,
+					},
 				},
 				error: null,
 			};
