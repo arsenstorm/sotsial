@@ -57,6 +57,10 @@ export class Provider<
 	}: Omit<GrantProps, "client_id" | "redirect_uri"> & {
 		readonly base: string;
 	}): Promise<Response<GrantResponse | null>> {
+		if (!this.config.redirectUri) {
+			throw new Error("Redirect URI is required");
+		}
+
 		return baseGrant({
 			base,
 			client_id: this.config.clientId,

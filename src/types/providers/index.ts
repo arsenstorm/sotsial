@@ -14,7 +14,7 @@ export interface ProviderConfig {
 	 *
 	 * Where the user will be redirected after the authentication process (i.e., for code exchange)
 	 */
-	redirectUri: string;
+	redirectUri?: string;
 
 	/**
 	 * Scopes
@@ -39,7 +39,7 @@ export interface ThreadsConfig {
 	 * Redirect URI for OAuth flow
 	 * Where the user will be redirected after the authentication process
 	 */
-	redirectUri: string;
+	redirectUri?: string;
 
 	/**
 	 * OAuth scopes to request from Threads

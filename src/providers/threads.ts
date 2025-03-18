@@ -135,6 +135,10 @@ export class Threads extends Provider<ThreadsConfig, Account> {
 			console.warn("CSRF token may be required for Threads authorization.");
 
 		try {
+			if (!this.config.redirectUri) {
+				throw new Error("Redirect URI is required");
+			}
+
 			// Step 1: Exchange code for access token
 			const accessTokenResponse = await fetch(
 				"https://graph.threads.net/oauth/access_token",
