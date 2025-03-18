@@ -1,6 +1,6 @@
 {
 	"name": "sotsial",
-	"version": "0.1.9",
+	"version": "0.1.10",
 	"license": "MIT",
 	"main": "./dist/index.js",
 	"devDependencies": {

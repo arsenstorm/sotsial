@@ -303,7 +303,10 @@ export class Threads extends Provider<ThreadsConfig, Account> {
 
 					if (error) {
 						errors.push(error);
+						continue;
 					}
+
+					containerId = data?.container_id;
 				} else {
 					const { data, error } = await this.createCarouselContainer(
 						account,
@@ -312,8 +315,12 @@ export class Threads extends Provider<ThreadsConfig, Account> {
 
 					if (error) {
 						errors.push(error);
+						continue;
 					}
+
+					containerId = data?.container_id;
 				}
+
 				if (!containerId) {
 					errors.push({
 						message: "Failed to create container",
