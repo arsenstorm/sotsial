@@ -85,15 +85,11 @@ export class Provider<
 	> {
 		const account = this.accounts?.[0];
 
-		if (!account) {
-			throw new Error("No account provided");
-		}
-
 		const scopes = requestedScopes?.length
 			? requestedScopes
 			: (this.config?.scopes ?? []);
 		const token =
-			(access_token?.trim() ?? account?.access_token?.trim()) ?? undefined;
+			access_token?.trim() ?? account?.access_token?.trim() ?? undefined;
 
 		if (!token) {
 			throw new Error("No token provided");
