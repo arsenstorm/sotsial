@@ -341,6 +341,7 @@ export class Threads extends Provider<ThreadsConfig, Account> {
 					errors.length > 0
 						? {
 								message: "Failed to publish post",
+								details: errors,
 							}
 						: null,
 			};
