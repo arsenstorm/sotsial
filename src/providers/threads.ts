@@ -197,8 +197,11 @@ export class Threads extends Provider<ThreadsConfig, Account> {
 
 			return {
 				data: {
-					refresh_token,
-					access_token,
+					// In the case of Threads, the refresh token is actually a long-lived access token
+					// so we're going to use that instead.
+					access_token: refresh_token,
+					// we also won't provide a refresh token in the response
+					refresh_token: undefined,
 					account_id: data.id,
 					expiry: timestamp(expires_in),
 					details: {

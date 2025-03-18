@@ -63,10 +63,36 @@ export interface ValidateResponse
  */
 export interface ExchangeResponse
 	extends Readonly<{
-		refresh_token: string;
+		/**
+		 * The refresh token for the account.
+		 *
+		 * @note This is not provided for some providers.
+		 * @see {@link https://sotsial.com/docs/refresh-tokens}
+		 */
+		refresh_token?: string;
+
+		/**
+		 * The access token for the account.
+		 */
 		access_token: string;
+
+		/**
+		 * The provider-specific account ID.
+		 *
+		 * For example, an Instagram app-scoped user ID.
+		 */
 		account_id: string;
+
+		/**
+		 * The expiry date of the access token.
+		 */
 		expiry: Date;
+
+		/**
+		 * The details of the account.
+		 *
+		 * @note This is not provided for some providers.
+		 */
 		details?: {
 			name: string | null;
 			username: string | null;
