@@ -12,30 +12,29 @@ import type {
 	ValidateResponse,
 } from "@/types/connect";
 import type { Response } from "@/types/response";
+import type { ErrorResponse } from "@/types/error";
 import type { PublishProps } from "@/types/publish";
+import type { ThreadsConfig } from "@/types/providers";
 import type { RefreshAccessTokenProps } from "@/types/token";
 import type { RefreshAccessTokenResponse } from "@/types/token";
 
 // Security
 import { timestamp } from "@/utils/timestamp";
 
-// Types
-import type { ThreadsConfig } from "@/types/providers";
-
 export class Threads extends Provider<ThreadsConfig, Account> {
 	constructor({
 		config,
-		account,
+		accounts,
 	}: Readonly<{
 		config: ThreadsConfig;
-		account?: Account;
+		accounts?: Account | Account[];
 	}>) {
 		super({
 			config: {
 				...config,
 				scopes: config.scopes ?? ["threads_basic", "threads_content_publish"],
 			},
-			account,
+			accounts,
 		});
 	}
 
@@ -257,15 +256,21 @@ export class Threads extends Provider<ThreadsConfig, Account> {
 	/**
 	 * Publishes a post to Threads.
 	 *
-	 * @param account - The account to publish the post to
 	 * @param post - The post to publish
 	 *
 	 * @returns The response from the publish request
 	 */
-	async publish({
-		post,
-	}: Omit<PublishProps<"threads">, "account">): Promise<Response<any | null>> {
-		if (!this.account) {
+	async publish({ post }: Omit<PublishProps<"threads">, "account">): Promise<
+		Response<
+			| {
+					success: boolean;
+					post_id: string;
+					account_id: string;
+			  }[]
+			| null
+		>
+	> {
+		if (!this.accounts) {
 			throw new Error("No account connected");
 		}
 
@@ -276,27 +281,69 @@ export class Threads extends Provider<ThreadsConfig, Account> {
 					? [post.media]
 					: [];
 			const mediaCount = mediaArray.length;
-			let containerId: string | undefined;
+			const data: {
+				success: boolean;
+				post_id: string;
+				account_id: string;
+			}[] = [];
+			const errors: ErrorResponse[] = [];
 
-			if (mediaCount <= 1) {
-				containerId = await this.createSingleContainer(post);
-			} else {
-				containerId = await this.createCarouselContainer(post);
+			for (const account of this.accounts) {
+				let containerId: string | undefined;
+
+				if (mediaCount <= 1) {
+					const { data, error } = await this.createSingleContainer(
+						account,
+						post,
+					);
+
+					if (error) {
+						errors.push(error);
+					}
+				} else {
+					const { data, error } = await this.createCarouselContainer(
+						account,
+						post,
+					);
+
+					if (error) {
+						errors.push(error);
+					}
+				}
+				if (!containerId) {
+					errors.push({
+						message: "Failed to create container",
+						details: {
+							account_id: account.id,
+						},
+					});
+					continue;
+				}
+
+				// Publish the container
+				const result = await this.publishContainer(account, containerId);
+
+				if (result.error) {
+					errors.push(result.error);
+					continue;
+				}
+
+				data.push(result.data);
 			}
 
-			if (!containerId) {
-				throw new Error("Failed to create container");
-			}
-
-			// Publish the container
-			return await this.publishContainer(containerId);
+			return {
+				data,
+				error:
+					errors.length > 0
+						? {
+								message: "Failed to publish post",
+							}
+						: null,
+			};
 		} catch (error) {
 			console.error(error);
 			return {
-				data: {
-					success: false,
-					id: undefined,
-				},
+				data: null,
 				error: {
 					message:
 						error instanceof Error ? error.message : "Failed to publish post",
@@ -310,16 +357,27 @@ export class Threads extends Provider<ThreadsConfig, Account> {
 	 * Creates a single container with 0 or 1 media items
 	 */
 	private async createSingleContainer(
+		account: Account,
 		post: PublishProps<"threads">["post"],
-	): Promise<string> {
-		if (!this.account?.access_token) {
-			throw new Error("No access token found");
+	): Promise<
+		Response<{
+			success: boolean;
+			container_id: string;
+		} | null>
+	> {
+		if (!account?.access_token) {
+			return {
+				data: null,
+				error: {
+					message: "No access token found",
+				},
+			};
 		}
 
 		const url = new URL(
-			`https://graph.threads.net/v1.0/${this.account?.id}/threads`,
+			`https://graph.threads.net/v1.0/${account?.id}/threads`,
 		);
-		url.searchParams.set("access_token", this.account?.access_token);
+		url.searchParams.set("access_token", account?.access_token);
 		url.searchParams.set("media_type", "TEXT");
 		url.searchParams.set("text", post?.text ?? "");
 
@@ -345,73 +403,116 @@ export class Threads extends Provider<ThreadsConfig, Account> {
 
 		if (!response.ok) {
 			console.error(data);
-			throw new Error("Failed to create single container");
+			return {
+				data: null,
+				error: {
+					message: "Failed to create single container",
+				},
+			};
 		}
 
-		return data.id;
+		return {
+			data: {
+				success: true,
+				container_id: data.id,
+			},
+			error: null,
+		};
 	}
 
 	/**
 	 * Creates a carousel container with multiple media items
 	 */
 	private async createCarouselContainer(
+		account: Account,
 		post: PublishProps<"threads">["post"],
-	): Promise<string> {
-		if (!this.account?.access_token) {
-			throw new Error("No access token found");
+	): Promise<
+		Response<{
+			success: boolean;
+			container_id: string;
+		} | null>
+	> {
+		if (!account?.access_token) {
+			return {
+				data: null,
+				error: {
+					message: "No account connected",
+				},
+			};
 		}
 
 		if (!post?.media) {
-			throw new Error(
-				"You must provide at least one media item for a carousel post",
-			);
+			return {
+				data: null,
+				error: {
+					message:
+						"You must provide at least one media item for a carousel post",
+				},
+			};
 		}
 
 		const mediaArray = Array.isArray(post.media) ? post.media : [post.media];
 
 		if (mediaArray.length > 20) {
-			throw new Error("Threads only allows up to 20 media items per carousel");
+			return {
+				data: null,
+				error: {
+					message: "Threads only allows up to 20 media items per carousel",
+				},
+			};
 		}
 
 		// Upload each media item
 		const base = new URL(
-			`https://graph.threads.net/v1.0/${this.account?.id}/threads`,
+			`https://graph.threads.net/v1.0/${account?.id}/threads`,
 		);
-		base.searchParams.set("access_token", this.account?.access_token);
+		base.searchParams.set("access_token", account?.access_token);
 
-		const children = await Promise.all(
-			mediaArray.map(async (media) => {
-				if (!["image", "video"].includes(media.type)) {
-					throw new Error(`Invalid media type: ${media.type}`);
-				}
+		let children: string[] = [];
 
-				const url = new URL(base.toString());
-				url.searchParams.set(
-					"media_type",
-					media.type === "image" ? "IMAGE" : "VIDEO",
-				);
-				url.searchParams.set(
-					media.type === "image" ? "image_url" : "video_url",
-					media.url,
-				);
+		try {
+			children = await Promise.all(
+				mediaArray.map(async (media) => {
+					if (!["image", "video"].includes(media.type)) {
+						throw new Error(`Invalid media type: ${media.type}`);
+					}
 
-				const response = await fetch(url.toString(), { method: "POST" });
-				const data = await response.json();
+					const url = new URL(base.toString());
+					url.searchParams.set(
+						"media_type",
+						media.type === "image" ? "IMAGE" : "VIDEO",
+					);
+					url.searchParams.set(
+						media.type === "image" ? "image_url" : "video_url",
+						media.url,
+					);
 
-				if (!response.ok) {
-					console.error(data);
-					throw new Error("Failed to upload media");
-				}
+					const response = await fetch(url.toString(), { method: "POST" });
+					const data = await response.json();
 
-				return data.id;
-			}),
-		);
+					if (!response.ok) {
+						console.error(data);
+						throw new Error("Failed to upload media");
+					}
+
+					return data.id;
+				}),
+			);
+		} catch (error) {
+			return {
+				data: null,
+				error: {
+					message:
+						error instanceof Error ? error.message : "Failed to upload media",
+				},
+			};
+		}
 
 		// Create carousel with all media items
 		const url = new URL(
-			`https://graph.threads.net/v1.0/${this.account?.id}/threads`,
+			`https://graph.threads.net/v1.0/${account?.id}/threads`,
 		);
-		url.searchParams.set("access_token", this.account?.access_token);
+		url.searchParams.set("access_token", account?.access_token);
 		url.searchParams.set("media_type", "CAROUSEL");
 		url.searchParams.set("children", children.join(","));
 		url.searchParams.set("text", post?.text ?? "");
@@ -423,26 +524,38 @@ export class Threads extends Provider<ThreadsConfig, Account> {
 
 		if (!response.ok) {
 			console.error(data);
-			throw new Error("Failed to create carousel");
+			return {
+				data: null,
+				error: {
+					message: "Failed to create carousel",
+				},
+			};
 		}
 
-		return data.id;
+		return {
+			data: {
+				success: true,
+				container_id: data.id,
+			},
+			error: null,
+		};
 	}
 
 	/**
 	 * Publishes a container that has been created
 	 */
 	private async publishContainer(
+		account: Account,
 		containerId: string,
 	): Promise<Response<any | null>> {
-		if (!this.account?.access_token) {
+		if (!account?.access_token) {
 			throw new Error("No access token found");
 		}
 
 		const url = new URL(
-			`https://graph.threads.net/v1.0/${this.account?.id}/threads_publish`,
+			`https://graph.threads.net/v1.0/${account?.id}/threads_publish`,
 		);
-		url.searchParams.set("access_token", this.account?.access_token);
+		url.searchParams.set("access_token", account?.access_token);
 		url.searchParams.set("creation_id", containerId);
 
 		const response = await fetch(url.toString(), {
@@ -458,7 +571,8 @@ export class Threads extends Provider<ThreadsConfig, Account> {
 		return {
 			data: {
 				success: true,
-				id: data.id,
+				post_id: data.id,
+				account_id: account.id,
 			},
 			error: null,
 		};

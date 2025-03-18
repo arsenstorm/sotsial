@@ -21,20 +21,25 @@ export class Provider<
 	},
 > {
 	config: Config;
-	account?: ProviderAccount;
+	accounts?: ProviderAccount[];
 
 	constructor({
 		config,
-		account,
+		accounts,
 	}: Readonly<{
 		config: Config;
-		account?: ProviderAccount;
+		accounts?: ProviderAccount | ProviderAccount[];
 	}>) {
 		this.config = {
 			...config,
 			scopes: config.scopes ?? [],
 		};
-		this.account = account;
+
+		this.accounts = Array.isArray(accounts)
+			? accounts
+			: accounts
+				? [accounts]
+				: [];
 	}
 
 	/**
@@ -74,11 +79,17 @@ export class Provider<
 	}: Omit<ValidateProps, "client_id" | "client_secret">): Promise<
 		Response<ValidateResponse | null>
 	> {
+		const account = this.accounts?.[0];
+
+		if (!account) {
+			throw new Error("No account provided");
+		}
+
 		const scopes = requestedScopes?.length
 			? requestedScopes
 			: (this.config?.scopes ?? []);
 		const token =
-			(access_token?.trim() || this.account?.access_token?.trim()) ?? undefined;
+			(access_token?.trim() || account?.access_token?.trim()) ?? undefined;
 
 		if (!token) {
 			throw new Error("No token provided");

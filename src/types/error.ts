@@ -3,4 +3,5 @@ export interface ErrorResponse {
 	status?: number;
 	hint?: string;
 	code?: string;
+	details?: Record<string, any>;
 }
