@@ -22,7 +22,12 @@ export class Sotsial {
 		}
 	}
 
-	async publish(post: any) {
+	async publish({
+		post,
+	}: Readonly<{
+		post: any; // TODO: Eventually we need to type this with AllPosts but
+		// it needs to work with ALL providers and not just a subset of them.
+	}>) {
 		const results: Record<keyof SotsialConfig, any> = {
 			threads: undefined,
 			instagram: undefined,
