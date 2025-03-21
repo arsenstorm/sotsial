@@ -22,11 +22,24 @@ export class Sotsial {
 		}
 	}
 
-	async publish(data: any) {
+	async publish(post: any) {
+		const results: Record<keyof SotsialConfig, any> = {
+			threads: undefined,
+			instagram: undefined,
+		};
+
 		if (this.threads) {
-			await this.threads.publish({
-				post: data,
+			results.threads = await this.threads.publish({
+				post,
 			});
 		}
+
+		if (this.instagram) {
+			results.instagram = await this.instagram.publish({
+				post,
+			});
+		}
+
+		return results;
 	}
 }
