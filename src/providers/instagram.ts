@@ -57,12 +57,11 @@ export class Instagram extends Provider<InstagramConfig, Account> {
 		},
 	): Promise<Response<GrantResponse | null>> {
 		return super.grant({
-			base: "https://www.instagram.com/accounts/login",
+			base: "https://www.instagram.com/oauth/authorize",
 			scopes,
 			params: {
 				enable_fb_login: "0",
-				force_authentication: "0",
-				next: "https://www.instagram.com/oauth/authorize",
+				force_authentication: "1",
 			},
 		});
 	}

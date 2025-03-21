@@ -47,7 +47,7 @@ const post = await sotsial.threads.publish({
 
 - [X] Threads
 - [ ] Twitter/X
-- [ ] Instagram
+- [X] Instagram
 - [ ] TikTok
 - [ ] Facebook
 - [ ] LinkedIn
