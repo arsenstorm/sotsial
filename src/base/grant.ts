@@ -21,15 +21,21 @@ export async function baseGrant({
 	client_id,
 	redirect_uri,
 	scopes,
-}: GrantProps & { readonly base: string }): Promise<
-	Response<GrantResponse | null>
-> {
+	params = {},
+}: GrantProps & {
+	readonly base: string;
+	params?: Record<string, string>;
+}): Promise<Response<GrantResponse | null>> {
 	const url = new URL(base);
 
 	url.searchParams.set("client_id", client_id);
 	url.searchParams.set("response_type", "code");
 	url.searchParams.set("redirect_uri", redirect_uri);
 	url.searchParams.set("scope", scopes.join(","));
+
+	for (const [key, value] of Object.entries(params)) {
+		url.searchParams.set(key, value);
+	}
 
 	const { data: tokens, error: generateError } = await generate();
 

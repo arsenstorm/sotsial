@@ -54,8 +54,10 @@ export class Provider<
 	async grant({
 		base,
 		scopes,
+		params = {},
 	}: Omit<GrantProps, "client_id" | "redirect_uri"> & {
 		readonly base: string;
+		params?: Record<string, string>;
 	}): Promise<Response<GrantResponse | null>> {
 		if (!this.config.redirectUri) {
 			throw new Error("Redirect URI is required");
@@ -66,6 +68,7 @@ export class Provider<
 			client_id: this.config.clientId,
 			redirect_uri: this.config.redirectUri,
 			scopes,
+			params,
 		});
 	}
 

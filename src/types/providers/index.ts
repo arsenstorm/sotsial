@@ -24,26 +24,6 @@ export interface ProviderConfig {
 	scopes?: string[];
 }
 
-export interface ThreadsConfig {
-	/**
-	 * OAuth Client ID for Threads API
-	 */
-	clientId: string;
+export interface ThreadsConfig extends ProviderConfig {}
 
-	/**
-	 * OAuth Client Secret for Threads API
-	 */
-	clientSecret: string;
-
-	/**
-	 * Redirect URI for OAuth flow
-	 * Where the user will be redirected after the authentication process
-	 */
-	redirectUri?: string;
-
-	/**
-	 * OAuth scopes to request from Threads
-	 * Default: ["threads_basic", "threads_content_publish"]
-	 */
-	scopes?: string[];
-}
+export interface InstagramConfig extends ProviderConfig {}
