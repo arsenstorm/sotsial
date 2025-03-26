@@ -162,8 +162,6 @@ export class TikTok extends Provider<TikTokConfig, Account> {
 				}
 
 				profileData = await response.json();
-
-				console.log(profileData);
 			}
 
 			return {
@@ -173,9 +171,9 @@ export class TikTok extends Provider<TikTokConfig, Account> {
 					account_id: open_id,
 					expiry: timestamp(refresh_expires_in),
 					details: {
-						name: profileData.display_name ?? null,
-						username: profileData.username ?? null,
-						avatar_url: profileData.avatar_url ?? null,
+						name: profileData?.data?.user?.display_name ?? null,
+						username: profileData?.data?.user?.username ?? null,
+						avatar_url: profileData?.data?.user?.avatar_url ?? null,
 					},
 				},
 				error: null,
