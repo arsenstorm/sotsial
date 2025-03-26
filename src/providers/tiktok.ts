@@ -36,6 +36,7 @@ export class TikTok extends Provider<TikTokConfig, Account> {
 					"video.publish",
 					"video.upload",
 					"user.info.basic",
+					"user.info.profile",
 				],
 			},
 			accounts,
@@ -135,25 +136,35 @@ export class TikTok extends Provider<TikTokConfig, Account> {
 
 			const data = await accessTokenResponse.json();
 
-			const { access_token, refresh_token, open_id, refresh_expires_in } = data;
+			const {
+				access_token,
+				refresh_token,
+				open_id,
+				refresh_expires_in,
+				scope,
+			} = data;
 
-			const profileUrl =
-				"https://open.tiktokapis.com/v2/user/info/?fields=open_id,username,avatar_url,display_name";
+			let profileData = undefined;
 
-			const profileResponse = await fetch(profileUrl, {
-				method: "GET",
-				headers: {
-					Authorization: `Bearer ${access_token}`,
-				},
-			});
+			if (scope.split(",").includes("user.info.profile")) {
+				const response = await fetch(
+					"https://open.tiktokapis.com/v2/user/info/?fields=open_id,username,avatar_url,display_name",
+					{
+						method: "GET",
+						headers: {
+							Authorization: `Bearer ${access_token}`,
+						},
+					},
+				);
 
-			if (!profileResponse.ok) {
-				console.log(profileResponse.status);
-				console.log(await profileResponse.text());
-				throw new Error("Failed to get TikTok user profile");
+				if (!response.ok) {
+					throw new Error("Failed to get TikTok user profile");
+				}
+
+				const { data } = await response.json();
+
+				profileData = data;
 			}
-
-			const { data: profileData } = await profileResponse.json();
 
 			return {
 				data: {
