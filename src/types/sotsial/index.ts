@@ -2,8 +2,11 @@
 import type { Account } from "@/types/auth";
 
 // Provider Types
-import type { ThreadsConfig } from "@/types/providers";
-import type { InstagramConfig } from "@/types/providers";
+import type {
+	ThreadsConfig,
+	TikTokConfig,
+	InstagramConfig,
+} from "@/types/providers";
 
 export interface SotsialConfig {
 	threads?: {
@@ -12,6 +15,10 @@ export interface SotsialConfig {
 	};
 	instagram?: {
 		config: InstagramConfig;
+		accounts?: Account | Account[];
+	};
+	tiktok?: {
+		config: TikTokConfig;
 		accounts?: Account | Account[];
 	};
 }

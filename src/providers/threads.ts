@@ -132,7 +132,7 @@ export class Threads extends Provider<ThreadsConfig, Account> {
 	>): Promise<Response<ExchangeResponse | null>> {
 		// Log warning if CSRF token is missing
 		csrf_token ??
-			console.warn("CSRF token may be required for Threads authorization.");
+			console.warn("CSRF token may be required for Threads authorisation.");
 
 		try {
 			if (!this.config.redirectUri) {

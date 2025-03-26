@@ -27,3 +27,5 @@ export interface ProviderConfig {
 export interface ThreadsConfig extends ProviderConfig {}
 
 export interface InstagramConfig extends ProviderConfig {}
+
+export interface TikTokConfig extends ProviderConfig {}

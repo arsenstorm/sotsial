@@ -132,7 +132,7 @@ export class Instagram extends Provider<InstagramConfig, Account> {
 	>): Promise<Response<ExchangeResponse | null>> {
 		// Log warning if CSRF token is missing
 		csrf_token ??
-			console.warn("CSRF token may be required for Instagram authorization.");
+			console.warn("CSRF token may be required for Instagram authorisation.");
 
 		try {
 			if (!this.config.redirectUri) {

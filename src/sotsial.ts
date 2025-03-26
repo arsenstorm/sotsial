@@ -1,4 +1,5 @@
 // Providers
+import { TikTok } from "@/providers/tiktok";
 import { Threads } from "@/providers/threads";
 import { Instagram } from "@/providers/instagram";
 
@@ -6,11 +7,12 @@ import { Instagram } from "@/providers/instagram";
 import type { SotsialConfig } from "@/types/sotsial";
 
 export class Sotsial {
+	tiktok!: TikTok;
 	threads!: Threads;
 	instagram!: Instagram;
 	providers: Array<keyof SotsialConfig> = [];
 
-	constructor({ threads, instagram }: Readonly<SotsialConfig>) {
+	constructor({ threads, instagram, tiktok }: Readonly<SotsialConfig>) {
 		if (threads) {
 			this.threads = new Threads(threads);
 			this.providers.push("threads");
@@ -20,6 +22,53 @@ export class Sotsial {
 			this.instagram = new Instagram(instagram);
 			this.providers.push("instagram");
 		}
+
+		if (tiktok) {
+			this.tiktok = new TikTok(tiktok);
+			this.providers.push("tiktok");
+		}
+	}
+
+	private async callProvider<T>(
+		provider: keyof SotsialConfig,
+		method: (provider: any) => Promise<T>,
+	) {
+		switch (provider) {
+			case "threads":
+				if (!this.threads) {
+					throw new Error("Threads provider not initialised");
+				}
+				return method(this.threads);
+			case "instagram":
+				if (!this.instagram) {
+					throw new Error("Instagram provider not initialised");
+				}
+				return method(this.instagram);
+			case "tiktok":
+				if (!this.tiktok) {
+					throw new Error("TikTok provider not initialised");
+				}
+				return method(this.tiktok);
+			default:
+				throw new Error(`Provider ${provider} not found`);
+		}
+	}
+
+	async grant(provider: keyof SotsialConfig) {
+		return this.callProvider(provider, (p) => p.grant());
+	}
+
+	async exchange(
+		provider: keyof SotsialConfig,
+		{
+			code,
+			csrf_token,
+		}: Readonly<{
+			code: string;
+			csrf_token: string;
+		}>,
+	) {
+		return this.callProvider(provider, (p) => p.exchange({ code, csrf_token }));
 	}
 
 	async publish({
@@ -31,6 +80,7 @@ export class Sotsial {
 		const results: Record<keyof SotsialConfig, any> = {
 			threads: undefined,
 			instagram: undefined,
+			tiktok: undefined,
 		};
 
 		if (this.threads) {
@@ -41,6 +91,12 @@ export class Sotsial {
 
 		if (this.instagram) {
 			results.instagram = await this.instagram.publish({
+				post,
+			});
+		}
+
+		if (this.tiktok) {
+			results.tiktok = await this.tiktok.publish({
 				post,
 			});
 		}
