@@ -148,6 +148,8 @@ export class TikTok extends Provider<TikTokConfig, Account> {
 			});
 
 			if (!profileResponse.ok) {
+				console.log(profileResponse.status);
+				console.log(await profileResponse.text());
 				throw new Error("Failed to get TikTok user profile");
 			}
 
