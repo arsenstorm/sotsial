@@ -161,9 +161,9 @@ export class TikTok extends Provider<TikTokConfig, Account> {
 					throw new Error("Failed to get TikTok user profile");
 				}
 
-				const { data } = await response.json();
+				profileData = await response.json();
 
-				profileData = data;
+				console.log(profileData);
 			}
 
 			return {
