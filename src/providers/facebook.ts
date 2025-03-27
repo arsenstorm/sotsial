@@ -12,7 +12,6 @@ import type {
 	ValidateResponse,
 } from "@/types/connect";
 import type { Response } from "@/types/response";
-import type { ErrorResponse } from "@/types/error";
 import type { PublishProps } from "@/types/publish";
 import type { FacebookConfig } from "@/types/providers";
 import type { RefreshAccessTokenProps } from "@/types/token";
@@ -22,7 +21,7 @@ import type { RefreshAccessTokenResponse } from "@/types/token";
 import { timestamp } from "@/utils/timestamp";
 
 export class Facebook extends Provider<FacebookConfig, Account> {
-	private version: "v21" | "v22" = "v22";
+	private version: "v21.0" | "v22.0" = "v22.0";
 
 	constructor({
 		config,
@@ -47,7 +46,7 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 			accounts,
 		});
 
-		this.version = config.version ?? "v22";
+		this.version = config.version ?? "v22.0";
 	}
 
 	/**

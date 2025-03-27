@@ -34,12 +34,12 @@ export interface FacebookConfig extends ProviderConfig {
 	/**
 	 * The version of the Facebook API to use
 	 *
-	 * @default "v22"
+	 * @default "v22.0"
 	 *
 	 * @note Sotsial has only been tested with v21 and v22.
 	 * It may still support other versions, but this is not guaranteed.
 	 *
 	 * @see {@link https://developers.facebook.com/docs/graph-api/guides/versioning/}
 	 */
-	version?: "v21" | "v22";
+	version?: "v21.0" | "v22.0";
 }
