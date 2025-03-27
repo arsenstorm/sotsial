@@ -43,10 +43,10 @@ export class Sotsial {
 		}
 	}
 
-	private async callProvider<T>(
-		provider: Exclude<Provider, "facebook"> | "facebook",
+	private async callProvider<T, P extends Provider>(
+		provider: P,
 		method: (provider: any) => Promise<T>,
-	) {
+	): Promise<T> {
 		switch (provider) {
 			case "threads":
 				if (!this.threads) {
@@ -95,7 +95,10 @@ export class Sotsial {
 			csrf_token: string;
 		}>,
 	) {
-		return this.callProvider(provider, (p) => p.exchange({ code, csrf_token }));
+		return this.callProvider<
+			Response<ExchangeResponse> | Response<ExchangeResponse[]>,
+			Provider
+		>(provider, (p) => p.exchange({ code, csrf_token }));
 	}
 
 	async publish({
