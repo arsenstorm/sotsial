@@ -6,6 +6,7 @@ import type {
 	ThreadsConfig,
 	TikTokConfig,
 	InstagramConfig,
+	FacebookConfig,
 } from "@/types/providers";
 
 export interface SotsialConfig {
@@ -19,6 +20,10 @@ export interface SotsialConfig {
 	};
 	tiktok?: {
 		config: TikTokConfig;
+		accounts?: Account | Account[];
+	};
+	facebook?: {
+		config: FacebookConfig;
 		accounts?: Account | Account[];
 	};
 }

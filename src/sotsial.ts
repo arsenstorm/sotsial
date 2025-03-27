@@ -2,6 +2,7 @@
 import { TikTok } from "@/providers/tiktok";
 import { Threads } from "@/providers/threads";
 import { Instagram } from "@/providers/instagram";
+import { Facebook } from "@/providers/facebook";
 
 // Sotsial Types
 import type { SotsialConfig } from "@/types/sotsial";
@@ -10,9 +11,15 @@ export class Sotsial {
 	tiktok!: TikTok;
 	threads!: Threads;
 	instagram!: Instagram;
+	facebook!: Facebook;
 	providers: Array<keyof SotsialConfig> = [];
 
-	constructor({ threads, instagram, tiktok }: Readonly<SotsialConfig>) {
+	constructor({
+		threads,
+		instagram,
+		tiktok,
+		facebook,
+	}: Readonly<SotsialConfig>) {
 		if (threads) {
 			this.threads = new Threads(threads);
 			this.providers.push("threads");
@@ -26,6 +33,11 @@ export class Sotsial {
 		if (tiktok) {
 			this.tiktok = new TikTok(tiktok);
 			this.providers.push("tiktok");
+		}
+
+		if (facebook) {
+			this.facebook = new Facebook(facebook);
+			this.providers.push("facebook");
 		}
 	}
 
@@ -49,6 +61,11 @@ export class Sotsial {
 					throw new Error("TikTok provider not initialised");
 				}
 				return method(this.tiktok);
+			case "facebook":
+				if (!this.facebook) {
+					throw new Error("Facebook provider not initialised");
+				}
+				return method(this.facebook);
 			default:
 				throw new Error(`Provider ${provider} not found`);
 		}
@@ -81,6 +98,7 @@ export class Sotsial {
 			threads: undefined,
 			instagram: undefined,
 			tiktok: undefined,
+			facebook: undefined,
 		};
 
 		if (this.threads) {
@@ -97,6 +115,12 @@ export class Sotsial {
 
 		if (this.tiktok) {
 			results.tiktok = await this.tiktok.publish({
+				post,
+			});
+		}
+
+		if (this.facebook) {
+			results.facebook = await this.facebook.publish({
 				post,
 			});
 		}
