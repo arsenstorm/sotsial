@@ -44,7 +44,7 @@ export class Sotsial {
 	}
 
 	private async callProvider<T>(
-		provider: Provider,
+		provider: Exclude<Provider, "facebook"> | "facebook",
 		method: (provider: any) => Promise<T>,
 	) {
 		switch (provider) {
