@@ -16,6 +16,7 @@ import type { PublishProps } from "@/types/publish";
 import type { RefreshAccessTokenProps } from "@/types/token";
 import type { RefreshAccessTokenResponse } from "@/types/token";
 import type { FacebookConfig, FacebookPage } from "@/types/providers";
+import type { ErrorResponse } from "@/types/error";
 
 // Security
 import { timestamp } from "@/utils/timestamp";
@@ -246,12 +247,174 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 			throw new Error("No account connected");
 		}
 
-		return {
-			data: null,
-			error: {
-				message: "Facebook is not yet supported",
-			},
-		};
+		// this.accounts for Facebook is an array of PAGES not ACCOUNTS
+		// so we need to publish to each page listed in this.accounts
+
+		try {
+			const data: {
+				success: boolean;
+				post_id: string;
+				account_id: string;
+			}[] = [];
+			const errors: ErrorResponse[] = [];
+
+			for (const page of this.accounts) {
+				try {
+					const publishUrl = new URL(
+						`https://graph.facebook.com/${this.version}/${page.id}/feed`,
+					);
+
+					const privacy =
+						{ public: "EVERYONE", mutual: "ALL_FRIENDS", private: "SELF" }[
+							post.privacy ?? "public"
+						] ?? "EVERYONE";
+
+					const mediaArray = Array.isArray(post?.media)
+						? post.media
+						: post?.media
+							? [post.media]
+							: [];
+
+					const attachedMedia: { media_fbid: string }[] = [];
+
+					if (mediaArray.length > 0) {
+						for (const media of mediaArray) {
+							if (media.type === "video") {
+								errors.push({
+									message: "Video uploads are not yet supported for Facebook",
+									details: {
+										account_id: page.id,
+									},
+								});
+								continue;
+							}
+
+							const mediaEndpoint =
+								media.type === "image" ? "photos" : "videos";
+							const uploadUrl = new URL(
+								`https://graph.facebook.com/${this.version}/${page.id}/${mediaEndpoint}`,
+							);
+
+							const uploadBody = {
+								url: media.url,
+								published: false, // Don't publish right away
+								access_token: page.access_token,
+							};
+
+							if (post.options?.publish_at) {
+								Object.assign(uploadBody, { temporary: true });
+							}
+
+							const uploadResponse = await fetch(uploadUrl.toString(), {
+								method: "POST",
+								headers: {
+									"Content-Type": "application/json",
+								},
+								body: JSON.stringify(uploadBody),
+							});
+
+							if (!uploadResponse.ok) {
+								const error = await uploadResponse.json();
+								throw new Error(
+									`Failed to upload media: ${error?.error?.message ?? "Unknown error"}`,
+								);
+							}
+
+							const { id } = await uploadResponse.json();
+							attachedMedia.push({ media_fbid: id });
+						}
+					}
+
+					// Build the post body
+					const postBody: Record<string, any> = {
+						message: post.text ?? "",
+						access_token: page.access_token,
+						published: true,
+						privacy: {
+							value: privacy,
+						},
+					};
+
+					// Add link if provided
+					if (post.link) {
+						postBody.link = post.link;
+					}
+
+					// Add media if uploaded
+					if (attachedMedia.length > 0) {
+						postBody.attached_media = attachedMedia;
+					}
+
+					// Handle scheduled posts
+					if (post.options?.publish_at) {
+						const publishTime = Math.floor(
+							new Date(post.options.publish_at).getTime() / 1000,
+						);
+						Object.assign(postBody, {
+							scheduled_publish_time: publishTime,
+							published: false,
+						});
+
+						if (attachedMedia.length > 0) {
+							postBody.unpublished_content_type = "SCHEDULED";
+						}
+					}
+
+					const publishResponse = await fetch(publishUrl.toString(), {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify(postBody),
+					});
+
+					if (!publishResponse.ok) {
+						const error = await publishResponse.json();
+						throw new Error(
+							`Failed to publish post: ${error?.error?.message ?? "Unknown error"}`,
+						);
+					}
+
+					const publishResult = await publishResponse.json();
+
+					data.push({
+						success: true,
+						post_id: publishResult.id,
+						account_id: page.id,
+					});
+				} catch (error) {
+					errors.push({
+						message:
+							error instanceof Error
+								? error.message
+								: "Failed to publish to page",
+						details: {
+							account_id: page.id,
+						},
+					});
+				}
+			}
+
+			return {
+				data: data.length > 0 ? data : null,
+				error:
+					errors.length > 0
+						? {
+								message: "Failed to publish to some or all pages",
+								details: errors,
+							}
+						: null,
+			};
+		} catch (error) {
+			return {
+				data: null,
+				error: {
+					message:
+						error instanceof Error ? error.message : "Failed to publish post",
+					hint: "Please check your credentials and try again",
+				},
+			};
+		}
 	}
 }
 
