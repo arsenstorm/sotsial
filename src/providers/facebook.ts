@@ -161,7 +161,11 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 				throw new Error("Failed to exchange Facebook code for access token");
 			}
 
-			const { access_token } = await accessTokenResponse.json();
+			const accessTokenData = await accessTokenResponse.json();
+
+			console.warn("accessTokenData", accessTokenData);
+
+			const { access_token } = accessTokenData;
 
 			// Step 2: Exchange access token for long-lived access token
 			const refreshTokenResponse = await fetch(
@@ -185,24 +189,13 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 
 			const refreshTokenData = await refreshTokenResponse.json();
 
-			console.warn(refreshTokenData);
+			console.warn("refreshTokenData", refreshTokenData);
 
 			const { access_token: refresh_token } = refreshTokenData;
 
-			// Step 3: Validate the refresh token
-			const validation = await this.validate({
-				access_token: refresh_token,
-				scopes: this.config.scopes ?? [],
-			});
-
-			if (validation.error) {
-				console.error(validation.error);
-				return { data: null, error: validation.error };
-			}
-
-			// Step 4: Get user info
+			// Step 3: Get user info
 			const userResponse = await fetch(
-				`https://graph.facebook.com/${this.version}/me?fields=id,name,profile_pic`,
+				`https://graph.facebook.com/${this.version}/me?fields=id,name,picture`,
 				{
 					headers: {
 						Authorization: `Bearer ${access_token}`,
@@ -216,7 +209,7 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 			}
 
 			const userData = await userResponse.json();
-			const { id: account_id, name, profile_pic } = userData;
+			const { id: account_id, name, picture } = userData;
 
 			// Step 5: Get user's pages
 			const pagesResponse = await fetch(
@@ -245,7 +238,7 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 					details: {
 						name: name ?? null,
 						username: null,
-						avatar_url: profile_pic ?? null,
+						avatar_url: picture?.data?.url ?? null,
 						pages: pages.map((page: { id: string }) => page.id),
 					},
 				},
