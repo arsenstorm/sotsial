@@ -5,7 +5,7 @@ import { Instagram } from "@/providers/instagram";
 import { Facebook } from "@/providers/facebook";
 
 // Sotsial Types
-import type { SotsialConfig } from "@/types/sotsial";
+import type { SotsialConfig, Provider } from "@/types/sotsial";
 import type { ExchangeResponse } from "@/types/connect";
 import type { Response } from "@/types/response";
 
@@ -14,7 +14,7 @@ export class Sotsial {
 	threads!: Threads;
 	instagram!: Instagram;
 	facebook!: Facebook;
-	providers: Array<keyof SotsialConfig> = [];
+	providers: Array<Provider> = [];
 
 	constructor({
 		threads,
@@ -44,7 +44,7 @@ export class Sotsial {
 	}
 
 	private async callProvider<T>(
-		provider: keyof SotsialConfig,
+		provider: Provider,
 		method: (provider: any) => Promise<T>,
 	) {
 		switch (provider) {
@@ -73,7 +73,7 @@ export class Sotsial {
 		}
 	}
 
-	async grant(provider: keyof SotsialConfig) {
+	async grant(provider: Provider) {
 		return this.callProvider(provider, (p) => p.grant());
 	}
 
@@ -82,11 +82,11 @@ export class Sotsial {
 		params: Readonly<{ code: string; csrf_token: string }>,
 	): Promise<Response<ExchangeResponse[]>>;
 	async exchange(
-		provider: Exclude<keyof SotsialConfig, "facebook">,
+		provider: Exclude<Provider, "facebook">,
 		params: Readonly<{ code: string; csrf_token: string }>,
 	): Promise<Response<ExchangeResponse>>;
 	async exchange(
-		provider: keyof SotsialConfig,
+		provider: Provider,
 		{
 			code,
 			csrf_token,
@@ -104,7 +104,7 @@ export class Sotsial {
 		post: any; // TODO: Eventually we need to type this with AllPosts but
 		// it needs to work with ALL providers and not just a subset of them.
 	}>) {
-		const results: Record<keyof SotsialConfig, any> = {
+		const results: Record<Provider, any> = {
 			threads: undefined,
 			instagram: undefined,
 			tiktok: undefined,

@@ -27,3 +27,11 @@ export interface SotsialConfig {
 		accounts?: Account | Account[];
 	};
 }
+
+export const PROVIDERS = [
+	"threads",
+	"instagram",
+	"tiktok",
+	"facebook",
+] as const;
+export type Provider = (typeof PROVIDERS)[number];
