@@ -43,8 +43,8 @@ export class Sotsial {
 		}
 	}
 
-	private async callProvider<T, P extends Provider>(
-		provider: P,
+	private async callProvider<T>(
+		provider: Provider,
 		method: (provider: any) => Promise<T>,
 	): Promise<T> {
 		switch (provider) {
@@ -73,20 +73,12 @@ export class Sotsial {
 		}
 	}
 
-	async grant(provider: Provider) {
+	async grant<T extends Provider>(provider: T) {
 		return this.callProvider(provider, (p) => p.grant());
 	}
 
-	async exchange(
-		provider: "facebook",
-		params: Readonly<{ code: string; csrf_token: string }>,
-	): Promise<Response<ExchangeResponse[]>>;
-	async exchange(
-		provider: Exclude<Provider, "facebook">,
-		params: Readonly<{ code: string; csrf_token: string }>,
-	): Promise<Response<ExchangeResponse>>;
-	async exchange(
-		provider: Provider,
+	async exchange<T extends Provider>(
+		provider: T,
 		{
 			code,
 			csrf_token,
@@ -95,10 +87,11 @@ export class Sotsial {
 			csrf_token: string;
 		}>,
 	) {
-		return this.callProvider<
-			Response<ExchangeResponse> | Response<ExchangeResponse[]>,
-			Provider
-		>(provider, (p) => p.exchange({ code, csrf_token }));
+		return this.callProvider(provider, (p) =>
+			p.exchange({ code, csrf_token }),
+		) as Promise<
+			Response<T extends "facebook" ? ExchangeResponse[] : ExchangeResponse>
+		>;
 	}
 
 	async publish({
