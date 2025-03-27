@@ -64,12 +64,12 @@ jobs:
           # Check if it's a beta version
           if [[ $TAG =~ ^[0-9]+\.[0-9]+\.[0-9]+-beta\.[0-9]+$ ]]; then
             echo "Publishing beta version $TAG"
-            bunx npm publish --provenance --tag beta --registry https://registry.npmjs.org/
-            bunx npm publish --provenance --tag beta --registry https://npm.pkg.github.com
+            bunx npm publish --provenance --tag beta --registry https://registry.npmjs.org/ --access public
+            bunx npm publish --provenance --tag beta --registry https://npm.pkg.github.com --access public
           else
             echo "Publishing production version $TAG"
-            bunx npm publish --provenance --tag latest --registry https://registry.npmjs.org/
-            bunx npm publish --provenance --tag latest --registry https://npm.pkg.github.com
+            bunx npm publish --provenance --tag latest --registry https://registry.npmjs.org/ --access public
+            bunx npm publish --provenance --tag latest --registry https://npm.pkg.github.com --access public
           fi
           
           # Clean up .npmrc file
