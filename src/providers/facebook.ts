@@ -129,6 +129,7 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 	 */
 	async exchange({
 		code,
+		csrf_token,
 	}: Omit<
 		ExchangeProps,
 		"client_id" | "client_secret" | "redirect_uri"
@@ -150,6 +151,7 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 						grant_type: "authorization_code",
 						redirect_uri: this.config.redirectUri,
 						code,
+						...(csrf_token ? { code_verifier: csrf_token } : {}),
 					}),
 				},
 			);
