@@ -325,9 +325,6 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 						message: post.text ?? "",
 						access_token: page.access_token,
 						published: true,
-						privacy: {
-							value: "EVERYONE",
-						},
 					};
 
 					// Add link if provided
