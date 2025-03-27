@@ -163,7 +163,7 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 			const { access_token } = await accessTokenResponse.json();
 
 			const pagesResponse = await fetch(
-				`${baseUrl}/me/accounts?fields=id,access_token,name,picture`,
+				`${baseUrl}/me/accounts?fields=id,access_token,name,picture,page_token`,
 				{
 					headers: { Authorization: `Bearer ${access_token}` },
 				},
