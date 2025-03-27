@@ -97,6 +97,5 @@ export interface ExchangeResponse
 			name: string | null;
 			username: string | null;
 			avatar_url: string | null;
-			pages?: string[];
 		} | null;
 	}> {}

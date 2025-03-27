@@ -24,12 +24,24 @@ export interface ProviderConfig {
 	scopes?: string[];
 }
 
+/**
+ * Threads configuration
+ */
 export interface ThreadsConfig extends ProviderConfig {}
 
+/**
+ * Instagram configuration
+ */
 export interface InstagramConfig extends ProviderConfig {}
 
+/**
+ * TikTok configuration
+ */
 export interface TikTokConfig extends ProviderConfig {}
 
+/**
+ * Facebook configuration
+ */
 export interface FacebookConfig extends ProviderConfig {
 	/**
 	 * The version of the Facebook API to use
@@ -42,4 +54,24 @@ export interface FacebookConfig extends ProviderConfig {
 	 * @see {@link https://developers.facebook.com/docs/graph-api/guides/versioning/}
 	 */
 	version?: "v21.0" | "v22.0";
+}
+
+/**
+ * Facebook Page
+ */
+export interface FacebookPage {
+	data: {
+		id: string;
+		page_token: string;
+		name: string;
+		picture: {
+			data: {
+				height: number;
+				is_silhouette: boolean;
+				url: string;
+				width: number;
+			};
+		};
+		access_token: string;
+	}[];
 }

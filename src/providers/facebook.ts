@@ -13,9 +13,9 @@ import type {
 } from "@/types/connect";
 import type { Response } from "@/types/response";
 import type { PublishProps } from "@/types/publish";
-import type { FacebookConfig } from "@/types/providers";
 import type { RefreshAccessTokenProps } from "@/types/token";
 import type { RefreshAccessTokenResponse } from "@/types/token";
+import type { FacebookConfig, FacebookPage } from "@/types/providers";
 
 // Security
 import { timestamp } from "@/utils/timestamp";
@@ -125,7 +125,7 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 	 * @param code - The code to exchange
 	 * @param csrf_token - The CSRF token
 	 *
-	 * @returns The refresh token, long-lived access token, account ID, and expiry date
+	 * @returns An array of refresh token, long-lived access token, account ID, and expiry date for each page
 	 */
 	async exchange({
 		code,
@@ -133,115 +133,61 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 	}: Omit<
 		ExchangeProps,
 		"client_id" | "client_secret" | "redirect_uri"
-	>): Promise<Response<ExchangeResponse | null>> {
+	>): Promise<Response<ExchangeResponse[] | null>> {
 		try {
 			if (!this.config.redirectUri) {
 				throw new Error("Redirect URI is required");
 			}
 
-			// Step 1: Exchange code for access token
-			const accessTokenResponse = await fetch(
-				`https://graph.facebook.com/${this.version}/oauth/access_token`,
-				{
-					method: "POST",
-					headers: { "Content-Type": "application/x-www-form-urlencoded" },
-					body: new URLSearchParams({
-						client_id: this.config.clientId,
-						client_secret: this.config.clientSecret,
-						grant_type: "authorization_code",
-						redirect_uri: this.config.redirectUri,
-						code,
-						...(csrf_token ? { code_verifier: csrf_token } : {}),
-					}),
-				},
-			);
+			const baseUrl = `https://graph.facebook.com/${this.version}`;
+			const params = new URLSearchParams({
+				client_id: this.config.clientId,
+				client_secret: this.config.clientSecret,
+				grant_type: "authorization_code",
+				redirect_uri: this.config.redirectUri,
+				code,
+				...(csrf_token ? { code_verifier: csrf_token } : {}),
+			});
+
+			const accessTokenResponse = await fetch(`${baseUrl}/oauth/access_token`, {
+				method: "POST",
+				headers: { "Content-Type": "application/x-www-form-urlencoded" },
+				body: params,
+			});
 
 			if (!accessTokenResponse.ok) {
-				console.error(await accessTokenResponse.text());
-				throw new Error("Failed to exchange Facebook code for access token");
+				const error = await accessTokenResponse.text();
+				throw new Error(`Failed to exchange Facebook code: ${error}`);
 			}
 
-			const accessTokenData = await accessTokenResponse.json();
+			const { access_token } = await accessTokenResponse.json();
 
-			console.warn("accessTokenData", accessTokenData);
-
-			const { access_token } = accessTokenData;
-
-			// Step 2: Exchange access token for long-lived access token
-			const refreshTokenResponse = await fetch(
-				`https://graph.facebook.com/${this.version}/oauth/access_token`,
-				{
-					method: "POST",
-					headers: { "Content-Type": "application/x-www-form-urlencoded" },
-					body: new URLSearchParams({
-						fb_exchange_token: access_token,
-						client_id: this.config.clientId,
-						client_secret: this.config.clientSecret,
-						grant_type: "fb_exchange_token",
-					}),
-				},
-			);
-
-			if (!refreshTokenResponse.ok) {
-				console.error(await refreshTokenResponse.text());
-				throw new Error("Failed to exchange Facebook token to refresh token");
-			}
-
-			const refreshTokenData = await refreshTokenResponse.json();
-
-			console.warn("refreshTokenData", refreshTokenData);
-
-			const { access_token: refresh_token } = refreshTokenData;
-
-			// Step 3: Get user info
-			const userResponse = await fetch(
-				`https://graph.facebook.com/${this.version}/me?fields=id,name,picture`,
-				{
-					headers: {
-						Authorization: `Bearer ${access_token}`,
-					},
-				},
-			);
-
-			if (!userResponse.ok) {
-				console.error(await userResponse.text());
-				throw new Error("Failed to get Facebook user info");
-			}
-
-			const userData = await userResponse.json();
-			const { id: account_id, name, picture } = userData;
-
-			// Step 5: Get user's pages
 			const pagesResponse = await fetch(
-				`https://graph.facebook.com/${this.version}/me/accounts?fields=id,access_token`,
+				`${baseUrl}/me/accounts?fields=id,access_token,name,picture`,
 				{
-					headers: {
-						Authorization: `Bearer ${access_token}`,
-					},
+					headers: { Authorization: `Bearer ${access_token}` },
 				},
 			);
 
 			if (!pagesResponse.ok) {
-				console.error(await pagesResponse.text());
-				throw new Error("Failed to get Facebook pages");
+				const error = await pagesResponse.text();
+				throw new Error(`Failed to get Facebook pages: ${error}`);
 			}
 
-			const pagesData = await pagesResponse.json();
-			const { data: pages = [] } = pagesData;
+			const pages: FacebookPage = await pagesResponse.json();
 
 			return {
-				data: {
-					access_token: refresh_token,
+				data: pages.data.map((page) => ({
+					access_token: page.access_token,
 					refresh_token: undefined,
-					account_id,
-					expiry: timestamp(90 * 24 * 60 * 60), // 90 days in seconds
+					account_id: page.id,
+					expiry: timestamp(90 * 24 * 60 * 60),
 					details: {
-						name: name ?? null,
-						username: null,
-						avatar_url: picture?.data?.url ?? null,
-						pages: pages.map((page: { id: string }) => page.id),
+						name: page.name,
+						username: page.page_token, // This is actually the username of the page
+						avatar_url: page.picture.data.url,
 					},
-				},
+				})),
 				error: null,
 			};
 		} catch (error) {

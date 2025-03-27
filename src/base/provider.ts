@@ -121,7 +121,7 @@ export class Provider<
 	}: Omit<
 		ExchangeProps,
 		"client_id" | "client_secret" | "redirect_uri"
-	>): Promise<Response<ExchangeResponse | null>> {
+	>): Promise<Response<ExchangeResponse | ExchangeResponse[] | null>> {
 		return {
 			data: null,
 			error: null,
