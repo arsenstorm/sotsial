@@ -133,8 +133,10 @@ export interface FacebookPostContent extends PostContent {
 
 	/**
 	 * The privacy of the post.
+	 *
+	 * @note - Facebook only allows public posts for pages
 	 */
-	privacy?: "public" | "mutual" | "private";
+	privacy?: "public";
 
 	/**
 	 * Additional options for the post.

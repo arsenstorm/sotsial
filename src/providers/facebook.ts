@@ -264,11 +264,6 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 						`https://graph.facebook.com/${this.version}/${page.id}/feed`,
 					);
 
-					const privacy =
-						{ public: "EVERYONE", mutual: "ALL_FRIENDS", private: "SELF" }[
-							post.privacy ?? "public"
-						] ?? "EVERYONE";
-
 					const mediaArray = Array.isArray(post?.media)
 						? post.media
 						: post?.media
@@ -331,7 +326,7 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 						access_token: page.access_token,
 						published: true,
 						privacy: {
-							value: privacy,
+							value: "EVERYONE",
 						},
 					};
 
