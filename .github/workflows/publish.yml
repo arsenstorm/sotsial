@@ -51,9 +51,12 @@ jobs:
         if: steps.check_version.outputs.should_publish == 'true'
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Create .npmrc file
+          # Create .npmrc file with both registries
           echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
+          echo "@${GITHUB_REPOSITORY_OWNER}:registry=https://npm.pkg.github.com" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=\${GITHUB_TOKEN}" >> .npmrc
           
           # Get version from package.json
           TAG=$(bun run pkg-version)
@@ -61,10 +64,12 @@ jobs:
           # Check if it's a beta version
           if [[ $TAG =~ ^[0-9]+\.[0-9]+\.[0-9]+-beta\.[0-9]+$ ]]; then
             echo "Publishing beta version $TAG"
-            bunx npm publish --provenance --tag beta
+            bunx npm publish --provenance --tag beta --registry https://registry.npmjs.org/
+            bunx npm publish --provenance --tag beta --registry https://npm.pkg.github.com
           else
             echo "Publishing production version $TAG"
-            bunx npm publish --provenance --tag latest
+            bunx npm publish --provenance --tag latest --registry https://registry.npmjs.org/
+            bunx npm publish --provenance --tag latest --registry https://npm.pkg.github.com
           fi
           
           # Clean up .npmrc file
