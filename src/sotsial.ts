@@ -6,6 +6,8 @@ import { Facebook } from "@/providers/facebook";
 
 // Sotsial Types
 import type { SotsialConfig } from "@/types/sotsial";
+import type { ExchangeResponse } from "@/types/connect";
+import type { Response } from "@/types/response";
 
 export class Sotsial {
 	tiktok!: TikTok;
@@ -75,6 +77,14 @@ export class Sotsial {
 		return this.callProvider(provider, (p) => p.grant());
 	}
 
+	async exchange(
+		provider: "facebook",
+		params: Readonly<{ code: string; csrf_token: string }>,
+	): Promise<Response<ExchangeResponse[]>>;
+	async exchange(
+		provider: Exclude<keyof SotsialConfig, "facebook">,
+		params: Readonly<{ code: string; csrf_token: string }>,
+	): Promise<Response<ExchangeResponse>>;
 	async exchange(
 		provider: keyof SotsialConfig,
 		{
