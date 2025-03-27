@@ -37,10 +37,14 @@ export interface TikTokPostContent extends PostContent {
 	};
 }
 
+// Facebook
+export interface FacebookPostContent extends PostContent {}
+
 export type PlatformContent = {
 	threads: ThreadsPostContent;
 	instagram: InstagramPostContent;
 	tiktok: TikTokPostContent;
+	facebook: FacebookPostContent;
 };
 
 export type Post<P extends keyof PlatformContent = keyof PlatformContent> =

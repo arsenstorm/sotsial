@@ -263,6 +263,8 @@ export class TikTok extends Provider<TikTokConfig, Account> {
 			throw new Error("No account connected");
 		}
 
+		console.warn("Publishing to TikTok is not yet stable. Use at own risk.");
+
 		try {
 			const mediaArray = Array.isArray(post?.media)
 				? post.media
