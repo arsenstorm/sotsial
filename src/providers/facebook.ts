@@ -167,7 +167,7 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 			const refreshTokenResponse = await fetch(
 				`https://graph.facebook.com/${this.version}/oauth/access_token`,
 				{
-					method: "GET",
+					method: "POST",
 					headers: { "Content-Type": "application/x-www-form-urlencoded" },
 					body: new URLSearchParams({
 						fb_exchange_token: access_token,
@@ -185,7 +185,7 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 
 			const refreshTokenData = await refreshTokenResponse.json();
 
-			console.log(refreshTokenData);
+			console.warn(refreshTokenData);
 
 			const { access_token: refresh_token } = refreshTokenData;
 
@@ -196,6 +196,7 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 			});
 
 			if (validation.error) {
+				console.error(validation.error);
 				return { data: null, error: validation.error };
 			}
 
