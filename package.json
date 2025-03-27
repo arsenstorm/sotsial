@@ -28,7 +28,8 @@
 		"bundle": "rm -rf dist && tsc && tsc-alias",
 		"prepublishOnly": "bun bundle",
 		"format": "bun x @biomejs/biome format --write ./",
-		"test": "bun test"
+		"test": "bun test",
+		"pkg-version": "node -p \"require('./package.json').version\""
 	},
 	"type": "module",
 	"types": "./dist/index.d.ts"

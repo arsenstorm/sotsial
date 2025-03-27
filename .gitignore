@@ -98,6 +98,9 @@ web_modules/
 
 .yarn-integrity
 
+# NPM config
+.npmrc
+
 # dotenv environment variable files
 
 .env

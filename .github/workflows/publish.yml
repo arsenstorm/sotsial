@@ -1,0 +1,63 @@
+name: Publish to NPM
+
+on:
+  push:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+          
+      - name: Install dependencies
+        run: bun install
+
+      - name: Check version change
+        id: check_version
+        run: |
+          # Get current version
+          CURRENT_VERSION=$(bun run pkg-version)
+          
+          # Get previous version from the last commit
+          git checkout HEAD~1
+          PREVIOUS_VERSION=$(bun run pkg-version)
+          git checkout HEAD
+          
+          # Compare versions
+          if [ "$CURRENT_VERSION" != "$PREVIOUS_VERSION" ]; then
+            echo "Version has changed from $PREVIOUS_VERSION to $CURRENT_VERSION"
+            echo "should_publish=true" >> $GITHUB_OUTPUT
+          else
+            echo "Version has not changed ($CURRENT_VERSION)"
+            echo "should_publish=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Publish to NPM
+        if: steps.check_version.outputs.should_publish == 'true'
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          # Create .npmrc file
+          echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
+          
+          # Get version from package.json
+          TAG=$(bun run pkg-version)
+          
+          # Check if it's a beta version
+          if [[ $TAG =~ ^[0-9]+\.[0-9]+\.[0-9]+-beta\.[0-9]+$ ]]; then
+            echo "Publishing beta version $TAG"
+            bunx npm publish --provenance --tag beta
+          else
+            echo "Publishing production version $TAG"
+            bunx npm publish --provenance --tag latest
+          fi
+          
+          # Clean up .npmrc file
+          rm .npmrc
