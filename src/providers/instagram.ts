@@ -299,7 +299,7 @@ export class Instagram extends Provider<InstagramConfig, Account> {
 				let containerId: string | undefined;
 				let media_type: "REELS" | "STORIES" | undefined;
 
-				if (post.type === "reel") {
+				if (post.ig_type === "reel") {
 					if (!mediaArray.length || mediaArray[0]?.type !== "video") {
 						errors.push({
 							message: "Instagram only allows videos for reels.",
@@ -313,7 +313,7 @@ export class Instagram extends Provider<InstagramConfig, Account> {
 					}
 					containerId = result.data?.container_id;
 					media_type = "REELS";
-				} else if (post.type === "story") {
+				} else if (post.ig_type === "story") {
 					const result = await this.createSingleContainer(account, post);
 					if (result.error) {
 						errors.push(result.error);
@@ -436,15 +436,15 @@ export class Instagram extends Provider<InstagramConfig, Account> {
 			}
 		}
 
-		if (post.type !== "story") {
+		if (post.ig_type !== "story") {
 			url.searchParams.set("caption", post?.text ?? "");
 		}
 
-		if (post.type === "reel") {
+		if (post.ig_type === "reel") {
 			url.searchParams.set("media_type", "REELS");
 		}
 
-		if (post.type === "story") {
+		if (post.ig_type === "story") {
 			url.searchParams.set("media_type", "STORIES");
 		}
 

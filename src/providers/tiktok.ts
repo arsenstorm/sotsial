@@ -349,20 +349,17 @@ export class TikTok extends Provider<TikTokConfig, Account> {
 					continue;
 				}
 
-				// Map privacy levels
-				const privacyMap = {
-					public: "PUBLIC_TO_EVERYONE",
-					friends: "MUTUAL_FOLLOW_FRIENDS",
-					private: "SELF_ONLY",
-				} as const;
-
 				// Get default privacy level from creator info
 				const defaultPrivacyLevel =
 					creatorInfo.data.privacy_level_options[0] ?? "PUBLIC_TO_EVERYONE";
 
 				// Get privacy level from post options or use default
-				const privacyLevel = post.options?.safety?.privacy
-					? privacyMap[post.options.safety.privacy]
+				const privacyLevel = post.privacy
+					? {
+							public: "PUBLIC_TO_EVERYONE",
+							mutual: "MUTUAL_FOLLOW_FRIENDS",
+							private: "SELF_ONLY",
+						}[post.privacy]
 					: defaultPrivacyLevel;
 
 				// Check if privacy level is allowed
@@ -379,7 +376,7 @@ export class TikTok extends Provider<TikTokConfig, Account> {
 				// Handle commercial content settings
 				const isCommercialContent =
 					post.options?.promotion?.self_promotion ||
-					post.options?.promotion?.branded_content?.is_branded_content;
+					post.options?.promotion?.is_branded_content;
 
 				// Validate privacy level for commercial content
 				if (isCommercialContent && privacyLevel === "SELF_ONLY") {
