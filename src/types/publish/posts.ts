@@ -127,6 +127,13 @@ export interface FacebookPostContent extends PostContent {
 	text: string;
 
 	/**
+	 * The type of Facebook post to be published.
+	 *
+	 * @note - If not specified, the type will be automatically determined.
+	 */
+	fb_type?: "feed" | "reel";
+
+	/**
 	 * An optional link to be added to the post.
 	 */
 	link?: string;
@@ -148,6 +155,36 @@ export interface FacebookPostContent extends PostContent {
 		 * If this is not set, the post will be published immediately.
 		 */
 		publish_at?: Date;
+
+		/**
+		 * Video-specific options.
+		 */
+		video?: {
+			/**
+			 * Title for the video.
+			 */
+			title?: string;
+
+			/**
+			 * Description for the video.
+			 */
+			description?: string;
+		};
+
+		/**
+		 * Reel-specific options.
+		 */
+		reel?: {
+			/**
+			 * Whether to tag a location in the reel.
+			 */
+			place_id?: string;
+
+			/**
+			 * Collaborators to invite for the reel.
+			 */
+			collaborators?: string[];
+		};
 	};
 }
 
