@@ -255,7 +255,6 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 	 * Uploads a file to Facebook's servers.
 	 * 
 	 * @param file_url - The URL of the file to upload
-	 * @param app_id - The Facebook app ID
 	 * @param access_token - The access token to use
 	 * 
 	 * @returns The uploaded file handle
@@ -286,7 +285,7 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 			const urlParts = file_url.split('/');
 			const fileName = urlParts[urlParts.length - 1] ?? 'video.mp4';
 
-			// Start upload session
+			// Step 1: Start upload session
 			const sessionResponse = await fetch(
 				`https://graph.facebook.com/${this.version}/${this.config.clientId}/uploads?${
 					new URLSearchParams({
@@ -307,7 +306,7 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 			const sessionData = await sessionResponse.json();
 			const uploadSessionId = sessionData.id.replace('upload:', '');
 
-			// Upload the file
+			// Step 2: Upload the file using file_url parameter as header
 			const uploadResponse = await fetch(
 				`https://graph.facebook.com/${this.version}/upload:${uploadSessionId}`,
 				{
@@ -315,8 +314,8 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 					headers: {
 						'Authorization': `OAuth ${access_token}`,
 						'file_offset': '0',
+						'file_url': file_url,
 					},
-					body: JSON.stringify({ file_url }),
 				}
 			);
 
@@ -655,26 +654,30 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 
 		const fileHandle = uploadResult.data!;
 		
-		// Build the video post body
-		const formData = new FormData();
-		formData.append('access_token', page.access_token);
-		formData.append('fbuploader_video_file_chunk', fileHandle);
+		// Prepare parameters for video publishing
+		const params = new URLSearchParams({
+			access_token: page.access_token,
+			fbuploader_video_file_chunk: fileHandle,
+		});
 		
-		if (post.text) formData.append('description', post.text);
-		if (post.options?.video?.title) formData.append('title', post.options.video.title);
-		if (post.options?.video?.description) formData.append('description', post.options.video.description);
+		if (post.text) params.append('description', post.text);
+		if (post.options?.video?.title) params.append('title', post.options.video.title);
+		if (post.options?.video?.description) params.append('description', post.options.video.description);
 		
 		if (post.options?.publish_at) {
 			const publishTime = Math.floor(new Date(post.options.publish_at).getTime() / 1000);
-			formData.append('scheduled_publish_time', publishTime.toString());
-			formData.append('published', 'false');
+			params.append('scheduled_publish_time', publishTime.toString());
+			params.append('published', 'false');
 		}
 
-		// Publish the video
-		const publishUrl = `https://graph-video.facebook.com/${this.version}/${page.id}/videos`;
+		// Publish the video using graph.facebook.com (not graph-video as it's deprecated)
+		const publishUrl = `https://graph.facebook.com/${this.version}/${page.id}/videos`;
 		const publishResponse = await fetch(publishUrl, {
 			method: 'POST',
-			body: formData,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			body: params,
 		});
 
 		if (!publishResponse.ok) {
