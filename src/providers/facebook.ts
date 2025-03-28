@@ -253,10 +253,10 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 
 	/**
 	 * Uploads a file to Facebook's servers.
-	 * 
+	 *
 	 * @param file_url - The URL of the file to upload
 	 * @param access_token - The access token to use
-	 * 
+	 *
 	 * @returns The uploaded file handle
 	 */
 	private async uploadFileToFacebook(
@@ -265,7 +265,7 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 	): Promise<Response<string | null>> {
 		try {
 			// Fetch file metadata
-			const fileResponse = await fetch(file_url, { method: 'HEAD' });
+			const fileResponse = await fetch(file_url, { method: "HEAD" });
 			if (!fileResponse.ok) {
 				return {
 					data: null,
@@ -273,54 +273,73 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 				};
 			}
 
-			const contentType = fileResponse.headers.get('content-type') ?? 'video/mp4';
-			const contentLength = fileResponse.headers.get('content-length') ?? '0';
+			const contentType =
+				fileResponse.headers.get("content-type") ?? "video/mp4";
+			const contentLength = fileResponse.headers.get("content-length") ?? "0";
 			const fileSize = Number.parseInt(contentLength, 10);
-			
+
 			if (!fileSize) {
-				return { data: null, error: { message: 'Could not determine file size' } };
+				return {
+					data: null,
+					error: { message: "Could not determine file size" },
+				};
 			}
 
-			// Extract filename from URL
-			const urlParts = file_url.split('/');
-			const fileName = urlParts[urlParts.length - 1] ?? 'video.mp4';
+			const urlParts = file_url.split("/");
+			let fileName = urlParts[urlParts.length - 1] ?? "video.mp4";
+
+			try {
+				fileName = decodeURIComponent(fileName);
+			} catch (e) {
+				console.warn("Failed to decode filename", e);
+			}
+
+			fileName = fileName
+				.replace(/[\\/<@%:?&#=+,;*^|"'\s]/g, "_")
+				.replace(/[^\w.-]/g, "_");
+
+			if (/^[.-]/.test(fileName)) {
+				fileName = `f${fileName}`;
+			}
 
 			// Step 1: Start upload session
 			const sessionResponse = await fetch(
-				`https://graph.facebook.com/${this.version}/${this.config.clientId}/uploads?${
-					new URLSearchParams({
+				`https://graph.facebook.com/${this.version}/${this.config.clientId}/uploads?${new URLSearchParams(
+					{
 						file_name: fileName,
 						file_length: fileSize.toString(),
 						file_type: contentType,
-						access_token
-					}).toString()
-				}`,
-				{ method: 'POST' }
+						access_token,
+					},
+				).toString()}`,
+				{ method: "POST" },
 			);
 
 			if (!sessionResponse.ok) {
 				const error = await sessionResponse.json();
+				console.error("Facebook upload session error:", error);
 				return this.handleApiError(error, "start upload session");
 			}
 
 			const sessionData = await sessionResponse.json();
-			const uploadSessionId = sessionData.id.replace('upload:', '');
+			const uploadSessionId = sessionData.id.replace("upload:", "");
 
 			// Step 2: Upload the file using file_url parameter as header
 			const uploadResponse = await fetch(
 				`https://graph.facebook.com/${this.version}/upload:${uploadSessionId}`,
 				{
-					method: 'POST',
+					method: "POST",
 					headers: {
-						'Authorization': `OAuth ${access_token}`,
-						'file_offset': '0',
-						'file_url': file_url,
+						Authorization: `OAuth ${access_token}`,
+						file_offset: "0",
+						file_url: file_url,
 					},
-				}
+				},
 			);
 
 			if (!uploadResponse.ok) {
 				const error = await uploadResponse.json();
+				console.error("Facebook file upload error:", error);
 				return this.handleApiError(error, "upload file");
 			}
 
@@ -333,7 +352,10 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 			return {
 				data: null,
 				error: {
-					message: error instanceof Error ? error.message : 'Unknown error during file upload',
+					message:
+						error instanceof Error
+							? error.message
+							: "Unknown error during file upload",
 				},
 			};
 		}
@@ -341,10 +363,10 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 
 	/**
 	 * Initializes a reel upload session.
-	 * 
+	 *
 	 * @param page_id - The ID of the Facebook page
 	 * @param access_token - The access token to use
-	 * 
+	 *
 	 * @returns The video ID and upload URL
 	 */
 	private async initializeReelUpload(
@@ -354,10 +376,10 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 		try {
 			const url = `https://graph.facebook.com/${this.version}/${page_id}/video_reels`;
 			const response = await fetch(url, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
-					upload_phase: 'start',
+					upload_phase: "start",
 					access_token: access_token,
 				}),
 			});
@@ -379,7 +401,10 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 			return {
 				data: null,
 				error: {
-					message: error instanceof Error ? error.message : 'Unknown error during reel initialization',
+					message:
+						error instanceof Error
+							? error.message
+							: "Unknown error during reel initialization",
 				},
 			};
 		}
@@ -387,11 +412,11 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 
 	/**
 	 * Uploads a video file for a reel.
-	 * 
+	 *
 	 * @param upload_url - The upload URL
 	 * @param video_url - The URL of the video file
 	 * @param access_token - The access token to use
-	 * 
+	 *
 	 * @returns Success status
 	 */
 	private async uploadReelVideo(
@@ -401,10 +426,10 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 	): Promise<Response<boolean | null>> {
 		try {
 			const response = await fetch(upload_url, {
-				method: 'POST',
+				method: "POST",
 				headers: {
-					'Authorization': `OAuth ${access_token}`,
-					'file_url': video_url,
+					Authorization: `OAuth ${access_token}`,
+					file_url: video_url,
 				},
 			});
 
@@ -422,7 +447,10 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 			return {
 				data: null,
 				error: {
-					message: error instanceof Error ? error.message : 'Unknown error during reel video upload',
+					message:
+						error instanceof Error
+							? error.message
+							: "Unknown error during reel video upload",
 				},
 			};
 		}
@@ -430,13 +458,13 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 
 	/**
 	 * Publishes a reel to Facebook.
-	 * 
+	 *
 	 * @param page_id - The ID of the Facebook page
 	 * @param video_id - The ID of the video
 	 * @param access_token - The access token to use
 	 * @param description - The description of the reel
 	 * @param place_id - Optional place ID to tag
-	 * 
+	 *
 	 * @returns Success status and post ID
 	 */
 	private async publishReel(
@@ -448,18 +476,20 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 	): Promise<Response<{ success: boolean; post_id: string } | null>> {
 		try {
 			const url = `https://graph.facebook.com/${this.version}/${page_id}/video_reels`;
-			
+
 			const params = new URLSearchParams({
 				access_token,
 				video_id,
-				upload_phase: 'finish',
-				video_state: 'PUBLISHED',
+				upload_phase: "finish",
+				video_state: "PUBLISHED",
 			});
-			
-			if (description) params.append('description', description);
-			if (place_id) params.append('place', place_id);
 
-			const response = await fetch(`${url}?${params.toString()}`, { method: 'POST' });
+			if (description) params.append("description", description);
+			if (place_id) params.append("place", place_id);
+
+			const response = await fetch(`${url}?${params.toString()}`, {
+				method: "POST",
+			});
 
 			if (!response.ok) {
 				const error = await response.json();
@@ -478,7 +508,10 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 			return {
 				data: null,
 				error: {
-					message: error instanceof Error ? error.message : 'Unknown error during reel publishing',
+					message:
+						error instanceof Error
+							? error.message
+							: "Unknown error during reel publishing",
 				},
 			};
 		}
@@ -514,29 +547,45 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 			const errors: ErrorResponse[] = [];
 
 			// Convert media to array format for easier processing
-			const mediaArray: MediaItem[] = Array.isArray(post?.media) 
-				? post.media 
-				: post?.media 
-					? [post.media] 
+			const mediaArray: MediaItem[] = Array.isArray(post?.media)
+				? post.media
+				: post?.media
+					? [post.media]
 					: [];
 
 			for (const page of this.accounts) {
 				try {
 					let result: PublishResult;
-					
+
 					// Handle different post types
-					if (post.fb_type === 'reel') {
+					if (post.fb_type === "reel") {
 						result = await this.handleReelPost(page, post, mediaArray, errors);
-					} else if (mediaArray.length === 1 && mediaArray[0]?.type === 'video') {
-						result = await this.handleVideoPost(page, post, mediaArray[0].url, errors);
+					} else if (
+						mediaArray.length === 1 &&
+						mediaArray[0]?.type === "video"
+					) {
+						result = await this.handleVideoPost(
+							page,
+							post,
+							mediaArray[0].url,
+							errors,
+						);
 					} else {
-						result = await this.handleRegularPost(page, post, mediaArray, errors);
+						result = await this.handleRegularPost(
+							page,
+							post,
+							mediaArray,
+							errors,
+						);
 					}
-					
+
 					if (result) results.push(result);
 				} catch (error) {
 					errors.push({
-						message: error instanceof Error ? error.message : "Failed to publish to page",
+						message:
+							error instanceof Error
+								? error.message
+								: "Failed to publish to page",
 						details: { account_id: page.id },
 					});
 				}
@@ -544,15 +593,20 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 
 			return {
 				data: results.length > 0 ? results : null,
-				error: errors.length > 0
-					? { message: "Failed to publish to some or all pages", details: errors }
-					: null,
+				error:
+					errors.length > 0
+						? {
+								message: "Failed to publish to some or all pages",
+								details: errors,
+							}
+						: null,
 			};
 		} catch (error) {
 			return {
 				data: null,
 				error: {
-					message: error instanceof Error ? error.message : "Failed to publish post",
+					message:
+						error instanceof Error ? error.message : "Failed to publish post",
 					hint: "Please check your credentials and try again",
 				},
 			};
@@ -563,24 +617,27 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 	 * Handles publishing a reel post
 	 */
 	private async handleReelPost(
-		page: Account, 
+		page: Account,
 		post: PublishProps<"facebook">["post"],
 		mediaArray: MediaItem[],
-		errors: ErrorResponse[]
+		errors: ErrorResponse[],
 	): Promise<PublishResult> {
 		// Reels require video
-		if (mediaArray.length === 0 || mediaArray[0]?.type !== 'video') {
+		if (mediaArray.length === 0 || mediaArray[0]?.type !== "video") {
 			errors.push({
-				message: 'Facebook reels require a video',
+				message: "Facebook reels require a video",
 				details: { account_id: page.id },
 			});
 			return null;
 		}
 
 		const videoUrl = mediaArray[0]?.url;
-		
+
 		// Initialize reel upload
-		const initReelResult = await this.initializeReelUpload(page.id, page.access_token);
+		const initReelResult = await this.initializeReelUpload(
+			page.id,
+			page.access_token,
+		);
 		if (initReelResult.error) {
 			errors.push({
 				message: initReelResult.error.message,
@@ -592,7 +649,11 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 		const { video_id, upload_url } = initReelResult.data!;
 
 		// Upload video for reel
-		const uploadResult = await this.uploadReelVideo(upload_url, videoUrl, page.access_token);
+		const uploadResult = await this.uploadReelVideo(
+			upload_url,
+			videoUrl,
+			page.access_token,
+		);
 		if (uploadResult.error) {
 			errors.push({
 				message: uploadResult.error.message,
@@ -607,9 +668,9 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 			video_id,
 			page.access_token,
 			post.text,
-			post.options?.reel?.place_id
+			post.options?.reel?.place_id,
 		);
-		
+
 		if (publishResult.error) {
 			errors.push({
 				message: publishResult.error.message,
@@ -621,7 +682,11 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 		// Invite collaborators if specified
 		if (post.options?.reel?.collaborators?.length) {
 			for (const collaboratorId of post.options.reel.collaborators) {
-				await this.inviteReelCollaborator(video_id, collaboratorId, page.access_token);
+				await this.inviteReelCollaborator(
+					video_id,
+					collaboratorId,
+					page.access_token,
+				);
 				// We don't fail if collaborator invites fail
 			}
 		}
@@ -637,13 +702,16 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 	 * Handles publishing a video post
 	 */
 	private async handleVideoPost(
-		page: Account, 
+		page: Account,
 		post: PublishProps<"facebook">["post"],
 		videoUrl: string,
-		errors: ErrorResponse[]
+		errors: ErrorResponse[],
 	): Promise<PublishResult> {
 		// Upload the video file to get the file handle
-		const uploadResult = await this.uploadFileToFacebook(videoUrl, page.access_token);
+		const uploadResult = await this.uploadFileToFacebook(
+			videoUrl,
+			page.access_token,
+		);
 		if (uploadResult.error) {
 			errors.push({
 				message: uploadResult.error.message,
@@ -653,40 +721,53 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 		}
 
 		const fileHandle = uploadResult.data!;
-		
+
 		// Prepare parameters for video publishing
 		const params = new URLSearchParams({
 			access_token: page.access_token,
 			fbuploader_video_file_chunk: fileHandle,
 		});
-		
-		if (post.text) params.append('description', post.text);
-		if (post.options?.video?.title) params.append('title', post.options.video.title);
-		if (post.options?.video?.description) params.append('description', post.options.video.description);
-		
+
+		if (post.text) params.append("description", post.text);
+		if (post.options?.video?.title)
+			params.append("title", post.options.video.title);
+		if (post.options?.video?.description)
+			params.append("description", post.options.video.description);
+
 		if (post.options?.publish_at) {
-			const publishTime = Math.floor(new Date(post.options.publish_at).getTime() / 1000);
-			params.append('scheduled_publish_time', publishTime.toString());
-			params.append('published', 'false');
+			const publishTime = Math.floor(
+				new Date(post.options.publish_at).getTime() / 1000,
+			);
+			params.append("scheduled_publish_time", publishTime.toString());
+			params.append("published", "false");
 		}
 
 		// Publish the video using graph.facebook.com (not graph-video as it's deprecated)
 		const publishUrl = `https://graph.facebook.com/${this.version}/${page.id}/videos`;
+		console.log("Publishing video to Facebook:", {
+			url: publishUrl,
+			page_id: page.id,
+			has_file_handle: Boolean(fileHandle),
+		});
+
 		const publishResponse = await fetch(publishUrl, {
-			method: 'POST',
+			method: "POST",
 			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded',
+				"Content-Type": "application/x-www-form-urlencoded",
 			},
 			body: params,
 		});
 
 		if (!publishResponse.ok) {
 			const error = await publishResponse.json();
-			throw new Error(`Failed to publish video: ${error?.error?.message ?? JSON.stringify(error)}`);
+			console.error("Facebook video publish error:", error);
+			throw new Error(
+				`Failed to publish video: ${error?.error?.message ?? JSON.stringify(error)}`,
+			);
 		}
 
 		const publishResult = await publishResponse.json();
-		
+
 		return {
 			success: true,
 			post_id: publishResult.id,
@@ -698,10 +779,10 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 	 * Handles publishing a regular post (text-only or with images)
 	 */
 	private async handleRegularPost(
-		page: Account, 
+		page: Account,
 		post: PublishProps<"facebook">["post"],
 		mediaArray: MediaItem[],
-		errors: ErrorResponse[]
+		errors: ErrorResponse[],
 	): Promise<PublishResult> {
 		const attachedMedia: { media_fbid: string }[] = [];
 
@@ -710,7 +791,8 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 			for (const media of mediaArray) {
 				if (media.type === "video") {
 					errors.push({
-						message: "For multiple videos, please upload them one at a time or use a reel",
+						message:
+							"For multiple videos, please upload them one at a time or use a reel",
 						details: { account_id: page.id },
 					});
 					continue;
@@ -735,7 +817,9 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 
 				if (!uploadResponse.ok) {
 					const error = await uploadResponse.json();
-					throw new Error(`Failed to upload media: ${error?.error?.message ?? "Unknown error"}`);
+					throw new Error(
+						`Failed to upload media: ${error?.error?.message ?? "Unknown error"}`,
+					);
 				}
 
 				const { id } = await uploadResponse.json();
@@ -754,15 +838,21 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 
 		// Handle scheduled posts
 		if (post.options?.publish_at) {
-			const publishTime = Math.floor(new Date(post.options.publish_at).getTime() / 1000);
+			const publishTime = Math.floor(
+				new Date(post.options.publish_at).getTime() / 1000,
+			);
 			Object.assign(postBody, {
 				scheduled_publish_time: publishTime,
 				published: false,
-				...(attachedMedia.length > 0 ? { unpublished_content_type: "SCHEDULED" } : {}),
+				...(attachedMedia.length > 0
+					? { unpublished_content_type: "SCHEDULED" }
+					: {}),
 			});
 		}
 
-		const publishUrl = new URL(`https://graph.facebook.com/${this.version}/${page.id}/feed`);
+		const publishUrl = new URL(
+			`https://graph.facebook.com/${this.version}/${page.id}/feed`,
+		);
 		const publishResponse = await fetch(publishUrl.toString(), {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
@@ -771,7 +861,9 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 
 		if (!publishResponse.ok) {
 			const error = await publishResponse.json();
-			throw new Error(`Failed to publish post: ${error?.error?.message ?? "Unknown error"}`);
+			throw new Error(
+				`Failed to publish post: ${error?.error?.message ?? "Unknown error"}`,
+			);
 		}
 
 		const publishResult = await publishResponse.json();
@@ -785,11 +877,11 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 
 	/**
 	 * Invites collaborators for a reel.
-	 * 
+	 *
 	 * @param video_id - The ID of the video
 	 * @param collaborator_id - The ID of the collaborator's Facebook page
 	 * @param access_token - The access token to use
-	 * 
+	 *
 	 * @returns Success status
 	 */
 	private async inviteReelCollaborator(
@@ -804,7 +896,9 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 				access_token,
 			});
 
-			const response = await fetch(`${url}?${params.toString()}`, { method: 'POST' });
+			const response = await fetch(`${url}?${params.toString()}`, {
+				method: "POST",
+			});
 
 			if (!response.ok) {
 				const error = await response.json();
@@ -820,7 +914,10 @@ export class Facebook extends Provider<FacebookConfig, Account> {
 			return {
 				data: null,
 				error: {
-					message: error instanceof Error ? error.message : 'Unknown error during collaborator invitation',
+					message:
+						error instanceof Error
+							? error.message
+							: "Unknown error during collaborator invitation",
 				},
 			};
 		}
