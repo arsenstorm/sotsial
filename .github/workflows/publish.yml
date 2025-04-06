@@ -80,3 +80,49 @@ jobs:
           
           # Clean up .npmrc file
           rm .npmrc
+
+      - name: Create GitHub Release
+        if: steps.check_version.outputs.should_publish == 'true'
+        working-directory: packages/sotsial
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get version from package.json
+          TAG=$(bun run pkg-version)
+          
+          # Get the repository URL from package.json
+          REPO_URL=$(node -p "require('./package.json').repository?.url ?? ''")
+          REPO_NAME=$(echo $REPO_URL | sed -n 's/.*github.com\/\(.*\)\.git/\1/p')
+          
+          # If repo name couldn't be extracted, try to derive from GitHub context
+          if [ -z "$REPO_NAME" ]; then
+            REPO_NAME="${GITHUB_REPOSITORY}"
+          fi
+          
+          # Extract the previous git tag to create comparison link
+          PREV_TAG=$(git tag --sort=-v:refname | head -n 1 || echo "")
+          
+          # Create comparison link if previous tag exists
+          if [ -n "$PREV_TAG" ]; then
+            COMPARISON_LINK="https://github.com/${REPO_NAME}/compare/${PREV_TAG}...v${TAG}"
+            RELEASE_NOTES="## What's Changed\nSee all changes: [${PREV_TAG}...v${TAG}](${COMPARISON_LINK})"
+          else
+            RELEASE_NOTES="Initial release"
+          fi
+          
+          # Set release title
+          RELEASE_TITLE="v$TAG"
+          
+          # Check if it's a beta version to set prerelease flag
+          if [[ $TAG =~ ^[0-9]+\.[0-9]+\.[0-9]+-beta\.[0-9]+$ ]]; then
+            echo "Creating GitHub beta release $TAG"
+            gh release create "v$TAG" \
+              --title "$RELEASE_TITLE" \
+              --notes "$RELEASE_NOTES" \
+              --prerelease
+          else
+            echo "Creating GitHub production release $TAG"
+            gh release create "v$TAG" \
+              --title "$RELEASE_TITLE" \
+              --notes "$RELEASE_NOTES"
+          fi
