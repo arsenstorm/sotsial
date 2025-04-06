@@ -1,6 +1,26 @@
 {
 	"$schema": "https://turbo.build/schema.json",
 	"ui": "tui",
+	"globalEnv": [
+		"BETTER_AUTH_SECRET",
+		"THREADS_CLIENT_ID",
+		"THREADS_CLIENT_SECRET",
+		"INSTAGRAM_CLIENT_ID",
+		"INSTAGRAM_CLIENT_SECRET",
+		"GITHUB_CLIENT_ID",
+		"GITHUB_CLIENT_SECRET",
+		"DATABASE_URL",
+		"ENCRYPTION_KEY",
+		"SOTSIAL_PROXY_KEY",
+		"FACEBOOK_CLIENT_ID",
+		"FACEBOOK_CLIENT_SECRET",
+		"TWITTER_CLIENT_ID",
+		"TWITTER_CLIENT_SECRET",
+		"LINKEDIN_CLIENT_ID",
+		"LINKEDIN_CLIENT_SECRET",
+		"GOOGLE_CLIENT_ID",
+		"GOOGLE_CLIENT_SECRET"
+	],
 	"tasks": {
 		"build": {},
 		"start": {},
