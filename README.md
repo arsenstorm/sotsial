@@ -1,8 +1,14 @@
-A package to easily cross-post to social media platforms.
+Social media cross-posting for developers.
 
-# `sotsial`
+# Sotsial
 
 The `sotsial` package powers [Sotsial](https://sotsial.com) - a platform built to make it cross-posting to social media platforms easier than ever with a developer-first approach.
+
+If you're looking for a managed solution, check out [sotsial.com](https://sotsial.com).
+
+## `sotsial`
+
+The `sotsial` package is a TypeScript library that allows you to connect to and publish to social media platforms.
 
 ## Usage
 
@@ -25,6 +31,8 @@ const sotsial = new Sotsial({
   // Add more providers here
 });
 ```
+
+
 
 ## Granting Access
 
@@ -92,12 +100,3 @@ const post = await sotsial.publish({
   },
 });
 ```
-
-## Supported Providers
-
-- [X] Threads
-- [ ] Twitter/X
-- [X] Instagram
-- [ ] TikTok
-- [ ] Facebook
-- [ ] LinkedIn

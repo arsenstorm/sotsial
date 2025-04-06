@@ -1,0 +1,200 @@
+import { GenerateSEO } from "@/components/docs/GenerateSEO";
+
+export const metadata = GenerateSEO({
+  title: "Posting to TikTok",
+  description:
+    "Learn how to post to TikTok with Sotsial.",
+  url: "https://sotsial.com/docs/posting/tiktok",
+});
+
+# Posting to TikTok
+
+Learn how to post to TikTok with Sotsial. {{ className: 'lead' }}
+
+<Danger>
+  TikTok has certain requirements for their direct publishing API.
+
+  Your application must meet these requirements to be able to publish to TikTok.
+</Danger>
+
+<hr />
+
+## Image Post
+
+<Warn>
+  Sotsial does not yet support posting images to TikTok.
+</Warn>
+
+<hr />
+
+## Video Post
+
+To post a video to TikTok, you need to provide the URL of the video and a caption.
+
+Due to TikTok’s requirements, you **must** provide additional `options` for Sotsial to be able to publish to TikTok.
+
+<CodeGroup tag="POST" label="/v1/publish">
+
+```bash {{ title: 'cURL' }}
+curl -X POST https://sotsial.com/v1/publish \
+  -H "Authorization: Bearer {token}" \
+  -H "Content-Type: application/json" \
+  -d '{"target": "<my_connection_id>", "post": {"tiktok": {"text": "Your video caption", "media": [{"url": "<video_url>", "type": "video"}]}, "options": {"safety": {"privacy": "private", "allow_comments": false, "allow_duet": false, "allow_stitch": false}, "promotion": {"self_promotion": false}}}}'
+```
+
+```js
+await fetch('https://sotsial.com/v1/publish', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    target: '<my_connection_id>',
+    post: { 
+      tiktok: {
+        text: 'Your video caption',
+        media: [
+          {
+            url: '<video_url>',
+            type: 'video',
+          },
+        ],
+        options: {
+          safety: {
+            privacy: 'private',
+            allow_comments: false,
+            allow_duet: false,
+            allow_stitch: false,
+          },
+          promotion: {
+            self_promotion: false,
+          },
+        },
+      },
+    },
+  }),
+});
+```
+
+```python
+import requests
+
+requests.post('https://sotsial.com/v1/publish', 
+  headers={
+    'Authorization': f'Bearer {token}',
+    'Content-Type': 'application/json',
+  },
+  json={
+    target: '<my_connection_id>',
+    post: {
+      tiktok: {
+        text: 'Your video caption',
+        media: [
+          {
+            url: '<video_url>',
+            type: 'video',
+          },
+        ],
+        options: {
+          safety: {
+            privacy: 'private',
+            allow_comments: false,
+            allow_duet: false,
+            allow_stitch: false,
+          },
+        },
+      },
+    },
+  },
+)
+```
+
+</CodeGroup>
+
+<Warn>
+  If you do not provide the `options` parameter with valid values, Sotsial will **reject** the request.
+</Warn>
+
+<hr />
+
+## Parameters
+
+TikTok has optional and required parameters that you can provide as part of your request.
+
+<Row>
+  <Col>
+    <Properties>
+      <Property name="safety" required>
+        Safety settings for your post.
+      </Property>
+      <Property name="promotion" required>
+        Promotion settings for your post.
+      </Property>
+    </Properties>
+
+    ### Safety Settings
+
+    <Properties>
+      <Property name="privacy" type="private | friends | public" required>
+        The privacy of your post.
+      </Property>
+      <Property name="allow_comments" type="boolean" required>
+        Whether to allow comments on your post.
+      </Property>
+      <Property name="allow_duet" type="boolean" required>
+        Whether to allow duets on your post.
+      </Property>
+      <Property name="allow_stitch" type="boolean" required>
+        Whether to allow stitches on your post.
+      </Property>
+    </Properties>
+
+    ### Promotion Settings
+
+    <Properties>
+      <Property name="self_promotion" type="boolean" required>
+        Whether to allow self promotion on your post.
+      </Property>
+      <Property name="is_your_brand_content" type="boolean" sometimes>
+        Whether the content is your brand content.
+
+        <Note>
+          This parameter is required if `self_promotion` is `true`.
+        </Note>
+      </Property>
+      <Property name="is_branded_content" type="boolean" sometimes>
+        Whether the content is branded content.
+
+        <Note>
+          This parameter is required if `self_promotion` is `true`.
+        </Note>
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+    ```json {{ 'title': 'Example Options' }}
+    {
+      "safety": {
+        "privacy": "private",
+        "allow_comments": false,
+        "allow_duet": false,
+        "allow_stitch": false
+      },
+      "promotion": {
+        "self_promotion": true,
+        "is_your_brand_content": false,
+        "is_branded_content": true
+      }
+    }
+    ```
+  </Col>
+</Row>
+
+<hr />
+
+## Restrictions & Requirements
+
+- You may only publish to post **original** content—you cannot repost content from other platforms.
+- There is a **varying** limit via a 24-hour window (typically around 15 posts per day per user).
+- You must follow the UX guidelines set by TikTok which can be found [here](https://developers.tiktok.com/doc/content-sharing-guidelines).

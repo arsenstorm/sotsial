@@ -1,0 +1,48 @@
+import { GenerateSEO } from "@/components/docs/GenerateSEO";
+
+export const metadata = GenerateSEO({
+  title: "Connecting accounts",
+  description:
+    "Connect social accounts to Sotsial.",
+  url: "https://sotsial.com/docs/connecting-accounts",
+});
+
+# Connecting accounts
+
+You can connect social accounts to Sotsial via the API or the dashboard. {{ className: 'lead' }}
+
+## Dashboard Method
+
+To connect a social account via the dashboard, go to the [integrations](/integrations) page and click **Connect an account**, select the platform you want to connect, and follow the instructions.
+
+<Tip>
+  You can connect multiple accounts of the same platform.
+</Tip>
+
+You should use this method if you only intend to connect your own accounts—otherwise, you should use the API method.
+
+## API Method
+
+Using the API to connect accounts is most suitable for end-users.
+
+<Note>
+  Coming soon.
+</Note>
+
+<Warn>
+  You cannot connect accounts via the API if you are using Sotsial's providers.
+</Warn>
+
+<hr />
+
+## Your own OAuth
+
+You may also wish to use your own OAuth credentials (such as your own app's Facebook App ID and Secret) to connect accounts.
+
+To do this, you'll need to set up the credential in the dashboard.
+
+<Tip>
+  Credentials are not yet fully supported.
+
+  If you need to use your own credentials, please [contact support](https://sotsial.com/help).
+</Tip>

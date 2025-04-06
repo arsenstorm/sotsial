@@ -1,0 +1,88 @@
+import { GenerateSEO } from "@/components/docs/GenerateSEO";
+
+export const metadata = GenerateSEO({
+  title: "Posting to Twitter",
+  description:
+    "Learn how to post to Twitter with Sotsial.",
+  url: "https://sotsial.com/docs/posting/twitter",
+});
+
+# Posting to Twitter
+
+Learn how to post to Twitter with Sotsial. {{ className: 'lead' }}
+
+<hr />
+
+## Text Post
+
+You can post text to Twitter by using the `twitter` object inside of your API request.
+
+<CodeGroup tag="POST" label="/v1/publish">
+
+```bash {{ title: 'cURL' }}
+curl -X POST https://sotsial.com/v1/publish \
+  -H "Authorization: Bearer {token}" \
+  -H "Content-Type: application/json" \
+  -d '{"target": "<my_connection_id>", "post": {"twitter": {"text": "my special message"}}}'
+```
+
+```js
+await fetch('https://sotsial.com/v1/publish', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    target: '<my_connection_id>',
+    post: { 
+      twitter: {
+        text: 'my special message'
+      },
+    },
+  }),
+});
+```
+
+```python
+import requests
+
+requests.post('https://sotsial.com/v1/publish', 
+  headers={
+    'Authorization': f'Bearer {token}',
+    'Content-Type': 'application/json',
+  },
+  json={
+    target: '<my_connection_id>',
+    post: {
+      twitter: {
+        text: 'my special message'
+      },
+    },
+  },
+)
+```
+
+</CodeGroup>
+
+<Note>
+  Text posts are limited to 280 characters for non-premium Twitter accounts, and 25K for premium accounts.
+</Note>
+
+<hr />
+
+## Image Posts
+
+<Warn>
+  Posting images to Twitter is not yet supported by Sotsial.
+</Warn>
+
+<hr />
+
+## Video Posts
+
+<Warn>
+  Posting videos to Twitter is not yet supported by Sotsial.
+</Warn>
+
+<hr />

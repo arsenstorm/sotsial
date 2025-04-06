@@ -1,0 +1,217 @@
+import { GenerateSEO } from "@/components/docs/GenerateSEO";
+
+export const metadata = GenerateSEO({
+  title: "Posting to Facebook",
+  description:
+    "Learn how to post to Facebook with Sotsial.",
+  url: "https://sotsial.com/docs/posting/facebook",
+});
+
+# Posting to Facebook
+
+Learn how to post to Facebook with Sotsial. {{ className: 'lead' }}
+
+<Warn>
+  The examples on this page uses the `publish_to_all_pages` parameter.
+
+  See the [Publishing Settings](#parameters) for more details.
+</Warn>
+
+## Text Post
+
+You can make a text post to Facebook via the `facebook` object.
+
+<CodeGroup tag="POST" label="/v1/publish">
+
+```bash {{ title: 'cURL' }}
+curl -X POST https://sotsial.com/v1/publish \
+  -H "Authorization: Bearer {token}" \
+  -H "Content-Type: application/json" \
+  -d '{"target": "<my_connection_id>", "post": {"facebook": {"text": "my special message", "page_ids": [], "options": {"publish_to_all_pages": true}}}}'
+```
+
+```js
+await fetch('https://sotsial.com/v1/publish', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    target: '<my_connection_id>',
+    post: { 
+      facebook: {
+        text: 'my special message',
+        page_ids: [],
+        options: {
+          publish_to_all_pages: true
+        }
+      },
+    },
+  }),
+});
+```
+
+```python
+import requests
+
+requests.post('https://sotsial.com/v1/publish', 
+  headers={
+    'Authorization': f'Bearer {token}',
+    'Content-Type': 'application/json',
+  },
+  json={
+    target: '<my_connection_id>',
+    post: {
+      facebook: {
+        text: 'my special message',
+        page_ids: [],
+        options: {
+          publish_to_all_pages: true
+        }
+      },
+    },
+  },
+)
+```
+
+</CodeGroup>
+
+<hr />
+
+## Image Post
+
+You can make a text post to Facebook via the `facebook` object.
+
+<CodeGroup tag="POST" label="/v1/publish">
+
+```bash {{ title: 'cURL' }}
+curl -X POST https://sotsial.com/v1/publish \
+  -H "Authorization: Bearer {token}" \
+  -H "Content-Type: application/json" \
+  -d '{"target": "<my_connection_id>", "post": {"facebook": {"text": "my special message", "page_ids": [], "media": [{"type": "image", "url": "<image_url>"}], "options": {"publish_to_all_pages": true}}}}'
+```
+
+```js
+await fetch('https://sotsial.com/v1/publish', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    target: '<my_connection_id>',
+    post: { 
+      facebook: {
+        text: 'my special message',
+        page_ids: [],
+        media: [
+          { type: 'image', url: '<image_url>' }
+        ],
+        options: {
+          publish_to_all_pages: true
+        }
+      },
+    },
+  }),
+});
+```
+
+```python
+import requests
+
+requests.post('https://sotsial.com/v1/publish', 
+  headers={
+    'Authorization': f'Bearer {token}',
+    'Content-Type': 'application/json',
+  },
+  json={
+    target: '<my_connection_id>',
+    post: {
+      facebook: {
+        text: 'my special message',
+        page_ids: [],
+        media: [
+          { type: 'image', url: '<image_url>' }
+        ],
+        options: {
+          publish_to_all_pages: true
+        }
+      },
+    },
+  },
+)
+```
+
+</CodeGroup>
+
+<hr />
+
+## Parameters
+
+Facebook has optional parameters that you can provide as part of your request.
+
+<Row>
+  <Col>
+    <Properties>
+      <Property name="safety">
+        Safety settings for your post.
+      </Property>
+      <Property name="publishing">
+        Publishing settings for your post.
+      </Property>
+    </Properties>
+
+    ### Safety Settings
+
+    <Properties>
+      <Property name="privacy" type="private | mutual | public">
+        The privacy of your post.
+      </Property>
+    </Properties>
+
+    ### Publishing Settings
+
+    <Properties>
+      <Property name="publish_to_all_pages" type="boolean">
+        Ignore `page_ids` and publish to all pages connected to the account.
+
+        <Danger>
+          Use this parameter cautiously.
+        </Danger>
+      </Property>
+      <Property name="published" type="boolean">
+        Should this post be published immediately.
+      </Property>
+      <Property name="publish_at" type="number" sometimes>
+        Unix timestamp of when to publish the post.
+
+        <Warn>
+          Required if `published` is set to `true`.
+        </Warn>
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+    ```json {{ 'title': 'Example Options' }}
+    {
+      "safety": {
+        "privacy": "mutual"
+      },
+      "publishing": {
+        "publish_to_all_pages": true,
+        "published": false,
+        "publish_at": 1735689600
+      }
+    }
+    ```
+  </Col>
+</Row>
+
+<hr />
+
+## Restrictions
+
+<Tip>
+  No restrictions yet.
+</Tip>

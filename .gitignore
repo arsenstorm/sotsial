@@ -177,4 +177,8 @@ dist
 # Finder (MacOS) folder config
 .DS_Store
 
+# Temporary files
 temp/
+
+# Turborepo
+.turbo/

@@ -1,0 +1,24 @@
+@import "tailwindcss";
+@config "../../tailwind.config.ts";
+
+@layer base {
+  :root {
+    --shiki-color-text: var(--color-white);
+    --shiki-token-constant: var(--color-amber-300);
+    --shiki-token-string: var(--color-amber-300);
+    --shiki-token-comment: var(--color-zinc-500);
+    --shiki-token-keyword: var(--color-red-300);
+    --shiki-token-parameter: var(--color-pink-300);
+    --shiki-token-function: var(--color-orange-300);
+    --shiki-token-string-expression: var(--color-amber-300);
+    --shiki-token-punctuation: var(--color-zinc-200);
+  }
+
+  [inert] ::-webkit-scrollbar {
+    display: none;
+  }
+
+  input[type='text']:focus {
+    box-shadow: none;
+  }
+}

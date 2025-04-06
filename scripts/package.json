@@ -1,0 +1,9 @@
+{
+	"name": "sotsial-scripts",
+	"description": "Utility scripts for Sotsial",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"dev": "bun run ./bundle-on-save.ts"
+	}
+}
