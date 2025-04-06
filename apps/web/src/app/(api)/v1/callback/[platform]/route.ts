@@ -75,8 +75,12 @@ export async function GET(
 	}
 
 	const sotsial = getSotsial({
-		platform,
-		credential,
+		platforms: [
+			{
+				platform,
+				credential,
+			},
+		],
 	});
 
 	const provider = sotsial.providers.find((p) => p === platform);

@@ -11,6 +11,7 @@ import { authorise } from "@/utils/auth/authorise";
 import { getCredentials } from "@/utils/credentials/get";
 import { getAccounts } from "@/utils/accounts/get-accounts";
 import { createCdnUrl } from "@/utils/cdn-url";
+import { getSotsial } from "@/config/sotsial";
 
 export async function POST(request: NextRequest) {
 	const {
@@ -167,63 +168,17 @@ export async function POST(request: NextRequest) {
 
 	// Here we initialise the Sotsial instance.
 	// If there isn't a user-provided credential for a platform, we'll use the Sotsial-provided default credentials.
-	const sotsial = new Sotsial({
-		...(accountsByPlatform.threads
-			? {
-					threads: {
-						config: {
-							clientId: credentials?.threads?.client_id,
-							clientSecret: credentials?.threads?.client_secret,
-						},
-						accounts: (accountsByPlatform.threads ?? []).map((account) => ({
-							id: account.account_id,
-							access_token: account.access_token,
-						})),
-					},
-				}
-			: {}),
-		...(accountsByPlatform.instagram
-			? {
-					instagram: {
-						config: {
-							clientId: credentials?.instagram?.client_id,
-							clientSecret: credentials?.instagram?.client_secret,
-						},
-						accounts: (accountsByPlatform.instagram ?? []).map((account) => ({
-							id: account.account_id,
-							access_token: account.access_token,
-						})),
-					},
-				}
-			: {}),
-		...(accountsByPlatform.tiktok
-			? {
-					tiktok: {
-						config: {
-							clientId: credentials?.tiktok?.client_id,
-							clientSecret: credentials?.tiktok?.client_secret,
-						},
-						accounts: (accountsByPlatform.tiktok ?? []).map((account) => ({
-							id: account.account_id,
-							access_token: account.access_token,
-						})),
-					},
-				}
-			: {}),
-		...(accountsByPlatform.facebook
-			? {
-					facebook: {
-						config: {
-							clientId: credentials?.facebook?.client_id,
-							clientSecret: credentials?.facebook?.client_secret,
-						},
-						accounts: (accountsByPlatform.facebook ?? []).map((account) => ({
-							id: account.account_id,
-							access_token: account.access_token,
-						})),
-					},
-				}
-			: {}),
+	const sotsial = getSotsial({
+		platforms: Object.entries(accountsByPlatform).map(
+			([platform, accounts]) => ({
+				platform,
+				credential: credentials[platform],
+				accounts: accounts.map((account) => ({
+					accountId: account.id,
+					access_token: account.access_token,
+				})),
+			}),
+		),
 	});
 
 	// Here we let Sotsial do its thing.

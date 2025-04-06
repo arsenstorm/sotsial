@@ -4,7 +4,8 @@
 	"private": true,
 	"scripts": {
 		"dev": "next dev --experimental-https",
-		"build": "next build",
+		"prebuild": "cd ../../packages/sotsial && bun bundle && cd ../../apps/web",
+		"build": "bun run prebuild && next build",
 		"start": "next start",
 		"lint": "next lint",
 		"auth:migrate": "bunx @better-auth/cli migrate --config ./src/auth.ts"
@@ -41,8 +42,8 @@
 		"next-view-transitions": "^0.3.2",
 		"nuqs": "^2.1.1",
 		"pg": "^8.14.0",
-		"react": "^19.0.0",
-		"react-dom": "^19.0.0",
+		"react": "^19.1.0",
+		"react-dom": "^19.1.0",
 		"react-dropzone": "^14.3.8",
 		"react-highlight-words": "^0.20.0",
 		"recma-import-images": "^0.0.3",

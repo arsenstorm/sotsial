@@ -1,0 +1,4 @@
+{
+	"buildCommand": "bun run prebuild && next build",
+	"outputDirectory": ".next"
+}
