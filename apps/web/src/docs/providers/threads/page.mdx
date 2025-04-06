@@ -1,0 +1,300 @@
+import { GenerateSEO } from "@/components/docs/GenerateSEO";
+
+export const metadata = GenerateSEO({
+  title: "Posting to Threads",
+  description:
+    "Learn how to post to Threads with Sotsial.",
+  url: "https://sotsial.com/docs/posting/threads",
+});
+
+# Posting to Threads
+
+Learn how to post to Threads with Sotsial. {{ className: 'lead' }}
+
+<hr />
+
+## Text Post
+
+Make a text post to Threads by sending this request:
+
+<CodeGroup tag="POST" label="/v1/publish">
+
+```bash {{ title: 'cURL' }}
+curl -X POST https://sotsial.com/v1/publish \
+  -H "Authorization: Bearer {token}" \
+  -H "Content-Type: application/json" \
+  -d '{"targets": ["<my_connection_id>"], "post": {"text": "My first post!"}}'
+```
+
+```js
+await fetch('https://sotsial.com/v1/publish', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    targets: ['<my_connection_id>'],
+    post: { 
+      text: 'My first post!',
+    },
+  }),
+});
+```
+
+```python
+import requests
+
+requests.post('https://sotsial.com/v1/publish', 
+  headers={
+    'Authorization': f'Bearer {token}',
+    'Content-Type': 'application/json',
+  },
+  json={
+    "targets": ["<my_connection_id>"],
+    "post": {
+      "text": "My first post!",
+    },
+  },
+)
+```
+
+</CodeGroup>
+
+<hr />
+
+## Image Post
+
+To post an image to Threads, you’ll need to upload the image to a public URL that Sotsial can access.
+
+After this, you can make an image post by sending this request:
+
+<CodeGroup tag="POST" label="/v1/publish">
+
+```bash {{ title: 'cURL' }}
+curl -X POST https://sotsial.com/v1/publish \
+  -H "Authorization: Bearer {token}" \
+  -H "Content-Type: application/json" \
+  -d '{"targets": ["<my_connection_id>"], "post": {"text": "A description of the image", "media": [{"url": "<image_url>", "type": "image"}]}}'
+```
+
+```js
+await fetch('https://sotsial.com/v1/publish', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    targets: ['<my_connection_id>'],
+    post: { 
+      text: 'A description of the image',
+      media: [
+        {
+          url: '<image_url>',
+          type: 'image',
+        },
+      ],
+    },
+  }),
+});
+```
+
+```python
+import requests
+
+requests.post('https://sotsial.com/v1/publish', 
+  headers={
+    'Authorization': f'Bearer {token}',
+    'Content-Type': 'application/json',
+  },
+  json={
+    "targets": ["<my_connection_id>"],
+    "post": {
+      "text": "A description of the image",
+      "media": [
+        {
+          "url": "<image_url>",
+          "type": "image",
+        },
+      ],
+    },
+  },
+)
+```
+
+</CodeGroup>
+
+<hr />
+
+## Video Post
+
+Posting a video to Threads via Sotsial is almost identical to posting an image.
+
+You’ll need to upload the video to a public URL that Sotsial can access and change the `type` to `video`.
+
+<CodeGroup tag="POST" label="/v1/publish">
+
+```bash {{ title: 'cURL' }}
+curl -X POST https://sotsial.com/v1/publish \
+  -H "Authorization: Bearer {token}" \
+  -H "Content-Type: application/json" \
+  -d '{"targets": ["<my_connection_id>"], "post": {"text": "A description of the video", "media": [{"url": "<video_url>", "type": "video"}]}}'
+```
+
+```js
+await fetch('https://sotsial.com/v1/publish', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    target: '<my_connection_id>',
+    post: { 
+      text: 'A description of the video',
+      media: [
+        {
+            url: '<video_url>',
+            type: 'video',
+        },
+      ],
+    },
+  }),
+});
+```
+
+```python
+import requests
+
+requests.post('https://sotsial.com/v1/publish', 
+  headers={
+    'Authorization': f'Bearer {token}',
+    'Content-Type': 'application/json',
+  },
+  json={
+    "targets": ["<my_connection_id>"],
+    "post": {
+      "text": "A description of the video",
+      "media": [
+        {
+          "url": "<video_url>",
+          "type": "video",
+        },
+      ],
+    },
+  },
+)
+```
+
+</CodeGroup>
+
+<hr />
+
+## Multiple Media Posts
+
+You can post up to 20 images or videos in a single thread.
+
+To do this, you can send a request with multiple media objects.
+
+<CodeGroup tag="POST" label="/v1/publish">
+
+```bash {{ title: 'cURL' }}
+curl -X POST https://sotsial.com/v1/publish \
+  -H "Authorization: Bearer {token}" \
+  -H "Content-Type: application/json" \
+  -d '{"targets": ["<my_connection_id>"], "post": {"text": "A description of the thread.", "media": [{"url": "<video_url>", "type": "video"}, {"url": "<image_url>", "type": "image"}]}}'
+```
+
+```js
+await fetch('https://sotsial.com/v1/publish', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    target: '<my_connection_id>',
+    post: { 
+      text: 'A description of the thread.',
+      media: [
+        {
+          url: '<video_url>',
+          type: 'video',
+        },
+        {
+          url: '<image_url>',
+          type: 'image',
+        },
+        // more media objects up to a total of 20
+      ],
+    },
+  }),
+});
+```
+
+```python
+import requests
+
+requests.post('https://sotsial.com/v1/publish', 
+  headers={
+    'Authorization': f'Bearer {token}',
+    'Content-Type': 'application/json',
+  },
+  json={
+    "targets": ["<my_connection_id>"],
+    "post": {
+      "text": "A description of the thread.",
+      "media": [
+        {
+          "url": "<video_url>",
+          "type": "video",
+        },
+        {
+          "url": "<image_url>",
+          "type": "image",
+        },
+        // more media objects up to a total of 20
+      ],
+    },
+  },
+)
+```
+
+</CodeGroup>
+
+<Warn>
+  All URLs must be publicly accessible.
+</Warn>
+
+<Warn>
+  Restrictions apply—see the restrictions below.
+</Warn>
+
+<hr />
+
+## Parameters
+
+There are no additional parameters for posts on Threads.
+
+<hr />
+
+## Restrictions
+
+### General Restrictions
+
+- Profiles are limited to 250 API-published posts within a 24-hour moving period.
+- You can only post up to 20 media objects in a single thread.
+- Text posts are limited to 500 characters.
+
+### Image Restrictions
+
+- Only JPEG and PNG images are supported.
+- The maximum file size is 8MB.
+- Aspect Ratio Limit is set to 10:1.
+
+### Video Restrictions
+
+- Only MOV or MP4 videos are supported.
+- The maximum file size is 1GB.
+- The maximum duration is 5 minutes.

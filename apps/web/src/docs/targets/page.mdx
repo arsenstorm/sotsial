@@ -1,0 +1,90 @@
+import { GenerateSEO } from "@/components/docs/GenerateSEO";
+
+export const metadata = GenerateSEO({
+  title: "Targets",
+  description:
+    "Targeting where you want to publish content.",
+  url: "https://sotsial.com/docs/targets",
+});
+
+# Targets
+
+Targets are the way to specify where you want to publish content. {{ className: 'lead' }}
+
+## What is a target?
+
+A target is an identifier that represents either a single connection or a group of connections.
+
+## Targeting connections
+
+There are multiple ways to target connections.
+
+- Using a connection ID
+- Using a tag
+- Targeting by username
+
+### Using a connection ID
+
+A connection ID is a unique identifier that represents a single connection.
+
+You can view the list of connections you have created in the [connections](/connections) page where you can also copy the connection ID.
+
+### Using a tag
+
+A tag is a way to target connections by a custom identifier.
+
+To set up a tag, you can either:
+
+1. Create a tag in the [connections](/connections) page.
+2. Specify tags when creating a grant URL.
+3. Set/update/delete tags via the API.
+
+### Targeting by username
+
+You can target connections by username by platform.
+
+For example, if you want to target connections by username on Threads, you would add `threads:<username>` to the `targets` parameter.
+
+<CodeGroup tag="POST" label="/v1/publish">
+
+```bash {{ title: 'cURL' }}
+curl -X POST https://sotsial.com/v1/publish \
+  -H "Authorization: Bearer {token}" \
+  -H "Content-Type: application/json" \
+  -d '{"targets": ["threads:john_doe"], "post": {"text": "My first post!"}}'
+```
+
+```js
+await fetch('https://sotsial.com/v1/publish', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    targets: ['threads:john_doe'],
+    post: { 
+      text: 'My first post!',
+    },
+  }),
+});
+```
+
+```python
+import requests
+
+requests.post('https://sotsial.com/v1/publish', 
+  headers={
+    'Authorization': f'Bearer {token}',
+    'Content-Type': 'application/json',
+  },
+  json={
+    targets: ['threads:john_doe'],
+    post: {
+      text: 'My first post!',
+    },
+  },
+)
+```
+
+</CodeGroup>

@@ -1,0 +1,86 @@
+import { GenerateSEO } from "@/components/docs/GenerateSEO";
+
+export const metadata = GenerateSEO({
+  title: "Quickstart",
+  description:
+    "Quickly get started with cross-posting your content on social media.",
+  url: "https://sotsial.com/docs/quickstart",
+});
+
+# Quickstart
+
+Quickly get started with cross-posting your content on social media. {{ className: 'lead' }}
+
+In this guide, we’ll connect to a Threads account and create a post for the account.
+
+## Connect your social account
+
+For this example, we’ll connect a Threads account via the dashboard.
+
+<Tip>
+  You can connect accounts via the API—see the [API method for connecting accounts](/docs/connecting-accounts#api-method) guide for more information.
+</Tip>
+
+Visit the [integrations](/integrations) page and click **Connect an account**, select **Threads**, and press **Connect**.
+
+Follow the instructions from Threads to connect your account.
+
+Once you’ve successfully connected your account, navigate to the [connections](/connections) page and find your account in the list and copy the connection ID.
+
+## Post to your social account
+
+You’ll need your API key from the [dashboard](/keys) to access the API.
+
+There is a single endpoint for posting to all platforms, but to just post to Threads, you can use the following example:
+
+<CodeGroup tag="POST" label="/v1/publish">
+
+```bash {{ title: 'cURL' }}
+curl -X POST https://sotsial.com/v1/publish \
+  -H "Authorization: Bearer {token}" \
+  -H "Content-Type: application/json" \
+  -d '{"targets": ["<my_connection_id>"], "post": {"text": "My first post!"}}'
+```
+
+```js
+await fetch('https://sotsial.com/v1/publish', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    targets: ['<my_connection_id>'],
+    post: { 
+      text: 'My first post!',
+    },
+  }),
+});
+```
+
+```python
+import requests
+
+requests.post('https://sotsial.com/v1/publish', 
+  headers={
+    'Authorization': f'Bearer {token}',
+    'Content-Type': 'application/json',
+  },
+  json={
+    target: '<my_connection_id>',
+    post: {
+      text: 'My first post!',
+    },
+  },
+)
+```
+
+</CodeGroup>
+
+**And that’s it!** You’ve made your first post to Threads.
+
+<Warn>
+  Some platforms require additional parameters.
+
+  Check out the documentation for each platform you’re posting to.
+</Warn>

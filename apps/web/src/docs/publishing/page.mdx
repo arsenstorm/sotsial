@@ -1,0 +1,148 @@
+import { GenerateSEO } from "@/components/docs/GenerateSEO";
+
+export const metadata = GenerateSEO({
+  title: "Publishing",
+  description:
+    "Publish content to social media platforms.",
+  url: "https://sotsial.com/docs/publishing",
+});
+
+# Publishing
+
+Sotsial is all about publishing content to social media platforms. {{ className: 'lead' }}
+
+## Via the Dashboard
+
+Some users may just want to publish content to social media platforms via the dashboard.
+
+To do this, you can go to the [posting](/posting) page and follow the instructions.
+
+## Via the API
+
+Publishing content via the API is most suitable for developers.
+
+To publish content via the API, you can use the `/v1/publish` endpoint.
+
+In order to publish content, you must provide a `targets` parameter. You can read more about targets [here](/docs/targets).
+
+<Tip>
+  You can use the API to publish content to any connection you have created.
+
+  This **includes** Sotsial's providers.
+</Tip>
+
+<CodeGroup tag="POST" label="/v1/publish">
+
+```bash {{ title: 'cURL' }}
+curl -X POST https://sotsial.com/v1/publish \
+  -H "Authorization: Bearer {token}" \
+  -H "Content-Type: application/json" \
+  -d '{"targets": ["<my_connection_id>"], "post": {"text": "My first post!"}}'
+```
+
+```js
+await fetch('https://sotsial.com/v1/publish', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    targets: ['<my_connection_id>'],
+    post: { 
+      text: 'My first post!',
+    },
+  }),
+});
+```
+
+```python
+import requests
+
+requests.post('https://sotsial.com/v1/publish', 
+  headers={
+    'Authorization': f'Bearer {token}',
+    'Content-Type': 'application/json',
+  },
+  json={
+    targets: ['<my_connection_id>'],
+    post: {
+      text: 'My first post!',
+    },
+  },
+)
+```
+
+</CodeGroup>
+
+## Targets
+
+Targets are the connections you want to publish to.
+
+You can specify multiple targets in a single request and Sotsial will attempt to publish to all of them.
+
+To include targets in your request, you can use the `targets` parameter in a request to the `/v1/publish` endpoint.
+
+<Note>
+  `targets` is a **required** parameter.
+</Note>
+
+## Media
+
+Sotsial allows you to publish content with media.
+
+To include media in your request, you must provide a `media` object in the `post` object.
+
+The `media` object must contain a `url` key and the type of media you are publishing which is either `image` or `video`.
+
+<CodeGroup tag="POST" label="/v1/publish">
+
+```bash {{ title: 'cURL' }}
+curl -X POST https://sotsial.com/v1/publish \
+  -H "Authorization: Bearer {token}" \
+  -H "Content-Type: application/json" \
+  -d '{"targets": ["<my_connection_id>"], "post": {"text": "My first post!", "media": {"url": "https://example.com/image.jpg", "type": "image"}}}'
+```
+
+```js
+await fetch('https://sotsial.com/v1/publish', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    targets: ['<my_connection_id>'],
+    post: { 
+      text: 'My first post!',
+      media: {
+        url: 'https://example.com/image.jpg',
+        type: 'image',
+      },
+    },
+  }),
+});
+```
+
+```python
+import requests
+
+requests.post('https://sotsial.com/v1/publish', 
+  headers={
+    'Authorization': f'Bearer {token}',
+    'Content-Type': 'application/json',
+  },
+  json={
+    targets: ['<my_connection_id>'],
+    post: {
+      text: 'My first post!',
+      media: {
+        url: 'https://example.com/image.jpg',
+        type: 'image',
+      },
+    },
+  },
+)
+```
+
+</CodeGroup>

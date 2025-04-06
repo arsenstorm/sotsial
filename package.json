@@ -1,0 +1,20 @@
+{
+	"name": "sotsial-project",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"dev": "turbo dev",
+		"build": "turbo build",
+		"start": "turbo start",
+		"format": "bunx @biomejs/biome format --write ./"
+	},
+	"devDependencies": {
+		"@types/bun": "latest",
+		"turbo": "^2.5.0"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	},
+	"packageManager": "bun@1.2.6",
+	"workspaces": ["packages/*", "apps/*", "scripts"]
+}

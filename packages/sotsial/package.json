@@ -1,0 +1,43 @@
+{
+	"name": "sotsial",
+	"version": "0.3.0",
+	"license": "MIT",
+	"main": "./dist/index.js",
+	"devDependencies": {
+		"@types/bun": "latest",
+		"@types/jsonwebtoken": "^9.0.9",
+		"tsc-alias": "^1.8.8",
+		"typescript": "^5.0.0"
+	},
+	"peerDependencies": {
+		"typescript": "^5.0.0"
+	},
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js",
+			"default": "./dist/index.js"
+		},
+		"./utils": {
+			"types": "./dist/utils/index.d.ts",
+			"import": "./dist/utils/index.js",
+			"default": "./dist/utils/index.js"
+		}
+	},
+	"files": ["dist"],
+	"scripts": {
+		"test": "bun test",
+		"bundle": "rm -rf dist && tsc && tsc-alias",
+		"prepublishOnly": "bun bundle",
+		"pkg-version": "node -p \"require('./package.json').version\""
+	},
+	"type": "module",
+	"types": "./dist/index.d.ts",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/arsenstorm/sotsial.git"
+	},
+	"dependencies": {
+		"jsonwebtoken": "^9.0.2"
+	}
+}

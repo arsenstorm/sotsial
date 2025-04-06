@@ -1,0 +1,239 @@
+import { GenerateSEO } from "@/components/docs/GenerateSEO";
+
+export const metadata = GenerateSEO({
+  title: "Posting to LinkedIn",
+  description:
+    "Learn how to post to LinkedIn with Sotsial.",
+  url: "https://sotsial.com/docs/posting/linkedin",
+});
+
+# Posting to LinkedIn
+
+Learn how to post to LinkedIn with Sotsial. {{ className: 'lead' }}
+
+<hr />
+
+## Text Post
+
+You can post text to LinkedIn by using the `linkedin` object inside of your API request.
+
+<CodeGroup tag="POST" label="/v1/publish">
+
+```bash {{ title: 'cURL' }}
+curl -X POST https://sotsial.com/v1/publish \
+  -H "Authorization: Bearer {token}" \
+  -H "Content-Type: application/json" \
+  -d '{"target": "<my_connection_id>", "post": {"linkedin": {"text": "my special message"}}}'
+```
+
+```js
+await fetch('https://sotsial.com/v1/publish', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    target: '<my_connection_id>',
+    post: { 
+      linkedin: {
+        text: 'my special message'
+      },
+    },
+  }),
+});
+```
+
+```python
+import requests
+
+requests.post('https://sotsial.com/v1/publish', 
+  headers={
+    'Authorization': f'Bearer {token}',
+    'Content-Type': 'application/json',
+  },
+  json={
+    target: '<my_connection_id>',
+    post: {
+      linkedin: {
+        text: 'my special message'
+      },
+    },
+  },
+)
+```
+
+</CodeGroup>
+
+<hr />
+
+## Image Post
+
+You can post an image to LinkedIn by including `media` inside your `linkedin` object.
+
+<CodeGroup tag="POST" label="/v1/publish">
+
+```bash {{ title: 'cURL' }}
+curl -X POST https://sotsial.com/v1/publish \
+  -H "Authorization: Bearer {token}" \
+  -H "Content-Type: application/json" \
+  -d '{"target": "<my_connection_id>", "post": {"linkedin": {"text": "my special message", "media": [{"type": "image", "url": "<image_url>"}]}}}'
+```
+
+```js
+await fetch('https://sotsial.com/v1/publish', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    target: '<my_connection_id>',
+    post: { 
+      linkedin: {
+        text: 'my special message',
+        media: [
+          {
+            type: "image",
+            url: "<image_url>"
+          }
+        ]
+      },
+    },
+  }),
+});
+```
+
+```python
+import requests
+
+requests.post('https://sotsial.com/v1/publish', 
+  headers={
+    'Authorization': f'Bearer {token}',
+    'Content-Type': 'application/json',
+  },
+  json={
+    target: '<my_connection_id>',
+    post: {
+      linkedin: {
+        text: 'my special message',
+        media: [
+          {
+            type: "image",
+            url: "<image_url>"
+          }
+        ]
+      },
+    },
+  },
+)
+```
+
+</CodeGroup>
+
+<hr />
+
+## Video Post
+
+To post a video to LinkedIn use the `video` type inside the `media` object with a public URL to the video.
+
+<CodeGroup tag="POST" label="/v1/publish">
+
+```bash {{ title: 'cURL' }}
+curl -X POST https://sotsial.com/v1/publish \
+  -H "Authorization: Bearer {token}" \
+  -H "Content-Type: application/json" \
+  -d '{"target": "<my_connection_id>", "post": {"linkedin": {"text": "my special message", "media": [{"type": "video", "url": "<video_url>"}]}}}'
+```
+
+```js
+await fetch('https://sotsial.com/v1/publish', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    target: '<my_connection_id>',
+    post: { 
+      linkedin: {
+        text: 'my special message',
+        media: [
+          {
+            type: "video",
+            url: "<video_url>"
+          }
+        ]
+      },
+    },
+  }),
+});
+```
+
+```python
+import requests
+
+requests.post('https://sotsial.com/v1/publish', 
+  headers={
+    'Authorization': f'Bearer {token}',
+    'Content-Type': 'application/json',
+  },
+  json={
+    target: '<my_connection_id>',
+    post: {
+      linkedin: {
+        text: 'my special message',
+        media: [
+          {
+            type: "video",
+            url: "<video_url>"
+          }
+        ]
+      },
+    },
+  },
+)
+```
+
+</CodeGroup>
+
+<hr />
+
+## Parameters
+
+LinkedIn has optional parameters that you can provide as part of your request.
+
+<Row>
+  <Col>
+    <Properties>
+      <Property name="safety">
+        Safety settings for your post.
+      </Property>
+    </Properties>
+
+    ### Safety Settings
+
+    <Properties>
+      <Property name="privacy" type="connections | public">
+        The privacy of your post.
+      </Property>
+    </Properties>
+  </Col>
+  <Col sticky>
+    ```json {{ 'title': 'Example Options' }}
+    {
+      "safety": {
+        "privacy": "connections"
+      }
+    }
+    ```
+  </Col>
+</Row>
+
+<hr />
+
+## Restrictions
+
+<Tip>
+  No restrictions yet.
+</Tip>

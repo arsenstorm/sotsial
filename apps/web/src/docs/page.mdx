@@ -1,0 +1,35 @@
+import { Guides } from "@/components/docs/Guides";
+import { Resources } from "@/components/docs/Resources";
+import { HeroPattern } from "@/components/docs/HeroPattern";
+import { GenerateSEO } from "@/components/docs/GenerateSEO";
+
+export const metadata = GenerateSEO({
+	title: "Introduction",
+	description:
+		"Learn about Sotsial and how to use it to cross-post your content on social media.",
+	url: "https://sotsial.com/docs",
+});
+
+export const sections = [];
+
+<HeroPattern />
+
+# Sotsial API Reference
+
+Use the Sotsial API to access cross-posting features and seamlessly integrate them into your platform. {{ className: 'lead' }}
+
+<div className="not-prose mb-16 mt-6 flex gap-3">
+  <Button href="/docs/quickstart" arrow="right">
+    <>Quickstart</>
+  </Button>
+</div>
+
+## Getting started {{ anchor: false }}
+
+Getting started is simple. [Login](/continue) to Sotsial using GitHub, add your payment method, and grab your API key.
+
+<div className="not-prose">
+  <Button href="/docs/quickstart" variant="text" arrow="right">
+    <>Got your API key?</>
+  </Button>
+</div>
