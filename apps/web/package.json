@@ -4,7 +4,7 @@
 	"private": true,
 	"scripts": {
 		"dev": "next dev --experimental-https",
-		"prebuild": "cd ../../packages/sotsial && bun bundle && cd ../../apps/web",
+		"prebuild": "cd ../../packages/sotsial && bun bundle && cd ../../apps/web && bun install --no-link && mkdir -p node_modules/sotsial && cp -r ../../packages/sotsial/dist/* node_modules/sotsial/ && cp ../../packages/sotsial/package.json node_modules/sotsial/",
 		"build": "bun run prebuild && next build",
 		"start": "next start",
 		"lint": "next lint",
