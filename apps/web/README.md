@@ -22,3 +22,9 @@ To publish, make this API call:
 	}
 }
 ```
+
+## License
+
+This project is licensed under the GNU Affero General Public License v3.0 - see the [LICENSE](../LICENSE) file for details.
+
+<sub>Copyright © 2025 Arsen Shkrumelyak. All rights reserved.</sub>

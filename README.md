@@ -32,8 +32,6 @@ const sotsial = new Sotsial({
 });
 ```
 
-
-
 ## Granting Access
 
 Before you can publish to a provider, your user must grant access to your app.
@@ -100,3 +98,14 @@ const post = await sotsial.publish({
   },
 });
 ```
+
+## License
+
+This project uses a dual-license approach:
+
+- All packages in the `packages/` directory are licensed under the MIT License - see the [LICENSE](packages/LICENSE) file for details.
+- All apps in the `apps/` directory are licensed under the GNU Affero General Public License v3.0 unless otherwise specified - see the [LICENSE](apps/web/LICENSE) file for details.
+
+This means you can freely use and modify packages under the MIT license, while all apps remain under the AGPL-3.0 license.
+
+<sub>Copyright © 2025 Arsen Shkrumelyak. All rights reserved.</sub>

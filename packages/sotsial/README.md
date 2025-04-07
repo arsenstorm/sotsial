@@ -101,3 +101,9 @@ const post = await sotsial.publish({
 - [ ] TikTok
 - [ ] Facebook
 - [ ] LinkedIn
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
+
+<sub>Copyright © 2025 Arsen Shkrumelyak. All rights reserved.</sub>
