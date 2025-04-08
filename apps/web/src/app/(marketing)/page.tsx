@@ -1,12 +1,3 @@
-"use client";
-
-// Next
-import Link from "next/link";
-
-// UI
-import { Button } from "@/components/ui/button";
-import { Input } from "@headlessui/react";
-
 // Icons
 import {
 	TiktokIcon,

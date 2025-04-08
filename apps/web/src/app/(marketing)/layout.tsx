@@ -1,7 +1,6 @@
 // Components
-import { TextLink } from "@/components/ui/text";
 import { Logo } from "@/components/logo";
-import Link from "next/link";
+import { Link } from "next-view-transitions";
 
 export default function MarketingLayout({
 	children,
@@ -44,7 +43,8 @@ export default function MarketingLayout({
 				<footer className="w-full py-6 mt-6 border-t border-dashed border-black/10">
 					<div className="container mx-auto flex items-center justify-between">
 						<p className="text-sm text-black/50">
-							&copy; {new Date().getFullYear()} Arsen Shkrumelyak. All rights reserved.
+							&copy; {new Date().getFullYear()} Arsen Shkrumelyak. All rights
+							reserved.
 						</p>
 					</div>
 				</footer>
