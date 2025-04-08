@@ -13,6 +13,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 2
+          fetch-tags: true
       
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -87,6 +88,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # Fetch all tags to ensure we have the history
+          git fetch --tags --force
+          
+          # Debug: List all available tags
+          echo "Available tags:"
+          git tag -l | sort -V
+          
           # Get version from package.json
           TAG=$(bun run pkg-version)
           
@@ -100,10 +108,12 @@ jobs:
           fi
           
           # Extract the previous git tag to create comparison link
-          PREV_TAG=$(git tag --sort=-v:refname | head -n 1 || echo "")
+          PREV_TAG=$(git tag --sort=-v:refname | grep -v "v$TAG" | head -n 1 || echo "")
+          echo "Current version: v$TAG"
+          echo "Previous version found: $PREV_TAG"
           
           # Create comparison link if previous tag exists
-          if [ -n "$PREV_TAG" ]; then
+          if [ -n "$PREV_TAG" ] && [ "$PREV_TAG" != "v$TAG" ]; then
             COMPARISON_LINK="https://github.com/${REPO_NAME}/compare/${PREV_TAG}...v${TAG}"
             RELEASE_NOTES="## What's Changed\nSee all changes: [${PREV_TAG}...v${TAG}](${COMPARISON_LINK})"
           else
