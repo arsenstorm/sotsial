@@ -57,7 +57,7 @@ export function DropdownItem({
 	| Omit<Headless.MenuItemProps<"button">, "as" | "className">
 	| Omit<Headless.MenuItemProps<typeof Link>, "as" | "className">
 )) {
-	let classes = clsx(
+	const classes = clsx(
 		className,
 		// Base styles
 		"group cursor-default rounded-lg px-3.5 py-2.5 focus:outline-hidden sm:px-3 sm:py-1.5",
@@ -209,7 +209,7 @@ export function DropdownShortcut({
 		>
 			{(Array.isArray(keys) ? keys : keys.split("")).map((char, index) => (
 				<kbd
-					key={index}
+					key={char}
 					className={clsx([
 						"min-w-[2ch] text-center font-sans text-zinc-400 capitalize group-data-focus:text-white forced-colors:group-data-focus:text-[HighlightText]",
 						// Make sure key names that are longer than one character (like "Tab") have extra space

@@ -60,7 +60,10 @@ export function AccountSelection({
 					}
 					square
 				/>
-				<Text className="text-sm" title={connection.account?.username ?? "no username"}>
+				<Text
+					className="text-sm"
+					title={connection.account?.username ?? "no username"}
+				>
 					{connection.account?.username ?? "no username"}
 				</Text>
 			</div>

@@ -1,4 +1,4 @@
-import * as Headless from "@headlessui/react";
+	import * as Headless from "@headlessui/react";
 import clsx from "clsx";
 import type React from "react";
 
@@ -137,6 +137,7 @@ export function Checkbox({
 					viewBox="0 0 14 14"
 					fill="none"
 				>
+					<title>{/* noop */}</title>
 					{/* Checkmark icon */}
 					<path
 						className="opacity-100 group-data-indeterminate:opacity-0"
