@@ -1,14 +1,43 @@
-export interface MediaOptions {
+export interface BasicMediaOptions {
+	url?: string;
+	file?: File;
+	type: "image" | "video";
+}
+
+export interface FileMediaOptions extends BasicMediaOptions {
+	url?: never;
+	/**
+	 * The file of the media to be added to the post.
+	 */
+	file: File;
+}
+
+export interface UrlMediaOptions extends BasicMediaOptions {
 	/**
 	 * The URL of the media to be added to the post.
 	 */
 	url: string;
+	file?: never;
+}
 
+export type MediaOptions = (FileMediaOptions | UrlMediaOptions) & {
 	/**
 	 * The type of media to be added to the post.
 	 */
 	type: "image" | "video";
-}
+};
+
+/**
+ * LinkedIn supports both URL and File media options
+ */
+export type LinkedInMediaOptions = MediaOptions;
+
+/**
+ * All platforms except LinkedIn only support URL media options
+ */
+export type StandardMediaOptions = UrlMediaOptions & {
+	type: "image" | "video";
+};
 
 export interface PostContent {
 	/**
@@ -28,10 +57,20 @@ export interface PostContent {
 }
 
 // Threads
-export interface ThreadsPostContent extends PostContent {}
+export interface ThreadsPostContent extends PostContent {
+	/**
+	 * The media to be added to the post.
+	 */
+	media?: StandardMediaOptions[] | StandardMediaOptions;
+}
 
 // Instagram
 export interface InstagramPostContent extends PostContent {
+	/**
+	 * The media to be added to the post.
+	 */
+	media?: StandardMediaOptions[] | StandardMediaOptions;
+
 	/**
 	 * The type of Instagram post to be published.
 	 */
@@ -50,7 +89,7 @@ export interface TikTokPostContent extends PostContent {
 	 *
 	 * @required - TikTok requires at least one media item
 	 */
-	media: MediaOptions[];
+	media: StandardMediaOptions[];
 
 	/**
 	 * The privacy of the post.
@@ -127,6 +166,11 @@ export interface FacebookPostContent extends PostContent {
 	text: string;
 
 	/**
+	 * The media to be added to the post.
+	 */
+	media?: StandardMediaOptions[] | StandardMediaOptions;
+
+	/**
 	 * The type of Facebook post to be published.
 	 *
 	 * @note - If not specified, the type will be automatically determined.
@@ -189,12 +233,18 @@ export interface FacebookPostContent extends PostContent {
 }
 
 // LinkedIn
-// TODO: Implement this
 export interface LinkedInPostContent extends PostContent {
 	/**
 	 * The text of the post.
+	 *
+	 * @required - LinkedIn requires text for the post
 	 */
 	text: string;
+
+	/**
+	 * The media to be added to the post.
+	 */
+	media?: LinkedInMediaOptions[] | LinkedInMediaOptions;
 }
 
 // Twitter
@@ -204,6 +254,11 @@ export interface TwitterPostContent extends PostContent {
 	 * The text of the post.
 	 */
 	text: string;
+
+	/**
+	 * The media to be added to the post.
+	 */
+	media?: StandardMediaOptions[] | StandardMediaOptions;
 }
 
 // Google
@@ -213,6 +268,11 @@ export interface GooglePostContent extends PostContent {
 	 * The text of the post.
 	 */
 	text: string;
+
+	/**
+	 * The media to be added to the post.
+	 */
+	media?: StandardMediaOptions[] | StandardMediaOptions;
 }
 
 export type PlatformContent = {

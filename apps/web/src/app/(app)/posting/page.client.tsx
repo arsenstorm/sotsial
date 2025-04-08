@@ -342,7 +342,7 @@ export function PostingForm() {
 					},
 					body: JSON.stringify({
 						targets,
-						content: platformContent,
+						post: platformContent,
 					}),
 				});
 

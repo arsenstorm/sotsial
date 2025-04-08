@@ -13,7 +13,7 @@ export interface PlatformConfig {
 	}> | null;
 	accounts?: Readonly<
 		{
-			accountId: string;
+			id: string;
 			access_token: string;
 		}[]
 	>;

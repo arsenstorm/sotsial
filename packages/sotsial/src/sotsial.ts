@@ -11,6 +11,28 @@ import { Twitter } from "@/providers/twitter";
 import type { SotsialConfig, Provider } from "@/types/sotsial";
 import type { ExchangeResponse } from "@/types/connect";
 import type { Response } from "@/types/response";
+import type {
+	MediaOptions,
+	PlatformContent,
+	PostContent,
+} from "@/types/publish/posts";
+
+// Provider-specific additional options type
+export type ProviderOptions = {
+	[P in Provider]?: Partial<
+		Omit<PlatformContent[P & keyof PlatformContent], keyof PostContent>
+	>;
+};
+
+// Type for unified post content structure
+export type UnifiedPostContent = {
+	// Common content for all providers
+	content: PostContent;
+	// Which providers to publish to (default: all enabled providers)
+	providers?: Provider[];
+	// Provider-specific additional options
+	options?: ProviderOptions;
+};
 
 export class Sotsial {
 	tiktok!: TikTok;
@@ -112,10 +134,24 @@ export class Sotsial {
 		}
 	}
 
+	/**
+	 * Create an authorisation URL for a provider.
+	 *
+	 * @param provider - The provider to create an authorisation URL for.
+	 * @returns The authorisation URL for the provider.
+	 */
 	async grant<T extends Provider>(provider: T) {
 		return this.callProvider(provider, (p) => p.grant());
 	}
 
+	/**
+	 * Exchange a code for an access token.
+	 *
+	 * @param provider - The provider to exchange the code for an access token.
+	 * @param code - The code to exchange for an access token.
+	 * @param csrf_token - The CSRF token to exchange for an access token.
+	 * @returns The results of the exchange operation.
+	 */
 	async exchange<T extends Provider>(
 		provider: T,
 		{
@@ -133,11 +169,21 @@ export class Sotsial {
 		>;
 	}
 
+	/**
+	 * Publish a post to all enabled providers.
+	 *
+	 * @param post - The post to publish.
+	 * @returns The results of the publish operation for each provider.
+	 */
 	async publish({
 		post,
 	}: Readonly<{
-		post: any; // TODO: Eventually we need to type this with AllPosts but
-		// it needs to work with ALL providers and not just a subset of them.
+		post: {
+			text?: string;
+			media?: MediaOptions[];
+		} & {
+			[P in Provider]?: Partial<PlatformContent[P]>;
+		};
 	}>) {
 		const results: Record<Provider, any> = {
 			threads: undefined,
@@ -149,45 +195,16 @@ export class Sotsial {
 			twitter: undefined,
 		};
 
-		if (this.threads) {
-			results.threads = await this.threads.publish({
-				post,
-			});
-		}
+		for (const provider of this.providers) {
+			const providerContent = {
+				text: post?.text,
+				media: post?.media,
+				// Add provider-specific options
+				...(post?.[provider] ?? {}),
+			};
 
-		if (this.instagram) {
-			results.instagram = await this.instagram.publish({
-				post,
-			});
-		}
-
-		if (this.tiktok) {
-			results.tiktok = await this.tiktok.publish({
-				post,
-			});
-		}
-
-		if (this.facebook) {
-			results.facebook = await this.facebook.publish({
-				post,
-			});
-		}
-
-		if (this.google) {
-			results.google = await this.google.publish({
-				post,
-			});
-		}
-
-		if (this.linkedin) {
-			results.linkedin = await this.linkedin.publish({
-				post,
-			});
-		}
-
-		if (this.twitter) {
-			results.twitter = await this.twitter.publish({
-				post,
+			results[provider] = await this[provider].publish({
+				post: providerContent as unknown as any,
 			});
 		}
 

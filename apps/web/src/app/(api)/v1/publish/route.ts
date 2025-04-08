@@ -1,6 +1,3 @@
-// Sotsial
-import Sotsial from "sotsial";
-
 // Next
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -174,7 +171,7 @@ export async function POST(request: NextRequest) {
 				platform,
 				credential: credentials[platform],
 				accounts: accounts.map((account) => ({
-					accountId: account.id,
+					id: account.account_id,
 					access_token: account.access_token,
 				})),
 			}),
@@ -185,12 +182,14 @@ export async function POST(request: NextRequest) {
 	const results = await sotsial.publish({
 		post: {
 			...post,
-			media: await Promise.all(
-				post.media.map(async (media: any) => ({
-					...media,
-					url: await createCdnUrl(media.url),
-				})),
-			),
+			...(post?.media?.length > 0 && {
+				media: await Promise.all(
+					post.media.map(async (media: any) => ({
+						...media,
+						url: await createCdnUrl(media.url),
+					})),
+				),
+			}),
 		},
 	});
 
