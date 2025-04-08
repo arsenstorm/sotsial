@@ -2,7 +2,7 @@
 	"name": "sotsial-web",
 	"version": "1.0.0",
 	"private": true,
-	"license": "AGPL-3.0",
+	"license": "AGPL-3.0-only",
 	"scripts": {
 		"dev": "next dev --experimental-https",
 		"prebuild": "cd ../../packages/sotsial && bun bundle && cd ../../apps/web && bun install --no-link && mkdir -p node_modules/sotsial && cp -r ../../packages/sotsial/dist/* node_modules/sotsial/ && cp ../../packages/sotsial/package.json node_modules/sotsial/",
