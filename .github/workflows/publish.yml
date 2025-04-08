@@ -107,15 +107,29 @@ jobs:
             REPO_NAME="${GITHUB_REPOSITORY}"
           fi
           
-          # Extract the previous git tag to create comparison link
-          PREV_TAG=$(git tag --sort=-v:refname | grep -v "v$TAG" | head -n 1 || echo "")
+          # Check if current tag is a beta
+          IS_CURRENT_BETA=false
+          if [[ $TAG =~ ^[0-9]+\.[0-9]+\.[0-9]+-beta\.[0-9]+$ ]]; then
+            IS_CURRENT_BETA=true
+          fi
+          
+          # Get the base version without beta suffix for comparison
+          BASE_VERSION=$(echo $TAG | sed -E 's/-beta\.[0-9]+$//')
+          
+          # Extract the previous git tag for comparison
+          if [ "$IS_CURRENT_BETA" = true ]; then
+            PREV_TAG=$(git tag --sort=-v:refname | grep -v "v$TAG" | head -n 1 || echo "")
+          else
+            PREV_TAG=$(git tag --sort=-v:refname | grep -v -- "-beta" | grep -v "v$BASE_VERSION" | head -n 1 || echo "")
+          fi
+          
           echo "Current version: v$TAG"
           echo "Previous version found: $PREV_TAG"
           
           # Create comparison link if previous tag exists
           if [ -n "$PREV_TAG" ] && [ "$PREV_TAG" != "v$TAG" ]; then
             COMPARISON_LINK="https://github.com/${REPO_NAME}/compare/${PREV_TAG}...v${TAG}"
-            RELEASE_NOTES="## What's Changed\nSee all changes: [${PREV_TAG}...v${TAG}](${COMPARISON_LINK})"
+            RELEASE_NOTES="## [${PREV_TAG}...v${TAG}](${COMPARISON_LINK})"
           else
             RELEASE_NOTES="Initial release"
           fi
