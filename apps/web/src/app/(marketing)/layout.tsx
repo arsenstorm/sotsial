@@ -20,13 +20,13 @@ export default function MarketingLayout({
 						<div className="flex items-center gap-6">
 							<Link
 								href="/docs"
-								className="text-sm text-black/70 hover:text-black"
+								className="text-sm text-black/70 hover:text-black hidden md:inline-flex"
 							>
 								Docs
 							</Link>
 							<Link
 								href="/pricing"
-								className="text-sm text-black/70 hover:text-black"
+								className="text-sm text-black/70 hover:text-black hidden md:inline-flex"
 							>
 								Pricing
 							</Link>
