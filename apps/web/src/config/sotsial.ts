@@ -31,23 +31,21 @@ export const getSotsial = ({
 
 	for (const platform of platforms) {
 		config[platform.platform] = {
-			config: platform.credential
-				? {
-						clientId:
-							platform.credential?.client_id ??
-							env(`${platform.platform.toUpperCase()}_CLIENT_ID`, {
-								throw: true,
-							}) ??
-							"",
-						clientSecret:
-							platform.credential?.client_secret ??
-							env(`${platform.platform.toUpperCase()}_CLIENT_SECRET`, {
-								throw: true,
-							}) ??
-							"",
-						redirectUri: constructRedirectUri(platform.platform),
-					}
-				: {},
+			config: {
+				clientId:
+					platform.credential?.client_id ??
+					env(`${platform.platform.toUpperCase()}_CLIENT_ID`, {
+						throw: true,
+					}) ??
+					"",
+				clientSecret:
+					platform.credential?.client_secret ??
+					env(`${platform.platform.toUpperCase()}_CLIENT_SECRET`, {
+						throw: true,
+					}) ??
+					"",
+				redirectUri: constructRedirectUri(platform.platform),
+			},
 			accounts: platform?.accounts ?? undefined,
 		};
 	}

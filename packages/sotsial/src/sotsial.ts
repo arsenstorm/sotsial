@@ -6,6 +6,7 @@ import { Facebook } from "@/providers/facebook";
 import { Google } from "@/providers/google";
 import { LinkedIn } from "@/providers/linkedin";
 import { Twitter } from "@/providers/twitter";
+import { YouTube } from "@/providers/youtube";
 
 // Sotsial Types
 import type { SotsialConfig, Provider } from "@/types/sotsial";
@@ -42,6 +43,7 @@ export class Sotsial {
 	google!: Google;
 	linkedin!: LinkedIn;
 	twitter!: Twitter;
+	youtube!: YouTube;
 	providers: Array<Provider> = [];
 
 	constructor({
@@ -52,6 +54,7 @@ export class Sotsial {
 		google,
 		linkedin,
 		twitter,
+		youtube,
 	}: Readonly<SotsialConfig>) {
 		if (threads) {
 			this.threads = new Threads(threads);
@@ -86,6 +89,11 @@ export class Sotsial {
 		if (twitter) {
 			this.twitter = new Twitter(twitter);
 			this.providers.push("twitter");
+		}
+
+		if (youtube) {
+			this.youtube = new YouTube(youtube);
+			this.providers.push("youtube");
 		}
 	}
 
@@ -129,6 +137,11 @@ export class Sotsial {
 					throw new Error("Twitter provider not initialised");
 				}
 				return method(this.twitter);
+			case "youtube":
+				if (!this.youtube) {
+					throw new Error("YouTube provider not initialised");
+				}
+				return method(this.youtube);
 			default:
 				throw new Error(`Provider ${provider} not found`);
 		}
@@ -193,6 +206,7 @@ export class Sotsial {
 			google: undefined,
 			linkedin: undefined,
 			twitter: undefined,
+			youtube: undefined,
 		};
 
 		for (const provider of this.providers) {

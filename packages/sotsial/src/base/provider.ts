@@ -102,6 +102,7 @@ export class Provider<
 		readonly noChallenge?: boolean;
 	}): Promise<Response<GrantResponse | null>> {
 		if (!this.config.redirectUri) {
+			console.warn(this.config)
 			throw new Error("Redirect URI is required");
 		}
 

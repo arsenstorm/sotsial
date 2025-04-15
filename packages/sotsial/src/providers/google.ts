@@ -31,12 +31,7 @@ export class Google extends Provider<GoogleConfig, Account> {
 		super({
 			config: {
 				...config,
-				scopes: config.scopes ?? [
-					"https://www.googleapis.com/auth/youtube.force-ssl",
-					"https://www.googleapis.com/auth/youtube.upload",
-					"https://www.googleapis.com/auth/youtube.readonly",
-					"https://www.googleapis.com/auth/youtube",
-				],
+				scopes: config.scopes ?? [],
 			},
 			accounts,
 		});
@@ -234,7 +229,7 @@ export class Google extends Provider<GoogleConfig, Account> {
 		return {
 			data: null,
 			error: {
-				message: "Google publishing is not supported",
+				message: "You cannot publish to Google.",
 			},
 		};
 	}

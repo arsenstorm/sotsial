@@ -28,11 +28,6 @@ export type MediaOptions = (FileMediaOptions | UrlMediaOptions) & {
 };
 
 /**
- * LinkedIn supports both URL and File media options
- */
-export type LinkedInMediaOptions = MediaOptions;
-
-/**
  * All platforms except LinkedIn only support URL media options
  */
 export type StandardMediaOptions = UrlMediaOptions & {
@@ -43,7 +38,7 @@ export interface PostContent {
 	/**
 	 * The text of the post.
 	 */
-	text: string;
+	text?: string;
 
 	/**
 	 * The media to be added to the post.
@@ -244,7 +239,7 @@ export interface LinkedInPostContent extends PostContent {
 	/**
 	 * The media to be added to the post.
 	 */
-	media?: LinkedInMediaOptions[] | LinkedInMediaOptions;
+	media?: MediaOptions[] | MediaOptions;
 }
 
 // Twitter
@@ -262,17 +257,73 @@ export interface TwitterPostContent extends PostContent {
 }
 
 // Google
-// TODO: Implement this
-export interface GooglePostContent extends PostContent {
+// TODO: Figure this out
+export interface GooglePostContent extends PostContent {}
+
+// YouTube
+export interface YouTubePostContent extends PostContent {
 	/**
-	 * The text of the post.
+	 * The title of the video.
 	 */
 	text: string;
 
 	/**
-	 * The media to be added to the post.
+	 * The description of the video.
 	 */
-	media?: StandardMediaOptions[] | StandardMediaOptions;
+	description?: string;
+
+	/**
+	 * The media.
+	 */
+	media?: MediaOptions;
+
+	/**
+	 * Additional options for the YouTube video.
+	 */
+	options?: {
+		/**
+		 * The type of YouTube video to be published.
+		 * - 'standard' for long-form videos
+		 * - 'short' for YouTube Shorts (vertical format videos under 60 seconds)
+		 */
+		yt_type?: "standard" | "short";
+
+		/**
+		 * Tags to be added to the video.
+		 */
+		tags?: string[];
+
+		/**
+		 * Category ID for the video.
+		 * See https://developers.google.com/youtube/v3/docs/videoCategories/list
+		 * Common categories:
+		 * - 1: Film & Animation
+		 * - 2: Autos & Vehicles
+		 * - 10: Music
+		 * - 15: Pets & Animals
+		 * - 17: Sports
+		 * - 20: Gaming
+		 * - 22: People & Blogs
+		 * - 23: Comedy
+		 * - 24: Entertainment
+		 * - 25: News & Politics
+		 * - 26: Howto & Style
+		 * - 27: Education
+		 * - 28: Science & Technology
+		 */
+		category_id?: string;
+
+		/**
+		 * Whether the video is made for kids.
+		 * This affects certain YouTube features like comments and recommendations.
+		 */
+		made_for_kids?: boolean;
+
+		/**
+		 * Whether to notify subscribers of the upload.
+		 */
+		notify_subscribers?: boolean;
+	};
 }
 
 export type PlatformContent = {
@@ -283,6 +334,7 @@ export type PlatformContent = {
 	linkedin: LinkedInPostContent;
 	twitter: TwitterPostContent;
 	google: GooglePostContent;
+	youtube: YouTubePostContent;
 };
 
 export type Post<P extends keyof PlatformContent = keyof PlatformContent> =

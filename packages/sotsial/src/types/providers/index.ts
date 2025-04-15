@@ -90,3 +90,10 @@ export interface TwitterConfig extends ProviderConfig {}
  * Google configuration
  */
 export interface GoogleConfig extends ProviderConfig {}
+
+/**
+ * YouTube configuration
+ *
+ * @extends GoogleConfig
+ */
+export interface YouTubeConfig extends GoogleConfig {}

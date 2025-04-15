@@ -2,9 +2,10 @@ import { Listbox, ListboxOption } from "@/components/ui/listbox";
 import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 
 type FormFieldProps = {
-	type: "select" | "checkbox" | "text" | "url" | "toggle";
+	type: "select" | "checkbox" | "text" | "url" | "toggle" | "textarea";
 	label: string;
 	name: string;
 	value: any;
@@ -90,6 +91,22 @@ export function PlatformFormField({
 					<Input
 						id={id}
 						type={type}
+						value={value ?? ""}
+						onChange={(e) => onChange(e.target.value)}
+						className="w-full"
+					/>
+				</div>
+			);
+
+		case "textarea":
+			return (
+				<div className="space-y-2">
+					<label htmlFor={id} className="block text-sm font-medium">
+						{label}
+						{required && <span className="text-red-500 ml-1">*</span>}
+					</label>
+					<Textarea
+						id={id}
 						value={value ?? ""}
 						onChange={(e) => onChange(e.target.value)}
 						className="w-full"

@@ -1,4 +1,4 @@
-type FormFieldType = "select" | "checkbox" | "text" | "url";
+type FormFieldType = "select" | "checkbox" | "text" | "url" | "textarea";
 
 type FormField = {
 	type: FormFieldType;
@@ -166,6 +166,58 @@ export const platformFormConfigs: Record<string, PlatformConfig> = {
 			{
 				title: "Additional Options",
 				fields: ["fb_link", "fb_options.reel.place_id"],
+			},
+		],
+	},
+	youtube: {
+		fields: [
+			{
+				type: "textarea",
+				label: "Description (optional)",
+				name: "yt_description",
+			},
+			{
+				type: "select",
+				label: "Post Type",
+				name: "yt_type",
+				defaultValue: "standard",
+				options: [
+					{ value: "standard", label: "Standard" },
+					{ value: "short", label: "Short" },
+				],
+				required: true,
+			},
+			{
+				type: "text",
+				label: "Tags (optional)",
+				name: "yt_tags",
+			},
+			{
+				type: "text",
+				label: "Category ID (optional)",
+				name: "yt_category_id",
+			},
+			{
+				type: "checkbox",
+				label: "Made for Kids",
+				name: "yt_options.made_for_kids",
+			},
+			{
+				type: "checkbox",
+				label: "Notify Subscribers (Not recommended)",
+				name: "yt_options.notify_subscribers",
+			},
+		],
+		sections: [
+			{
+				fields: [
+					"yt_description",
+					"yt_type",
+					"yt_tags",
+					"yt_category_id",
+					"yt_options.made_for_kids",
+					"yt_options.notify_subscribers",
+				],
 			},
 		],
 	},

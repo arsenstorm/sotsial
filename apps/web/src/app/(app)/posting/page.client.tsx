@@ -263,6 +263,14 @@ export function PostingForm() {
 						errors.push("Facebook requires a post type");
 					}
 					break;
+				case "youtube":
+					if (mediaItems.length === 0) {
+						errors.push("YouTube requires at least one media item");
+					}
+					if (!postText) {
+						errors.push("YouTube requires a title for the video");
+					}
+					break;
 			}
 		}
 
@@ -322,6 +330,13 @@ export function PostingForm() {
 									link: platformFormState.fb_link,
 									privacy: platformFormState.fb_privacy,
 									options: platformFormState.fb_options,
+								};
+								break;
+							case "youtube":
+								acc[conn.platform] = {
+									text: postText,
+									title: postText ?? "Untitled Video",
+									media: mediaItems,
 								};
 								break;
 							default:

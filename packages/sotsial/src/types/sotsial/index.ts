@@ -10,6 +10,7 @@ import type {
 	GoogleConfig,
 	LinkedInConfig,
 	TwitterConfig,
+	YouTubeConfig,
 } from "@/types/providers";
 
 export interface SotsialConfig {
@@ -41,6 +42,10 @@ export interface SotsialConfig {
 		config: TwitterConfig;
 		accounts?: Account | Account[];
 	};
+	youtube?: {
+		config: YouTubeConfig;
+		accounts?: Account | Account[];
+	};
 }
 
 export const PROVIDERS = [
@@ -51,5 +56,6 @@ export const PROVIDERS = [
 	"google",
 	"linkedin",
 	"twitter",
+	"youtube",
 ] as const;
 export type Provider = (typeof PROVIDERS)[number];

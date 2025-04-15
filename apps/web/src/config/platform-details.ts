@@ -58,9 +58,9 @@ export const platformDetails = {
 		logo: LinkedinIcon,
 		color: "blue",
 	},
-	google: {
+	youtube: {
 		supported: true,
-		name: "YouTube (Google)",
+		name: "YouTube",
 		logo: YoutubeIcon,
 		color: "red",
 	},
