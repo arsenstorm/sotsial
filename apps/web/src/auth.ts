@@ -11,7 +11,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const auth = betterAuth({
-	appName: "Sotsial",
+	appName: "sotsial",
 	url: process.env.BETTER_AUTH_URL,
 	secret: process.env.BETTER_AUTH_SECRET,
 	database: new Pool({
