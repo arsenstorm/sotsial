@@ -7,6 +7,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@sotsial/ui/components/tabs";
+import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -42,7 +43,15 @@ const slugify = (value: string) =>
 
 function OnboardingPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { invite } = Route.useSearch();
+
+  const afterOrgReady = async () => {
+    queryClient.removeQueries({ queryKey: sessionQuery.queryKey });
+    await queryClient.fetchQuery(sessionQuery);
+    await router.invalidate();
+    router.navigate({ to: "/dashboard" });
+  };
 
   return (
     <div className="space-y-6">
@@ -60,21 +69,10 @@ function OnboardingPage() {
           <TabsTrigger value="accept">Accept invite</TabsTrigger>
         </TabsList>
         <TabsContent className="pt-4" value="create">
-          <CreateOrgForm
-            onDone={async () => {
-              await router.invalidate();
-              router.navigate({ to: "/dashboard" });
-            }}
-          />
+          <CreateOrgForm onDone={afterOrgReady} />
         </TabsContent>
         <TabsContent className="pt-4" value="accept">
-          <AcceptInviteForm
-            defaultInviteId={invite}
-            onDone={async () => {
-              await router.invalidate();
-              router.navigate({ to: "/dashboard" });
-            }}
-          />
+          <AcceptInviteForm defaultInviteId={invite} onDone={afterOrgReady} />
         </TabsContent>
       </Tabs>
     </div>

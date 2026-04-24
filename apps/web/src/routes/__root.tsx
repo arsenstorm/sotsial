@@ -8,6 +8,8 @@ import {
   Outlet,
   Scripts,
 } from "@tanstack/react-router";
+import { ThemeProvider } from "@/components/theme-provider";
+import { getThemeServerFn, type Theme } from "@/lib/theme";
 import type { RouterAppContext } from "../router";
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
@@ -19,6 +21,7 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
     ],
     links: [{ rel: "stylesheet", href: appCss }],
   }),
+  loader: () => getThemeServerFn(),
   notFoundComponent: () => (
     <main className="container mx-auto p-4 pt-16">
       <h1 className="font-semibold text-2xl">404</h1>
@@ -31,26 +34,40 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const theme = Route.useLoaderData() as Theme;
+
   return (
-    <html className="antialiased" lang="en">
+    <html
+      className={`antialiased ${theme === "dark" ? "dark" : ""}`}
+      lang="en"
+      suppressHydrationWarning
+    >
       <head>
         <HeadContent />
       </head>
       <body className="isolate">
-        <RootProviders>{children ?? <Outlet />}</RootProviders>
+        <RootProviders theme={theme}>{children ?? <Outlet />}</RootProviders>
         <Scripts />
       </body>
     </html>
   );
 }
 
-function RootProviders({ children }: { children: React.ReactNode }) {
+function RootProviders({
+  children,
+  theme,
+}: {
+  children: React.ReactNode;
+  theme: Theme;
+}) {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>{children}</TooltipProvider>
-      <Toaster richColors />
+      <ThemeProvider initialTheme={theme}>
+        <TooltipProvider>{children}</TooltipProvider>
+        <Toaster richColors />
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

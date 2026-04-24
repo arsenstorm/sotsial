@@ -6,6 +6,7 @@ import {
 } from "@sotsial/ui/components/description-list";
 import { Field, FieldLabel } from "@sotsial/ui/components/field";
 import { Input } from "@sotsial/ui/components/input";
+import { PageHeading } from "@sotsial/ui/components/page-heading";
 import { PageSubheading } from "@sotsial/ui/components/page-subheading";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
@@ -50,6 +51,10 @@ function AccountPage() {
 
   return (
     <div className="space-y-8">
+      <PageHeading
+        description="Your personal profile and session."
+        title="Account"
+      />
       <section className="space-y-4">
         <PageSubheading title="Profile" />
         <DescriptionList>

@@ -1,11 +1,12 @@
 import { Button } from "@sotsial/ui/components/button";
 import { Field, FieldLabel } from "@sotsial/ui/components/field";
 import { Input } from "@sotsial/ui/components/input";
+import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
-import { authClient } from "@/lib/auth";
+import { authClient, sessionQuery } from "@/lib/auth";
 
 const searchSchema = z.object({
   next: z.string().optional(),
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/(auth)/sign-in")({
 
 function SignInPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { next } = Route.useSearch();
   const [pending, setPending] = useState(false);
 
@@ -38,6 +40,8 @@ function SignInPage() {
       return;
     }
 
+    queryClient.removeQueries({ queryKey: sessionQuery.queryKey });
+    await queryClient.fetchQuery(sessionQuery);
     await router.invalidate();
     router.navigate({ to: next ?? "/dashboard" });
   };

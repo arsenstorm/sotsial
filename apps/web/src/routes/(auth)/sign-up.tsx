@@ -1,10 +1,11 @@
 import { Button } from "@sotsial/ui/components/button";
 import { Field, FieldLabel } from "@sotsial/ui/components/field";
 import { Input } from "@sotsial/ui/components/input";
+import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { authClient } from "@/lib/auth";
+import { authClient, sessionQuery } from "@/lib/auth";
 
 export const Route = createFileRoute("/(auth)/sign-up")({
   component: SignUpPage,
@@ -12,6 +13,7 @@ export const Route = createFileRoute("/(auth)/sign-up")({
 
 function SignUpPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [pending, setPending] = useState(false);
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -32,6 +34,8 @@ function SignUpPage() {
       return;
     }
 
+    queryClient.removeQueries({ queryKey: sessionQuery.queryKey });
+    await queryClient.fetchQuery(sessionQuery);
     await router.invalidate();
     router.navigate({ to: "/onboarding" });
   };

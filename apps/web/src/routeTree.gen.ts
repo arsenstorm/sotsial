@@ -9,25 +9,37 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as legalRouteRouteImport } from './routes/(legal)/route'
 import { Route as authRouteRouteImport } from './routes/(auth)/route'
 import { Route as appRouteRouteImport } from './routes/(app)/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as V1SplatRouteImport } from './routes/v1/$'
+import { Route as marketingPricingRouteImport } from './routes/(marketing)/pricing'
+import { Route as legalTermsRouteImport } from './routes/(legal)/terms'
+import { Route as legalSecurityRouteImport } from './routes/(legal)/security'
+import { Route as legalPrivacyRouteImport } from './routes/(legal)/privacy'
 import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
 import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
 import { Route as authOnboardingRouteImport } from './routes/(auth)/onboarding'
-import { Route as appPostingRouteImport } from './routes/(app)/posting'
 import { Route as appKeysRouteImport } from './routes/(app)/keys'
-import { Route as appIntegrationsRouteImport } from './routes/(app)/integrations'
+import { Route as appHelpRouteImport } from './routes/(app)/help'
 import { Route as appDashboardRouteImport } from './routes/(app)/dashboard'
-import { Route as appCredentialsRouteImport } from './routes/(app)/credentials'
 import { Route as appConnectionsRouteImport } from './routes/(app)/connections'
+import { Route as appBillingRouteImport } from './routes/(app)/billing'
 import { Route as appSettingsRouteRouteImport } from './routes/(app)/settings/route'
 import { Route as appSettingsIndexRouteImport } from './routes/(app)/settings/index'
+import { Route as appPostsIndexRouteImport } from './routes/(app)/posts/index'
 import { Route as appSettingsOrganizationRouteImport } from './routes/(app)/settings/organization'
 import { Route as appSettingsMembersRouteImport } from './routes/(app)/settings/members'
+import { Route as appSettingsIntegrationsRouteImport } from './routes/(app)/settings/integrations'
+import { Route as appSettingsCredentialsRouteImport } from './routes/(app)/settings/credentials'
+import { Route as appPostsCreateRouteImport } from './routes/(app)/posts/create'
 import { Route as appKeysIdRouteImport } from './routes/(app)/keys.$id'
 
+const legalRouteRoute = legalRouteRouteImport.update({
+  id: '/(legal)',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const authRouteRoute = authRouteRouteImport.update({
   id: '/(auth)',
   getParentRoute: () => rootRouteImport,
@@ -46,6 +58,26 @@ const V1SplatRoute = V1SplatRouteImport.update({
   path: '/v1/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const marketingPricingRoute = marketingPricingRouteImport.update({
+  id: '/(marketing)/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const legalTermsRoute = legalTermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => legalRouteRoute,
+} as any)
+const legalSecurityRoute = legalSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => legalRouteRoute,
+} as any)
+const legalPrivacyRoute = legalPrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => legalRouteRoute,
+} as any)
 const authSignUpRoute = authSignUpRouteImport.update({
   id: '/sign-up',
   path: '/sign-up',
@@ -61,19 +93,14 @@ const authOnboardingRoute = authOnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => authRouteRoute,
 } as any)
-const appPostingRoute = appPostingRouteImport.update({
-  id: '/posting',
-  path: '/posting',
-  getParentRoute: () => appRouteRoute,
-} as any)
 const appKeysRoute = appKeysRouteImport.update({
   id: '/keys',
   path: '/keys',
   getParentRoute: () => appRouteRoute,
 } as any)
-const appIntegrationsRoute = appIntegrationsRouteImport.update({
-  id: '/integrations',
-  path: '/integrations',
+const appHelpRoute = appHelpRouteImport.update({
+  id: '/help',
+  path: '/help',
   getParentRoute: () => appRouteRoute,
 } as any)
 const appDashboardRoute = appDashboardRouteImport.update({
@@ -81,14 +108,14 @@ const appDashboardRoute = appDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => appRouteRoute,
 } as any)
-const appCredentialsRoute = appCredentialsRouteImport.update({
-  id: '/credentials',
-  path: '/credentials',
-  getParentRoute: () => appRouteRoute,
-} as any)
 const appConnectionsRoute = appConnectionsRouteImport.update({
   id: '/connections',
   path: '/connections',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appBillingRoute = appBillingRouteImport.update({
+  id: '/billing',
+  path: '/billing',
   getParentRoute: () => appRouteRoute,
 } as any)
 const appSettingsRouteRoute = appSettingsRouteRouteImport.update({
@@ -101,6 +128,11 @@ const appSettingsIndexRoute = appSettingsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => appSettingsRouteRoute,
 } as any)
+const appPostsIndexRoute = appPostsIndexRouteImport.update({
+  id: '/posts/',
+  path: '/posts/',
+  getParentRoute: () => appRouteRoute,
+} as any)
 const appSettingsOrganizationRoute = appSettingsOrganizationRouteImport.update({
   id: '/organization',
   path: '/organization',
@@ -111,6 +143,21 @@ const appSettingsMembersRoute = appSettingsMembersRouteImport.update({
   path: '/members',
   getParentRoute: () => appSettingsRouteRoute,
 } as any)
+const appSettingsIntegrationsRoute = appSettingsIntegrationsRouteImport.update({
+  id: '/integrations',
+  path: '/integrations',
+  getParentRoute: () => appSettingsRouteRoute,
+} as any)
+const appSettingsCredentialsRoute = appSettingsCredentialsRouteImport.update({
+  id: '/credentials',
+  path: '/credentials',
+  getParentRoute: () => appSettingsRouteRoute,
+} as any)
+const appPostsCreateRoute = appPostsCreateRouteImport.update({
+  id: '/posts/create',
+  path: '/posts/create',
+  getParentRoute: () => appRouteRoute,
+} as any)
 const appKeysIdRoute = appKeysIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -120,36 +167,50 @@ const appKeysIdRoute = appKeysIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/settings': typeof appSettingsRouteRouteWithChildren
+  '/billing': typeof appBillingRoute
   '/connections': typeof appConnectionsRoute
-  '/credentials': typeof appCredentialsRoute
   '/dashboard': typeof appDashboardRoute
-  '/integrations': typeof appIntegrationsRoute
+  '/help': typeof appHelpRoute
   '/keys': typeof appKeysRouteWithChildren
-  '/posting': typeof appPostingRoute
   '/onboarding': typeof authOnboardingRoute
   '/sign-in': typeof authSignInRoute
   '/sign-up': typeof authSignUpRoute
+  '/privacy': typeof legalPrivacyRoute
+  '/security': typeof legalSecurityRoute
+  '/terms': typeof legalTermsRoute
+  '/pricing': typeof marketingPricingRoute
   '/v1/$': typeof V1SplatRoute
   '/keys/$id': typeof appKeysIdRoute
+  '/posts/create': typeof appPostsCreateRoute
+  '/settings/credentials': typeof appSettingsCredentialsRoute
+  '/settings/integrations': typeof appSettingsIntegrationsRoute
   '/settings/members': typeof appSettingsMembersRoute
   '/settings/organization': typeof appSettingsOrganizationRoute
+  '/posts/': typeof appPostsIndexRoute
   '/settings/': typeof appSettingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/billing': typeof appBillingRoute
   '/connections': typeof appConnectionsRoute
-  '/credentials': typeof appCredentialsRoute
   '/dashboard': typeof appDashboardRoute
-  '/integrations': typeof appIntegrationsRoute
+  '/help': typeof appHelpRoute
   '/keys': typeof appKeysRouteWithChildren
-  '/posting': typeof appPostingRoute
   '/onboarding': typeof authOnboardingRoute
   '/sign-in': typeof authSignInRoute
   '/sign-up': typeof authSignUpRoute
+  '/privacy': typeof legalPrivacyRoute
+  '/security': typeof legalSecurityRoute
+  '/terms': typeof legalTermsRoute
+  '/pricing': typeof marketingPricingRoute
   '/v1/$': typeof V1SplatRoute
   '/keys/$id': typeof appKeysIdRoute
+  '/posts/create': typeof appPostsCreateRoute
+  '/settings/credentials': typeof appSettingsCredentialsRoute
+  '/settings/integrations': typeof appSettingsIntegrationsRoute
   '/settings/members': typeof appSettingsMembersRoute
   '/settings/organization': typeof appSettingsOrganizationRoute
+  '/posts': typeof appPostsIndexRoute
   '/settings': typeof appSettingsIndexRoute
 }
 export interface FileRoutesById {
@@ -157,20 +218,28 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/(app)': typeof appRouteRouteWithChildren
   '/(auth)': typeof authRouteRouteWithChildren
+  '/(legal)': typeof legalRouteRouteWithChildren
   '/(app)/settings': typeof appSettingsRouteRouteWithChildren
+  '/(app)/billing': typeof appBillingRoute
   '/(app)/connections': typeof appConnectionsRoute
-  '/(app)/credentials': typeof appCredentialsRoute
   '/(app)/dashboard': typeof appDashboardRoute
-  '/(app)/integrations': typeof appIntegrationsRoute
+  '/(app)/help': typeof appHelpRoute
   '/(app)/keys': typeof appKeysRouteWithChildren
-  '/(app)/posting': typeof appPostingRoute
   '/(auth)/onboarding': typeof authOnboardingRoute
   '/(auth)/sign-in': typeof authSignInRoute
   '/(auth)/sign-up': typeof authSignUpRoute
+  '/(legal)/privacy': typeof legalPrivacyRoute
+  '/(legal)/security': typeof legalSecurityRoute
+  '/(legal)/terms': typeof legalTermsRoute
+  '/(marketing)/pricing': typeof marketingPricingRoute
   '/v1/$': typeof V1SplatRoute
   '/(app)/keys/$id': typeof appKeysIdRoute
+  '/(app)/posts/create': typeof appPostsCreateRoute
+  '/(app)/settings/credentials': typeof appSettingsCredentialsRoute
+  '/(app)/settings/integrations': typeof appSettingsIntegrationsRoute
   '/(app)/settings/members': typeof appSettingsMembersRoute
   '/(app)/settings/organization': typeof appSettingsOrganizationRoute
+  '/(app)/posts/': typeof appPostsIndexRoute
   '/(app)/settings/': typeof appSettingsIndexRoute
 }
 export interface FileRouteTypes {
@@ -178,56 +247,78 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/settings'
+    | '/billing'
     | '/connections'
-    | '/credentials'
     | '/dashboard'
-    | '/integrations'
+    | '/help'
     | '/keys'
-    | '/posting'
     | '/onboarding'
     | '/sign-in'
     | '/sign-up'
+    | '/privacy'
+    | '/security'
+    | '/terms'
+    | '/pricing'
     | '/v1/$'
     | '/keys/$id'
+    | '/posts/create'
+    | '/settings/credentials'
+    | '/settings/integrations'
     | '/settings/members'
     | '/settings/organization'
+    | '/posts/'
     | '/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/billing'
     | '/connections'
-    | '/credentials'
     | '/dashboard'
-    | '/integrations'
+    | '/help'
     | '/keys'
-    | '/posting'
     | '/onboarding'
     | '/sign-in'
     | '/sign-up'
+    | '/privacy'
+    | '/security'
+    | '/terms'
+    | '/pricing'
     | '/v1/$'
     | '/keys/$id'
+    | '/posts/create'
+    | '/settings/credentials'
+    | '/settings/integrations'
     | '/settings/members'
     | '/settings/organization'
+    | '/posts'
     | '/settings'
   id:
     | '__root__'
     | '/'
     | '/(app)'
     | '/(auth)'
+    | '/(legal)'
     | '/(app)/settings'
+    | '/(app)/billing'
     | '/(app)/connections'
-    | '/(app)/credentials'
     | '/(app)/dashboard'
-    | '/(app)/integrations'
+    | '/(app)/help'
     | '/(app)/keys'
-    | '/(app)/posting'
     | '/(auth)/onboarding'
     | '/(auth)/sign-in'
     | '/(auth)/sign-up'
+    | '/(legal)/privacy'
+    | '/(legal)/security'
+    | '/(legal)/terms'
+    | '/(marketing)/pricing'
     | '/v1/$'
     | '/(app)/keys/$id'
+    | '/(app)/posts/create'
+    | '/(app)/settings/credentials'
+    | '/(app)/settings/integrations'
     | '/(app)/settings/members'
     | '/(app)/settings/organization'
+    | '/(app)/posts/'
     | '/(app)/settings/'
   fileRoutesById: FileRoutesById
 }
@@ -235,11 +326,20 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   appRouteRoute: typeof appRouteRouteWithChildren
   authRouteRoute: typeof authRouteRouteWithChildren
+  legalRouteRoute: typeof legalRouteRouteWithChildren
+  marketingPricingRoute: typeof marketingPricingRoute
   V1SplatRoute: typeof V1SplatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/(legal)': {
+      id: '/(legal)'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof legalRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(auth)': {
       id: '/(auth)'
       path: ''
@@ -268,6 +368,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof V1SplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(marketing)/pricing': {
+      id: '/(marketing)/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof marketingPricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(legal)/terms': {
+      id: '/(legal)/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof legalTermsRouteImport
+      parentRoute: typeof legalRouteRoute
+    }
+    '/(legal)/security': {
+      id: '/(legal)/security'
+      path: '/security'
+      fullPath: '/security'
+      preLoaderRoute: typeof legalSecurityRouteImport
+      parentRoute: typeof legalRouteRoute
+    }
+    '/(legal)/privacy': {
+      id: '/(legal)/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof legalPrivacyRouteImport
+      parentRoute: typeof legalRouteRoute
+    }
     '/(auth)/sign-up': {
       id: '/(auth)/sign-up'
       path: '/sign-up'
@@ -289,13 +417,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authOnboardingRouteImport
       parentRoute: typeof authRouteRoute
     }
-    '/(app)/posting': {
-      id: '/(app)/posting'
-      path: '/posting'
-      fullPath: '/posting'
-      preLoaderRoute: typeof appPostingRouteImport
-      parentRoute: typeof appRouteRoute
-    }
     '/(app)/keys': {
       id: '/(app)/keys'
       path: '/keys'
@@ -303,11 +424,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appKeysRouteImport
       parentRoute: typeof appRouteRoute
     }
-    '/(app)/integrations': {
-      id: '/(app)/integrations'
-      path: '/integrations'
-      fullPath: '/integrations'
-      preLoaderRoute: typeof appIntegrationsRouteImport
+    '/(app)/help': {
+      id: '/(app)/help'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof appHelpRouteImport
       parentRoute: typeof appRouteRoute
     }
     '/(app)/dashboard': {
@@ -317,18 +438,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appDashboardRouteImport
       parentRoute: typeof appRouteRoute
     }
-    '/(app)/credentials': {
-      id: '/(app)/credentials'
-      path: '/credentials'
-      fullPath: '/credentials'
-      preLoaderRoute: typeof appCredentialsRouteImport
-      parentRoute: typeof appRouteRoute
-    }
     '/(app)/connections': {
       id: '/(app)/connections'
       path: '/connections'
       fullPath: '/connections'
       preLoaderRoute: typeof appConnectionsRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/billing': {
+      id: '/(app)/billing'
+      path: '/billing'
+      fullPath: '/billing'
+      preLoaderRoute: typeof appBillingRouteImport
       parentRoute: typeof appRouteRoute
     }
     '/(app)/settings': {
@@ -345,6 +466,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appSettingsIndexRouteImport
       parentRoute: typeof appSettingsRouteRoute
     }
+    '/(app)/posts/': {
+      id: '/(app)/posts/'
+      path: '/posts'
+      fullPath: '/posts/'
+      preLoaderRoute: typeof appPostsIndexRouteImport
+      parentRoute: typeof appRouteRoute
+    }
     '/(app)/settings/organization': {
       id: '/(app)/settings/organization'
       path: '/organization'
@@ -359,6 +487,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appSettingsMembersRouteImport
       parentRoute: typeof appSettingsRouteRoute
     }
+    '/(app)/settings/integrations': {
+      id: '/(app)/settings/integrations'
+      path: '/integrations'
+      fullPath: '/settings/integrations'
+      preLoaderRoute: typeof appSettingsIntegrationsRouteImport
+      parentRoute: typeof appSettingsRouteRoute
+    }
+    '/(app)/settings/credentials': {
+      id: '/(app)/settings/credentials'
+      path: '/credentials'
+      fullPath: '/settings/credentials'
+      preLoaderRoute: typeof appSettingsCredentialsRouteImport
+      parentRoute: typeof appSettingsRouteRoute
+    }
+    '/(app)/posts/create': {
+      id: '/(app)/posts/create'
+      path: '/posts/create'
+      fullPath: '/posts/create'
+      preLoaderRoute: typeof appPostsCreateRouteImport
+      parentRoute: typeof appRouteRoute
+    }
     '/(app)/keys/$id': {
       id: '/(app)/keys/$id'
       path: '/$id'
@@ -370,12 +519,16 @@ declare module '@tanstack/react-router' {
 }
 
 interface appSettingsRouteRouteChildren {
+  appSettingsCredentialsRoute: typeof appSettingsCredentialsRoute
+  appSettingsIntegrationsRoute: typeof appSettingsIntegrationsRoute
   appSettingsMembersRoute: typeof appSettingsMembersRoute
   appSettingsOrganizationRoute: typeof appSettingsOrganizationRoute
   appSettingsIndexRoute: typeof appSettingsIndexRoute
 }
 
 const appSettingsRouteRouteChildren: appSettingsRouteRouteChildren = {
+  appSettingsCredentialsRoute: appSettingsCredentialsRoute,
+  appSettingsIntegrationsRoute: appSettingsIntegrationsRoute,
   appSettingsMembersRoute: appSettingsMembersRoute,
   appSettingsOrganizationRoute: appSettingsOrganizationRoute,
   appSettingsIndexRoute: appSettingsIndexRoute,
@@ -397,22 +550,24 @@ const appKeysRouteWithChildren =
 
 interface appRouteRouteChildren {
   appSettingsRouteRoute: typeof appSettingsRouteRouteWithChildren
+  appBillingRoute: typeof appBillingRoute
   appConnectionsRoute: typeof appConnectionsRoute
-  appCredentialsRoute: typeof appCredentialsRoute
   appDashboardRoute: typeof appDashboardRoute
-  appIntegrationsRoute: typeof appIntegrationsRoute
+  appHelpRoute: typeof appHelpRoute
   appKeysRoute: typeof appKeysRouteWithChildren
-  appPostingRoute: typeof appPostingRoute
+  appPostsCreateRoute: typeof appPostsCreateRoute
+  appPostsIndexRoute: typeof appPostsIndexRoute
 }
 
 const appRouteRouteChildren: appRouteRouteChildren = {
   appSettingsRouteRoute: appSettingsRouteRouteWithChildren,
+  appBillingRoute: appBillingRoute,
   appConnectionsRoute: appConnectionsRoute,
-  appCredentialsRoute: appCredentialsRoute,
   appDashboardRoute: appDashboardRoute,
-  appIntegrationsRoute: appIntegrationsRoute,
+  appHelpRoute: appHelpRoute,
   appKeysRoute: appKeysRouteWithChildren,
-  appPostingRoute: appPostingRoute,
+  appPostsCreateRoute: appPostsCreateRoute,
+  appPostsIndexRoute: appPostsIndexRoute,
 }
 
 const appRouteRouteWithChildren = appRouteRoute._addFileChildren(
@@ -435,10 +590,28 @@ const authRouteRouteWithChildren = authRouteRoute._addFileChildren(
   authRouteRouteChildren,
 )
 
+interface legalRouteRouteChildren {
+  legalPrivacyRoute: typeof legalPrivacyRoute
+  legalSecurityRoute: typeof legalSecurityRoute
+  legalTermsRoute: typeof legalTermsRoute
+}
+
+const legalRouteRouteChildren: legalRouteRouteChildren = {
+  legalPrivacyRoute: legalPrivacyRoute,
+  legalSecurityRoute: legalSecurityRoute,
+  legalTermsRoute: legalTermsRoute,
+}
+
+const legalRouteRouteWithChildren = legalRouteRoute._addFileChildren(
+  legalRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   appRouteRoute: appRouteRouteWithChildren,
   authRouteRoute: authRouteRouteWithChildren,
+  legalRouteRoute: legalRouteRouteWithChildren,
+  marketingPricingRoute: marketingPricingRoute,
   V1SplatRoute: V1SplatRoute,
 }
 export const routeTree = rootRouteImport

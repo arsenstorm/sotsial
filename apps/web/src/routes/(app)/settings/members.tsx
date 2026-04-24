@@ -5,6 +5,7 @@ import { Button } from "@sotsial/ui/components/button";
 import { Empty } from "@sotsial/ui/components/empty";
 import { Field, FieldLabel } from "@sotsial/ui/components/field";
 import { Input } from "@sotsial/ui/components/input";
+import { PageHeading } from "@sotsial/ui/components/page-heading";
 import { PageSubheading } from "@sotsial/ui/components/page-subheading";
 import {
   Select,
@@ -117,6 +118,10 @@ function MembersPage() {
 
   return (
     <div className="space-y-8">
+      <PageHeading
+        description="People with access to this organization."
+        title="Members"
+      />
       <section className="space-y-4">
         <PageSubheading title="Members" />
         {membersLoading ? (

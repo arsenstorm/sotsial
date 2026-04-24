@@ -19,8 +19,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
 
-export const Route = createFileRoute("/(app)/posting")({
-  component: PostingPage,
+export const Route = createFileRoute("/(app)/posts/create")({
+  component: CreatePostPage,
 });
 
 interface ConnectionRow {
@@ -37,7 +37,7 @@ interface PublishResult {
   [key: string]: unknown;
 }
 
-function PostingPage() {
+function CreatePostPage() {
   const [text, setText] = useState("");
   const [mediaUrl, setMediaUrl] = useState("");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -100,7 +100,7 @@ function PostingPage() {
     <div className="space-y-6">
       <PageHeading
         description="Publish to every connected platform at once."
-        title="Posting"
+        title="New post"
       />
 
       <section className="space-y-3">

@@ -1,3 +1,14 @@
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@sotsial/ui/components/alert-dialog";
 import { Button } from "@sotsial/ui/components/button";
 import {
   DescriptionDetails,
@@ -6,6 +17,7 @@ import {
 } from "@sotsial/ui/components/description-list";
 import { Field, FieldLabel } from "@sotsial/ui/components/field";
 import { Input } from "@sotsial/ui/components/input";
+import { PageHeading } from "@sotsial/ui/components/page-heading";
 import { PageSubheading } from "@sotsial/ui/components/page-subheading";
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
@@ -52,11 +64,6 @@ function OrganizationPage() {
       if (!org) {
         return;
       }
-      // biome-ignore lint/suspicious/noAlert: destructive action requires explicit confirmation
-      const ok = window.confirm(`Delete ${org.name}? This cannot be undone.`);
-      if (!ok) {
-        return;
-      }
       const res = await authClient.organization.delete({
         organizationId: org.id,
       });
@@ -77,6 +84,10 @@ function OrganizationPage() {
 
   return (
     <div className="space-y-8">
+      <PageHeading
+        description="Details and settings for this workspace."
+        title="Organization"
+      />
       <section className="space-y-4">
         <PageSubheading title="Identity" />
         <DescriptionList>
@@ -126,13 +137,41 @@ function OrganizationPage() {
 
       <section className="space-y-3">
         <PageSubheading title="Danger zone" />
-        <Button
-          disabled={deleteMutation.isPending}
-          onClick={() => deleteMutation.mutate()}
-          variant="destructive"
-        >
-          {deleteMutation.isPending ? "Deleting…" : "Delete organization"}
-        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger
+            render={
+              <Button disabled={deleteMutation.isPending} variant="destructive">
+                {deleteMutation.isPending ? "Deleting…" : "Delete organization"}
+              </Button>
+            }
+          />
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete {org.name}?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This permanently removes the organization, all of its
+                connections, credentials, and API keys. This action cannot be
+                undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => deleteMutation.mutate()}
+                render={
+                  <Button
+                    disabled={deleteMutation.isPending}
+                    variant="destructive"
+                  >
+                    {deleteMutation.isPending
+                      ? "Deleting…"
+                      : `Delete ${org.name}`}
+                  </Button>
+                }
+              />
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </section>
     </div>
   );

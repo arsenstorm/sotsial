@@ -48,7 +48,7 @@ const PLATFORMS = [
   "youtube",
 ] as const;
 
-export const Route = createFileRoute("/(app)/credentials")({
+export const Route = createFileRoute("/(app)/settings/credentials")({
   component: CredentialsPage,
 });
 
