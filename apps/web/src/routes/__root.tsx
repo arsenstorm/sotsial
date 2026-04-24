@@ -22,14 +22,6 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
     links: [{ rel: "stylesheet", href: appCss }],
   }),
   loader: () => getThemeServerFn(),
-  notFoundComponent: () => (
-    <main className="container mx-auto p-4 pt-16">
-      <h1 className="font-semibold text-2xl">404</h1>
-      <p className="text-muted-foreground">
-        The requested page could not be found.
-      </p>
-    </main>
-  ),
   shellComponent: RootDocument,
 });
 
