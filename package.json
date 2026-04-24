@@ -8,7 +8,7 @@
     "typescript": "5.9.3",
     "ultracite": "7.6.1"
   },
-  "name": "sotsial",
+  "name": "sotsial-project",
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
@@ -17,7 +17,8 @@
     "typecheck": "turbo typecheck",
     "check": "ultracite check",
     "fix": "ultracite fix",
-    "prepare": "husky"
+    "prepare": "husky",
+    "cf:types": "turbo cf:types"
   },
   "type": "module",
   "workspaces": [

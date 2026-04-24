@@ -1,0 +1,30 @@
+{
+  "name": "@sotsial/auth",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "lint": "eslint",
+    "format": "prettier --write \"**/*.ts\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@sotsial/db": "workspace:*",
+    "better-auth": "^1.6.2"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260412.1",
+    "@types/node": "^25.1.0",
+    "@types/react": "^19.2.10",
+    "react": "^19.2.4",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  },
+  "exports": {
+    "./server": "./src/server.ts",
+    "./client": "./src/client.ts",
+    "./types": "./src/types.ts"
+  }
+}

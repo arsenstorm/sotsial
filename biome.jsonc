@@ -5,5 +5,13 @@
     "ultracite/biome/react",
     "ultracite/biome/vitest",
     "ultracite/biome/remix"
-  ]
+  ],
+  "files": {
+    "includes": [
+      "!apps/old-web",
+      "!packages/ui",
+      "!packages/sotsial",
+      "!**/workers.d.ts"
+    ]
+  }
 }

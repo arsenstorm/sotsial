@@ -1,6 +1,5 @@
 {
-  "name": "web",
-  "version": "0.0.1",
+  "name": "sotsial-web",
   "type": "module",
   "private": true,
   "scripts": {
@@ -9,6 +8,7 @@
     "preview": "vite preview",
     "lint": "eslint",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
+    "cf:types": "wrangler types workers.d.ts --env-interface CloudflareBindings",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -18,14 +18,18 @@
     "@tanstack/react-router": "^1.132.0",
     "@tanstack/react-start": "^1.132.0",
     "@tanstack/router-plugin": "^1.132.0",
+    "@sotsial/auth": "workspace:*",
+    "@sotsial/db": "workspace:*",
     "@sotsial/ui": "workspace:*",
-    "nitro": "latest",
+    "better-auth": "^1.6.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "tailwindcss": "^4.1.18",
     "vite-tsconfig-paths": "^5.1.4"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.33.1",
+    "@rsbuild/core": "^2.0.1",
     "@tanstack/eslint-config": "^0.3.0",
     "@types/node": "^25.1.0",
     "@types/react": "^19.2.10",
@@ -33,6 +37,7 @@
     "@vitejs/plugin-react": "^5.1.1",
     "eslint": "^9.39.2",
     "typescript": "^5.9.3",
-    "vite": "^7.3.2"
+    "vite": "^7.3.2",
+    "wrangler": "^4.84.1"
   }
 }
