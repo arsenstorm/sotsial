@@ -26,6 +26,7 @@
   ],
   "vars": {
     "APP_BASE_URL": "https://sotsial.com",
+    "AUTH_URL": "https://sotsial.com",
     "ENVIRONMENT": "production"
   },
   "hyperdrive": [

@@ -25,13 +25,15 @@
     }
   ],
   "vars": {
-    "APP_BASE_URL": "http://localhost:8787",
+    "APP_BASE_URL": "http://localhost:3000",
+    "AUTH_URL": "http://localhost:3000",
     "ENVIRONMENT": "development"
   },
   "env": {
     "production": {
       "vars": {
         "APP_BASE_URL": "https://api.sotsial.com",
+        "AUTH_URL": "https://sotsial.com",
         "ENVIRONMENT": "production"
       }
     }
@@ -40,7 +42,7 @@
     {
       "binding": "DATABASE",
       "id": "REPLACE_WITH_HYPERDRIVE_ID",
-      "localConnectionString": "postgresql://postgres:postgres@127.0.0.1:54322/postgres"
+      "localConnectionString": "postgresql://postgres:postgres@127.0.0.1:6432/sotsial"
     }
   ]
 }

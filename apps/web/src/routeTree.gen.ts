@@ -9,9 +9,33 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as authRouteRouteImport } from './routes/(auth)/route'
+import { Route as appRouteRouteImport } from './routes/(app)/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as V1SplatRouteImport } from './routes/v1/$'
+import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
+import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
+import { Route as authOnboardingRouteImport } from './routes/(auth)/onboarding'
+import { Route as appPostingRouteImport } from './routes/(app)/posting'
+import { Route as appKeysRouteImport } from './routes/(app)/keys'
+import { Route as appIntegrationsRouteImport } from './routes/(app)/integrations'
+import { Route as appDashboardRouteImport } from './routes/(app)/dashboard'
+import { Route as appCredentialsRouteImport } from './routes/(app)/credentials'
+import { Route as appConnectionsRouteImport } from './routes/(app)/connections'
+import { Route as appSettingsRouteRouteImport } from './routes/(app)/settings/route'
+import { Route as appSettingsIndexRouteImport } from './routes/(app)/settings/index'
+import { Route as appSettingsOrganizationRouteImport } from './routes/(app)/settings/organization'
+import { Route as appSettingsMembersRouteImport } from './routes/(app)/settings/members'
+import { Route as appKeysIdRouteImport } from './routes/(app)/keys.$id'
 
+const authRouteRoute = authRouteRouteImport.update({
+  id: '/(auth)',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const appRouteRoute = appRouteRouteImport.update({
+  id: '/(app)',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -22,35 +46,214 @@ const V1SplatRoute = V1SplatRouteImport.update({
   path: '/v1/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const authSignUpRoute = authSignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => authRouteRoute,
+} as any)
+const authSignInRoute = authSignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => authRouteRoute,
+} as any)
+const authOnboardingRoute = authOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => authRouteRoute,
+} as any)
+const appPostingRoute = appPostingRouteImport.update({
+  id: '/posting',
+  path: '/posting',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appKeysRoute = appKeysRouteImport.update({
+  id: '/keys',
+  path: '/keys',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appIntegrationsRoute = appIntegrationsRouteImport.update({
+  id: '/integrations',
+  path: '/integrations',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appDashboardRoute = appDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appCredentialsRoute = appCredentialsRouteImport.update({
+  id: '/credentials',
+  path: '/credentials',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appConnectionsRoute = appConnectionsRouteImport.update({
+  id: '/connections',
+  path: '/connections',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appSettingsRouteRoute = appSettingsRouteRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => appRouteRoute,
+} as any)
+const appSettingsIndexRoute = appSettingsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => appSettingsRouteRoute,
+} as any)
+const appSettingsOrganizationRoute = appSettingsOrganizationRouteImport.update({
+  id: '/organization',
+  path: '/organization',
+  getParentRoute: () => appSettingsRouteRoute,
+} as any)
+const appSettingsMembersRoute = appSettingsMembersRouteImport.update({
+  id: '/members',
+  path: '/members',
+  getParentRoute: () => appSettingsRouteRoute,
+} as any)
+const appKeysIdRoute = appKeysIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => appKeysRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/settings': typeof appSettingsRouteRouteWithChildren
+  '/connections': typeof appConnectionsRoute
+  '/credentials': typeof appCredentialsRoute
+  '/dashboard': typeof appDashboardRoute
+  '/integrations': typeof appIntegrationsRoute
+  '/keys': typeof appKeysRouteWithChildren
+  '/posting': typeof appPostingRoute
+  '/onboarding': typeof authOnboardingRoute
+  '/sign-in': typeof authSignInRoute
+  '/sign-up': typeof authSignUpRoute
   '/v1/$': typeof V1SplatRoute
+  '/keys/$id': typeof appKeysIdRoute
+  '/settings/members': typeof appSettingsMembersRoute
+  '/settings/organization': typeof appSettingsOrganizationRoute
+  '/settings/': typeof appSettingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/connections': typeof appConnectionsRoute
+  '/credentials': typeof appCredentialsRoute
+  '/dashboard': typeof appDashboardRoute
+  '/integrations': typeof appIntegrationsRoute
+  '/keys': typeof appKeysRouteWithChildren
+  '/posting': typeof appPostingRoute
+  '/onboarding': typeof authOnboardingRoute
+  '/sign-in': typeof authSignInRoute
+  '/sign-up': typeof authSignUpRoute
   '/v1/$': typeof V1SplatRoute
+  '/keys/$id': typeof appKeysIdRoute
+  '/settings/members': typeof appSettingsMembersRoute
+  '/settings/organization': typeof appSettingsOrganizationRoute
+  '/settings': typeof appSettingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/(app)': typeof appRouteRouteWithChildren
+  '/(auth)': typeof authRouteRouteWithChildren
+  '/(app)/settings': typeof appSettingsRouteRouteWithChildren
+  '/(app)/connections': typeof appConnectionsRoute
+  '/(app)/credentials': typeof appCredentialsRoute
+  '/(app)/dashboard': typeof appDashboardRoute
+  '/(app)/integrations': typeof appIntegrationsRoute
+  '/(app)/keys': typeof appKeysRouteWithChildren
+  '/(app)/posting': typeof appPostingRoute
+  '/(auth)/onboarding': typeof authOnboardingRoute
+  '/(auth)/sign-in': typeof authSignInRoute
+  '/(auth)/sign-up': typeof authSignUpRoute
   '/v1/$': typeof V1SplatRoute
+  '/(app)/keys/$id': typeof appKeysIdRoute
+  '/(app)/settings/members': typeof appSettingsMembersRoute
+  '/(app)/settings/organization': typeof appSettingsOrganizationRoute
+  '/(app)/settings/': typeof appSettingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/v1/$'
+  fullPaths:
+    | '/'
+    | '/settings'
+    | '/connections'
+    | '/credentials'
+    | '/dashboard'
+    | '/integrations'
+    | '/keys'
+    | '/posting'
+    | '/onboarding'
+    | '/sign-in'
+    | '/sign-up'
+    | '/v1/$'
+    | '/keys/$id'
+    | '/settings/members'
+    | '/settings/organization'
+    | '/settings/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/v1/$'
-  id: '__root__' | '/' | '/v1/$'
+  to:
+    | '/'
+    | '/connections'
+    | '/credentials'
+    | '/dashboard'
+    | '/integrations'
+    | '/keys'
+    | '/posting'
+    | '/onboarding'
+    | '/sign-in'
+    | '/sign-up'
+    | '/v1/$'
+    | '/keys/$id'
+    | '/settings/members'
+    | '/settings/organization'
+    | '/settings'
+  id:
+    | '__root__'
+    | '/'
+    | '/(app)'
+    | '/(auth)'
+    | '/(app)/settings'
+    | '/(app)/connections'
+    | '/(app)/credentials'
+    | '/(app)/dashboard'
+    | '/(app)/integrations'
+    | '/(app)/keys'
+    | '/(app)/posting'
+    | '/(auth)/onboarding'
+    | '/(auth)/sign-in'
+    | '/(auth)/sign-up'
+    | '/v1/$'
+    | '/(app)/keys/$id'
+    | '/(app)/settings/members'
+    | '/(app)/settings/organization'
+    | '/(app)/settings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  appRouteRoute: typeof appRouteRouteWithChildren
+  authRouteRoute: typeof authRouteRouteWithChildren
   V1SplatRoute: typeof V1SplatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/(auth)': {
+      id: '/(auth)'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof authRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(app)': {
+      id: '/(app)'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof appRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -65,11 +268,177 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof V1SplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(auth)/sign-up': {
+      id: '/(auth)/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof authSignUpRouteImport
+      parentRoute: typeof authRouteRoute
+    }
+    '/(auth)/sign-in': {
+      id: '/(auth)/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof authSignInRouteImport
+      parentRoute: typeof authRouteRoute
+    }
+    '/(auth)/onboarding': {
+      id: '/(auth)/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof authOnboardingRouteImport
+      parentRoute: typeof authRouteRoute
+    }
+    '/(app)/posting': {
+      id: '/(app)/posting'
+      path: '/posting'
+      fullPath: '/posting'
+      preLoaderRoute: typeof appPostingRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/keys': {
+      id: '/(app)/keys'
+      path: '/keys'
+      fullPath: '/keys'
+      preLoaderRoute: typeof appKeysRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/integrations': {
+      id: '/(app)/integrations'
+      path: '/integrations'
+      fullPath: '/integrations'
+      preLoaderRoute: typeof appIntegrationsRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/dashboard': {
+      id: '/(app)/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof appDashboardRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/credentials': {
+      id: '/(app)/credentials'
+      path: '/credentials'
+      fullPath: '/credentials'
+      preLoaderRoute: typeof appCredentialsRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/connections': {
+      id: '/(app)/connections'
+      path: '/connections'
+      fullPath: '/connections'
+      preLoaderRoute: typeof appConnectionsRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/settings': {
+      id: '/(app)/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof appSettingsRouteRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/settings/': {
+      id: '/(app)/settings/'
+      path: '/'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof appSettingsIndexRouteImport
+      parentRoute: typeof appSettingsRouteRoute
+    }
+    '/(app)/settings/organization': {
+      id: '/(app)/settings/organization'
+      path: '/organization'
+      fullPath: '/settings/organization'
+      preLoaderRoute: typeof appSettingsOrganizationRouteImport
+      parentRoute: typeof appSettingsRouteRoute
+    }
+    '/(app)/settings/members': {
+      id: '/(app)/settings/members'
+      path: '/members'
+      fullPath: '/settings/members'
+      preLoaderRoute: typeof appSettingsMembersRouteImport
+      parentRoute: typeof appSettingsRouteRoute
+    }
+    '/(app)/keys/$id': {
+      id: '/(app)/keys/$id'
+      path: '/$id'
+      fullPath: '/keys/$id'
+      preLoaderRoute: typeof appKeysIdRouteImport
+      parentRoute: typeof appKeysRoute
+    }
   }
 }
 
+interface appSettingsRouteRouteChildren {
+  appSettingsMembersRoute: typeof appSettingsMembersRoute
+  appSettingsOrganizationRoute: typeof appSettingsOrganizationRoute
+  appSettingsIndexRoute: typeof appSettingsIndexRoute
+}
+
+const appSettingsRouteRouteChildren: appSettingsRouteRouteChildren = {
+  appSettingsMembersRoute: appSettingsMembersRoute,
+  appSettingsOrganizationRoute: appSettingsOrganizationRoute,
+  appSettingsIndexRoute: appSettingsIndexRoute,
+}
+
+const appSettingsRouteRouteWithChildren =
+  appSettingsRouteRoute._addFileChildren(appSettingsRouteRouteChildren)
+
+interface appKeysRouteChildren {
+  appKeysIdRoute: typeof appKeysIdRoute
+}
+
+const appKeysRouteChildren: appKeysRouteChildren = {
+  appKeysIdRoute: appKeysIdRoute,
+}
+
+const appKeysRouteWithChildren =
+  appKeysRoute._addFileChildren(appKeysRouteChildren)
+
+interface appRouteRouteChildren {
+  appSettingsRouteRoute: typeof appSettingsRouteRouteWithChildren
+  appConnectionsRoute: typeof appConnectionsRoute
+  appCredentialsRoute: typeof appCredentialsRoute
+  appDashboardRoute: typeof appDashboardRoute
+  appIntegrationsRoute: typeof appIntegrationsRoute
+  appKeysRoute: typeof appKeysRouteWithChildren
+  appPostingRoute: typeof appPostingRoute
+}
+
+const appRouteRouteChildren: appRouteRouteChildren = {
+  appSettingsRouteRoute: appSettingsRouteRouteWithChildren,
+  appConnectionsRoute: appConnectionsRoute,
+  appCredentialsRoute: appCredentialsRoute,
+  appDashboardRoute: appDashboardRoute,
+  appIntegrationsRoute: appIntegrationsRoute,
+  appKeysRoute: appKeysRouteWithChildren,
+  appPostingRoute: appPostingRoute,
+}
+
+const appRouteRouteWithChildren = appRouteRoute._addFileChildren(
+  appRouteRouteChildren,
+)
+
+interface authRouteRouteChildren {
+  authOnboardingRoute: typeof authOnboardingRoute
+  authSignInRoute: typeof authSignInRoute
+  authSignUpRoute: typeof authSignUpRoute
+}
+
+const authRouteRouteChildren: authRouteRouteChildren = {
+  authOnboardingRoute: authOnboardingRoute,
+  authSignInRoute: authSignInRoute,
+  authSignUpRoute: authSignUpRoute,
+}
+
+const authRouteRouteWithChildren = authRouteRoute._addFileChildren(
+  authRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  appRouteRoute: appRouteRouteWithChildren,
+  authRouteRoute: authRouteRouteWithChildren,
   V1SplatRoute: V1SplatRoute,
 }
 export const routeTree = rootRouteImport

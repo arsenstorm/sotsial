@@ -29,8 +29,8 @@ const buildProxyHeaders = async (
 };
 
 const rewriteLocation = (location: string, host: string): string => {
-  const publicPath = location.startsWith("http://api/")
-    ? location.replace("http://api/", "/")
+  const publicPath = location.startsWith("http://v1/")
+    ? location.replace("http://v1/", "/")
     : location;
 
   return new URL(publicPath, host).toString();

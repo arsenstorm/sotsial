@@ -6,9 +6,7 @@ import { env } from "./env";
 const auth = new Hono<{
   Bindings: CloudflareBindings & DatabaseBindings;
   Variables: { cf: CfProperties<unknown> | null };
-}>();
-
-auth.on(["POST", "GET"], "/*", (c) => {
+}>().on(["POST", "GET"], "/*", (c) => {
   const cf = c.get("cf");
   return initAuth(env, cf ?? undefined).handler(c.req.raw);
 });

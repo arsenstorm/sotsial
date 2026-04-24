@@ -8,6 +8,13 @@
       "when": 1777029855743,
       "tag": "0000_mysterious_mister_fear",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1777032027216,
+      "tag": "0001_spicy_scarecrow",
+      "breakpoints": true
     }
   ]
 }
