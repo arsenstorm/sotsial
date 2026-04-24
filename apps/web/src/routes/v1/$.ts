@@ -69,6 +69,7 @@ export const Route = createFileRoute("/v1/$")({
         const host = env.PUBLIC_APP_BASE_URL;
         const url = new URL(request.url, host);
         const targetPath = normalizeProxyPath(url.pathname);
+
         const response = await env.API.fetch(
           `http://api${targetPath}${url.search}`,
           {

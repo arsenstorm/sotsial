@@ -2,15 +2,7 @@ import { type Database, getHyperdriveDatabase } from "@sotsial/db/client";
 import type { Context } from "hono";
 import { env } from "./env";
 
-let instance: Database | null = null;
-
-export const db = (): Database => {
-  if (!instance) {
-    instance = getHyperdriveDatabase(env.DATABASE);
-  }
-
-  return instance;
-};
+export const db = (): Database => getHyperdriveDatabase(env.DATABASE);
 
 export type AppContext = Context<{
   Bindings: CloudflareBindings;

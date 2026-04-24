@@ -1,6 +1,8 @@
 import {
   Logout02Icon,
+  Moon02Icon,
   PlusSignIcon,
+  Sun02Icon,
   Tick02Icon,
   UnfoldMoreIcon,
 } from "@hugeicons/core-free-icons";
@@ -36,6 +38,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTheme } from "@/components/theme-provider";
 import { authClient, sessionQuery } from "@/lib/auth";
 
 const slugify = (value: string) =>
@@ -51,7 +54,9 @@ export function NavUser({ name, email }: { name: string; email: string }) {
   const { isMobile } = useSidebar();
   const { data: orgs } = authClient.useListOrganizations();
   const { data: activeOrg } = authClient.useActiveOrganization();
+  const { theme, setTheme } = useTheme();
   const [createOpen, setCreateOpen] = useState(false);
+  const isDark = theme === "dark";
 
   const initials = (name || email)
     .split(" ")
@@ -167,6 +172,16 @@ export function NavUser({ name, email }: { name: string; email: string }) {
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
+                <DropdownMenuItem
+                  closeOnClick={false}
+                  onClick={() => setTheme(isDark ? "light" : "dark")}
+                >
+                  <HugeiconsIcon
+                    icon={isDark ? Sun02Icon : Moon02Icon}
+                    strokeWidth={2}
+                  />
+                  {isDark ? "Light mode" : "Dark mode"}
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={onSignOut}>
                   <HugeiconsIcon icon={Logout02Icon} strokeWidth={2} />
                   Sign out
