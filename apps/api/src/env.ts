@@ -37,11 +37,8 @@ export const env = createEnv({
     // Encryption (OAuth tokens, CSRF tokens, client secrets at rest)
     ENCRYPTION_KEY: z.string().min(1),
 
-    // Optional CDN base URL for media transforms
-    CDN_BASE_URL: z.string().url().optional(),
-
-    // HMAC signing key for the CDN proxy (required when CDN_BASE_URL is set)
-    SOTSIAL_PROXY_KEY: z.string().min(1).optional(),
+    // HMAC signing key for the CDN proxy
+    SOTSIAL_PROXY_KEY: z.string().min(1),
 
     // Platform credentials (Sotsial-provided fallbacks)
     ...platformCredentials,

@@ -1,5 +1,4 @@
 import { Hono } from "hono";
-import { logger } from "hono/logger";
 import auth from "./auth";
 import callback from "./routes/callback";
 import connections from "./routes/connections";
@@ -11,9 +10,7 @@ import publish from "./routes/publish";
 const app = new Hono<{
   Bindings: CloudflareBindings;
   Variables: { cf?: CfProperties<unknown> | null };
-}>();
-app
-  .use(logger())
+}>()
   // Capture Cloudflare request properties once so downstream handlers can use them.
   .use("*", async (c, next) => {
     c.set("cf", c.req.raw.cf ?? null);

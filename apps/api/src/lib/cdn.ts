@@ -18,10 +18,6 @@ const toHex = (buffer: ArrayBuffer): string => {
  * signing key is not configured, the original URL is returned unchanged.
  */
 export const createCdnUrl = async (url: string): Promise<string> => {
-  if (!(env.CDN_BASE_URL && env.SOTSIAL_PROXY_KEY)) {
-    return url;
-  }
-
   let canonical: string;
   try {
     canonical = new URL(url).toString();
@@ -47,7 +43,7 @@ export const createCdnUrl = async (url: string): Promise<string> => {
   );
   const token = toHex(signature);
 
-  const proxied = new URL(env.CDN_BASE_URL);
+  const proxied = new URL("https://proxy.sotsial.com");
   proxied.searchParams.set("url", canonical);
   proxied.searchParams.set("expires", String(expiresAt));
   proxied.searchParams.set("token", token);

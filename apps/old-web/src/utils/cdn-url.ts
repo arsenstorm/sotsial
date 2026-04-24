@@ -1,6 +1,5 @@
 import "server-only";
 
-const CDN_BASE_URL = "https://proxy.sotsial.com/";
 const DEFAULT_EXPIRY_SECONDS = 60 * 60 * 24 * 7; // 7 days
 
 const encoder = new TextEncoder();
@@ -52,7 +51,7 @@ export async function createCdnUrl(
   );
   const token = toHex(signature);
 
-  const proxied = new URL(CDN_BASE_URL);
+  const proxied = new URL("https://proxy.sotsial.com");
   proxied.searchParams.set("url", canonical);
   proxied.searchParams.set("expires", String(expiresAt));
   proxied.searchParams.set("token", token);
