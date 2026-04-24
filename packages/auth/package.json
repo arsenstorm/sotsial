@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@better-auth/api-key": "^1.6.9",
     "@sotsial/db": "workspace:*",
     "better-auth": "^1.6.2"
   },
@@ -25,6 +26,7 @@
   "exports": {
     "./server": "./src/server.ts",
     "./client": "./src/client.ts",
-    "./types": "./src/types.ts"
+    "./types": "./src/types.ts",
+    "./cloudflare/proxy": "./src/cloudflare/proxy.ts"
   }
 }

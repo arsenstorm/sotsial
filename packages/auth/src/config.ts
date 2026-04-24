@@ -1,14 +1,15 @@
+import { apiKey } from "@better-auth/api-key";
 import type { BetterAuthOptions } from "better-auth";
-import { admin } from "better-auth/plugins";
+import { admin, organization } from "better-auth/plugins";
 import { ac, roles } from "./permissions";
 import type { AuthEnv } from "./types";
 
-export const core = (env: AuthEnv) => {
+export const core = (env: AuthEnv, _cf?: CfProperties<unknown>) => {
   return {
     telemetry: { enabled: false },
     appName: "sotsial",
     baseURL: env.APP_BASE_URL,
-    basePath: "/api/auth",
+    basePath: "/v1/auth",
     secret: env.AUTH_SECRET,
     advanced: {
       cookiePrefix: "sotsial",
@@ -30,6 +31,13 @@ export const core = (env: AuthEnv) => {
     },
     trustedOrigins: [env.APP_BASE_URL],
     plugins: [
+      // Organization API keys
+      apiKey({
+        configId: "organization",
+        defaultPrefix: "so_",
+        references: "organization",
+      }),
+      organization({}),
       admin({
         ac,
         roles,

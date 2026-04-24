@@ -1,4 +1,3 @@
-import { initAuth } from "@sotsial/auth/server";
 import handler from "@tanstack/react-start/server-entry";
 
 const CUSTOM_HOST = "sotsial.com";
@@ -8,14 +7,10 @@ export default {
   // biome-ignore lint/suspicious/useAwait: intentionally async
   async fetch(
     request: Request,
-    env: CloudflareBindings,
+    _env: CloudflareBindings,
     _ctx: ExecutionContext
   ) {
     const url = new URL(request.url);
-
-    if (url.pathname.startsWith("/api/auth/")) {
-      return initAuth(env).handler(request);
-    }
 
     if (url.pathname.startsWith("/docs")) {
       const proxyUrl = new URL(request.url);

@@ -3,7 +3,7 @@ import { createAuthClient } from "better-auth/react";
 import type { Auth } from "./server";
 
 const client = createAuthClient({
-  basePath: "/api/auth",
+  basePath: "/v1/auth",
   plugins: [inferAdditionalFields<Auth>(), adminClient()],
 });
 

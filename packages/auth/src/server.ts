@@ -4,11 +4,11 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { core } from "./config";
 import type { AuthEnv } from "./types";
 
-export const initAuth = (env: AuthEnv) => {
+export const initAuth = (env: AuthEnv, cf?: CfProperties<unknown>) => {
   const hyperdrive = getHyperdriveDatabase(env.DATABASE);
 
   return betterAuth({
-    ...core(env),
+    ...core(env, cf),
     database: drizzleAdapter(hyperdrive, {
       provider: "pg",
       usePlural: false,
