@@ -9,7 +9,33 @@ export const organization = pgTable("organization", {
   logo: text("logo"),
   metadata: text("metadata"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  stripeCustomerId: text("stripe_customer_id"),
 });
+
+export const subscription = pgTable(
+  "subscription",
+  {
+    id: uuid("id").default(sql`pg_catalog.gen_random_uuid()`).primaryKey(),
+    plan: text("plan").notNull(),
+    referenceId: text("reference_id").notNull(),
+    stripeCustomerId: text("stripe_customer_id"),
+    stripeSubscriptionId: text("stripe_subscription_id"),
+    status: text("status").notNull().default("incomplete"),
+    periodStart: timestamp("period_start"),
+    periodEnd: timestamp("period_end"),
+    cancelAtPeriodEnd: text("cancel_at_period_end"),
+    seats: text("seats"),
+    trialStart: timestamp("trial_start"),
+    trialEnd: timestamp("trial_end"),
+    stripeScheduleId: text("stripe_schedule_id"),
+  },
+  (table) => [
+    index("subscription_referenceId_idx").on(table.referenceId),
+    index("subscription_stripeSubscriptionId_idx").on(
+      table.stripeSubscriptionId
+    ),
+  ]
+);
 
 export const member = pgTable(
   "member",

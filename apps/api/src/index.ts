@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import auth from "./auth";
+import billing from "./routes/billing";
 import callback from "./routes/callback";
 import connections from "./routes/connections";
 import connectionsVerify from "./routes/connections-verify";
@@ -26,6 +27,7 @@ const app = new Hono<{
   .route("/v1/posts", posts)
   .route("/v1/credentials", credentials)
   .route("/v1/keys", keys)
+  .route("/v1/billing", billing)
   .route("/v1/upload", upload)
   .route("/v1/callback", callback);
 

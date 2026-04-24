@@ -41,6 +41,12 @@ export const env = createEnv({
     // HMAC signing key for the CDN proxy
     SOTSIAL_PROXY_KEY: z.string().min(1),
 
+    // Stripe (optional — billing features activate when set)
+    STRIPE_SECRET_KEY: z.string().optional(),
+    STRIPE_WEBHOOK_SECRET: z.string().optional(),
+    STRIPE_PRICE_TEAM: z.string().optional(),
+    STRIPE_PRICE_ENTERPRISE: z.string().optional(),
+
     // Platform credentials (Sotsial-provided fallbacks)
     ...platformCredentials,
   },

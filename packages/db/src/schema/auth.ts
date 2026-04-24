@@ -23,7 +23,22 @@ export const user = pgTable("user", {
   banned: boolean("banned").default(false),
   banReason: text("ban_reason"),
   banExpires: timestamp("ban_expires"),
+  twoFactorEnabled: boolean("two_factor_enabled").default(false),
+  stripeCustomerId: text("stripe_customer_id"),
 });
+
+export const twoFactor = pgTable(
+  "two_factor",
+  {
+    id: uuid("id").default(sql`pg_catalog.gen_random_uuid()`).primaryKey(),
+    secret: text("secret").notNull(),
+    backupCodes: text("backup_codes").notNull(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+  },
+  (table) => [index("two_factor_userId_idx").on(table.userId)]
+);
 
 export const session = pgTable(
   "session",

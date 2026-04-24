@@ -28,6 +28,7 @@ import { Route as appConnectionsRouteImport } from './routes/(app)/connections'
 import { Route as appSettingsRouteRouteImport } from './routes/(app)/settings/route'
 import { Route as appSettingsIndexRouteImport } from './routes/(app)/settings/index'
 import { Route as appPostsIndexRouteImport } from './routes/(app)/posts/index'
+import { Route as authSignInTwoFactorRouteImport } from './routes/(auth)/sign-in.two-factor'
 import { Route as authInviteIdRouteImport } from './routes/(auth)/invite.$id'
 import { Route as appSettingsOrganizationRouteImport } from './routes/(app)/settings/organization'
 import { Route as appSettingsMembersRouteImport } from './routes/(app)/settings/members'
@@ -129,6 +130,11 @@ const appPostsIndexRoute = appPostsIndexRouteImport.update({
   path: '/posts/',
   getParentRoute: () => appRouteRoute,
 } as any)
+const authSignInTwoFactorRoute = authSignInTwoFactorRouteImport.update({
+  id: '/two-factor',
+  path: '/two-factor',
+  getParentRoute: () => authSignInRoute,
+} as any)
 const authInviteIdRoute = authInviteIdRouteImport.update({
   id: '/invite/$id',
   path: '/invite/$id',
@@ -178,7 +184,7 @@ export interface FileRoutesByFullPath {
   '/help': typeof appHelpRoute
   '/keys': typeof appKeysRouteWithChildren
   '/onboarding': typeof authOnboardingRoute
-  '/sign-in': typeof authSignInRoute
+  '/sign-in': typeof authSignInRouteWithChildren
   '/sign-up': typeof authSignUpRoute
   '/privacy': typeof legalPrivacyRoute
   '/security': typeof legalSecurityRoute
@@ -193,6 +199,7 @@ export interface FileRoutesByFullPath {
   '/settings/members': typeof appSettingsMembersRoute
   '/settings/organization': typeof appSettingsOrganizationRoute
   '/invite/$id': typeof authInviteIdRoute
+  '/sign-in/two-factor': typeof authSignInTwoFactorRoute
   '/posts/': typeof appPostsIndexRoute
   '/settings/': typeof appSettingsIndexRoute
 }
@@ -203,7 +210,7 @@ export interface FileRoutesByTo {
   '/help': typeof appHelpRoute
   '/keys': typeof appKeysRouteWithChildren
   '/onboarding': typeof authOnboardingRoute
-  '/sign-in': typeof authSignInRoute
+  '/sign-in': typeof authSignInRouteWithChildren
   '/sign-up': typeof authSignUpRoute
   '/privacy': typeof legalPrivacyRoute
   '/security': typeof legalSecurityRoute
@@ -218,6 +225,7 @@ export interface FileRoutesByTo {
   '/settings/members': typeof appSettingsMembersRoute
   '/settings/organization': typeof appSettingsOrganizationRoute
   '/invite/$id': typeof authInviteIdRoute
+  '/sign-in/two-factor': typeof authSignInTwoFactorRoute
   '/posts': typeof appPostsIndexRoute
   '/settings': typeof appSettingsIndexRoute
 }
@@ -233,7 +241,7 @@ export interface FileRoutesById {
   '/(app)/help': typeof appHelpRoute
   '/(app)/keys': typeof appKeysRouteWithChildren
   '/(auth)/onboarding': typeof authOnboardingRoute
-  '/(auth)/sign-in': typeof authSignInRoute
+  '/(auth)/sign-in': typeof authSignInRouteWithChildren
   '/(auth)/sign-up': typeof authSignUpRoute
   '/(legal)/privacy': typeof legalPrivacyRoute
   '/(legal)/security': typeof legalSecurityRoute
@@ -248,6 +256,7 @@ export interface FileRoutesById {
   '/(app)/settings/members': typeof appSettingsMembersRoute
   '/(app)/settings/organization': typeof appSettingsOrganizationRoute
   '/(auth)/invite/$id': typeof authInviteIdRoute
+  '/(auth)/sign-in/two-factor': typeof authSignInTwoFactorRoute
   '/(app)/posts/': typeof appPostsIndexRoute
   '/(app)/settings/': typeof appSettingsIndexRoute
 }
@@ -276,6 +285,7 @@ export interface FileRouteTypes {
     | '/settings/members'
     | '/settings/organization'
     | '/invite/$id'
+    | '/sign-in/two-factor'
     | '/posts/'
     | '/settings/'
   fileRoutesByTo: FileRoutesByTo
@@ -301,6 +311,7 @@ export interface FileRouteTypes {
     | '/settings/members'
     | '/settings/organization'
     | '/invite/$id'
+    | '/sign-in/two-factor'
     | '/posts'
     | '/settings'
   id:
@@ -330,6 +341,7 @@ export interface FileRouteTypes {
     | '/(app)/settings/members'
     | '/(app)/settings/organization'
     | '/(auth)/invite/$id'
+    | '/(auth)/sign-in/two-factor'
     | '/(app)/posts/'
     | '/(app)/settings/'
   fileRoutesById: FileRoutesById
@@ -478,6 +490,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appPostsIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
+    '/(auth)/sign-in/two-factor': {
+      id: '/(auth)/sign-in/two-factor'
+      path: '/two-factor'
+      fullPath: '/sign-in/two-factor'
+      preLoaderRoute: typeof authSignInTwoFactorRouteImport
+      parentRoute: typeof authSignInRoute
+    }
     '/(auth)/invite/$id': {
       id: '/(auth)/invite/$id'
       path: '/invite/$id'
@@ -593,16 +612,28 @@ const appRouteRouteWithChildren = appRouteRoute._addFileChildren(
   appRouteRouteChildren,
 )
 
+interface authSignInRouteChildren {
+  authSignInTwoFactorRoute: typeof authSignInTwoFactorRoute
+}
+
+const authSignInRouteChildren: authSignInRouteChildren = {
+  authSignInTwoFactorRoute: authSignInTwoFactorRoute,
+}
+
+const authSignInRouteWithChildren = authSignInRoute._addFileChildren(
+  authSignInRouteChildren,
+)
+
 interface authRouteRouteChildren {
   authOnboardingRoute: typeof authOnboardingRoute
-  authSignInRoute: typeof authSignInRoute
+  authSignInRoute: typeof authSignInRouteWithChildren
   authSignUpRoute: typeof authSignUpRoute
   authInviteIdRoute: typeof authInviteIdRoute
 }
 
 const authRouteRouteChildren: authRouteRouteChildren = {
   authOnboardingRoute: authOnboardingRoute,
-  authSignInRoute: authSignInRoute,
+  authSignInRoute: authSignInRouteWithChildren,
   authSignUpRoute: authSignUpRoute,
   authInviteIdRoute: authInviteIdRoute,
 }

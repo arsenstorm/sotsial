@@ -1,5 +1,6 @@
 import { Search01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { Kbd } from "@sotsial/ui/components/kbd";
 import { Label } from "@sotsial/ui/components/label";
 import { SidebarInput } from "@sotsial/ui/components/sidebar";
 
@@ -11,7 +12,7 @@ export function SearchForm({ ...props }: React.ComponentProps<"form">) {
           Search
         </Label>
         <SidebarInput
-          className="h-8 pl-7"
+          className="h-8 pr-14 pl-7"
           id="site-search"
           placeholder="Search…"
         />
@@ -20,6 +21,9 @@ export function SearchForm({ ...props }: React.ComponentProps<"form">) {
           icon={Search01Icon}
           strokeWidth={2}
         />
+        <Kbd className="pointer-events-none absolute top-1/2 right-1.5 -translate-y-1/2 select-none">
+          ⌘K
+        </Kbd>
       </div>
     </form>
   );

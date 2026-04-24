@@ -1,6 +1,8 @@
 import { apiKey } from "@better-auth/api-key";
+import { stripe as stripePlugin } from "@better-auth/stripe";
 import type { BetterAuthOptions } from "better-auth";
-import { admin, organization } from "better-auth/plugins";
+import { admin, organization, twoFactor } from "better-auth/plugins";
+import Stripe from "stripe";
 import { orgAc, orgRoles, systemAc, systemRoles } from "./permissions";
 import type { AuthEnv } from "./types";
 
@@ -75,7 +77,6 @@ export const core = (env: AuthEnv, _cf?: CfProperties<unknown>) => {
           // Email delivery is deferred; log the invite URL so the owner can
           // copy it by hand. The Members page also exposes a Copy link button.
           const inviteUrl = `${env.AUTH_URL}/invite/${invitation.id}`;
-          // biome-ignore lint/suspicious/noConsole: invite link surfacing for dev
           console.log(
             `[invite] ${org.name} → ${invitation.email} (${invitation.role}): ${inviteUrl}`
           );
@@ -93,6 +94,54 @@ export const core = (env: AuthEnv, _cf?: CfProperties<unknown>) => {
         adminRoles: ["admin"],
         defaultRole: "user",
       }),
+      twoFactor({
+        issuer: "Sotsial",
+      }),
+      ...buildStripePlugins(env),
     ],
   } satisfies BetterAuthOptions;
 };
+
+function buildStripePlugins(env: AuthEnv) {
+  if (!(env.STRIPE_SECRET_KEY && env.STRIPE_WEBHOOK_SECRET)) {
+    return [];
+  }
+
+  const stripeClient = new Stripe(env.STRIPE_SECRET_KEY, {
+    httpClient: Stripe.createFetchHttpClient(),
+  });
+
+  const plans = [
+    { name: "free", limits: { posts: 100, accounts: 3 } },
+    ...(env.STRIPE_PRICE_TEAM
+      ? [
+          {
+            name: "team",
+            priceId: env.STRIPE_PRICE_TEAM,
+            limits: { posts: 10_000, accounts: 999 },
+          },
+        ]
+      : []),
+    ...(env.STRIPE_PRICE_ENTERPRISE
+      ? [
+          {
+            name: "enterprise",
+            priceId: env.STRIPE_PRICE_ENTERPRISE,
+            limits: { posts: 999_999, accounts: 999_999 },
+          },
+        ]
+      : []),
+  ];
+
+  return [
+    stripePlugin({
+      stripeClient,
+      stripeWebhookSecret: env.STRIPE_WEBHOOK_SECRET,
+      createCustomerOnSignUp: true,
+      subscription: {
+        enabled: true,
+        plans,
+      },
+    }),
+  ];
+}

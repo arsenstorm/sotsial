@@ -10,4 +10,8 @@ export interface AuthEnv {
   AUTH_URL: string;
   DATABASE: Hyperdrive;
   ENVIRONMENT: "production" | "development";
+  STRIPE_PRICE_ENTERPRISE?: string;
+  STRIPE_PRICE_TEAM?: string;
+  STRIPE_SECRET_KEY?: string;
+  STRIPE_WEBHOOK_SECRET?: string;
 }
