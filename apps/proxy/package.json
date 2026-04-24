@@ -1,0 +1,16 @@
+{
+  "name": "sotsial-proxy",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy --minify --env-file ../../.env --env production",
+    "cf:types": "wrangler types workers.d.ts --env-interface CloudflareBindings"
+  },
+  "dependencies": {
+    "evlog": "^2.14.0",
+    "hono": "^4.12.15"
+  },
+  "devDependencies": {
+    "wrangler": "^4.4.0"
+  }
+}

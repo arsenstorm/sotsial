@@ -144,7 +144,10 @@ const app = new Hono<{
     const transformedMedia =
       mediaInput && mediaInput.length > 0
         ? await Promise.all(
-            mediaInput.map((m) => ({ ...m, url: createCdnUrl(m.url) }))
+            mediaInput.map(async (m) => ({
+              ...m,
+              url: await createCdnUrl(m.url),
+            }))
           )
         : undefined;
 

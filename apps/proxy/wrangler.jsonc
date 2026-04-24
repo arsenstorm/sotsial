@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "sotsial-api",
+  "name": "sotsial-proxy",
   "main": "src/index.ts",
   "account_id": "8dd0864e5cce87fba700990f062744f0",
   "compatibility_date": "2026-04-24",
@@ -14,35 +14,27 @@
   },
   "routes": [
     {
-      "pattern": "https://api.sotsial.com/*",
+      "pattern": "https://proxy.sotsial.com/*",
       "zone_name": "sotsial.com",
       "custom_domain": false
     },
     {
-      "pattern": "api.sotsial.com",
+      "pattern": "proxy.sotsial.com",
       "zone_name": "sotsial.com",
       "custom_domain": true
     }
   ],
   "vars": {
-    "APP_BASE_URL": "http://localhost:3000",
-    "AUTH_URL": "http://localhost:3000",
     "ENVIRONMENT": "development"
+  },
+  "secrets": {
+    "required": ["SOTSIAL_PROXY_KEY"]
   },
   "env": {
     "production": {
       "vars": {
-        "APP_BASE_URL": "https://api.sotsial.com",
-        "AUTH_URL": "https://sotsial.com",
         "ENVIRONMENT": "production"
       }
     }
-  },
-  "hyperdrive": [
-    {
-      "binding": "DATABASE",
-      "id": "REPLACE_WITH_HYPERDRIVE_ID",
-      "localConnectionString": "postgresql://postgres:postgres@127.0.0.1:6432/sotsial"
-    }
-  ]
+  }
 }

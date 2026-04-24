@@ -1,17 +1,55 @@
 import { env } from "../env";
 
+const DEFAULT_EXPIRY_SECONDS = 60 * 60 * 24 * 7; // 7 days
+
+const encoder = new TextEncoder();
+
+const toHex = (buffer: ArrayBuffer): string => {
+  const bytes = new Uint8Array(buffer);
+  let out = "";
+  for (const byte of bytes) {
+    out += byte.toString(16).padStart(2, "0");
+  }
+  return out;
+};
+
 /**
- * Rewrite a media URL through the configured CDN. If no CDN base URL is set,
- * the original URL is returned unchanged.
+ * Rewrite a media URL through the signing CDN proxy. If the CDN base URL or
+ * signing key is not configured, the original URL is returned unchanged.
  */
-export const createCdnUrl = (url: string): string => {
-  if (!env.CDN_BASE_URL) {
+export const createCdnUrl = async (url: string): Promise<string> => {
+  if (!(env.CDN_BASE_URL && env.SOTSIAL_PROXY_KEY)) {
     return url;
   }
 
+  let canonical: string;
   try {
-    return new URL(`/${encodeURIComponent(url)}`, env.CDN_BASE_URL).toString();
+    canonical = new URL(url).toString();
   } catch {
     return url;
   }
+
+  const expiresAt = Math.floor(Date.now() / 1000) + DEFAULT_EXPIRY_SECONDS;
+  // Must match the verifier: `v1:${expiresAt ?? ''}:${canonical URL}`.
+  const payload = `v1:${expiresAt}:${canonical}`;
+
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(env.SOTSIAL_PROXY_KEY),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const signature = await crypto.subtle.sign(
+    "HMAC",
+    key,
+    encoder.encode(payload)
+  );
+  const token = toHex(signature);
+
+  const proxied = new URL(env.CDN_BASE_URL);
+  proxied.searchParams.set("url", canonical);
+  proxied.searchParams.set("expires", String(expiresAt));
+  proxied.searchParams.set("token", token);
+  return proxied.toString();
 };

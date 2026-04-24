@@ -40,6 +40,9 @@ export const env = createEnv({
     // Optional CDN base URL for media transforms
     CDN_BASE_URL: z.string().url().optional(),
 
+    // HMAC signing key for the CDN proxy (required when CDN_BASE_URL is set)
+    SOTSIAL_PROXY_KEY: z.string().min(1).optional(),
+
     // Platform credentials (Sotsial-provided fallbacks)
     ...platformCredentials,
   },
