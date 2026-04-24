@@ -1,10 +1,10 @@
 // Security
-import { generate } from "@/utils/tokens";
-import { generateCodeChallenge } from "@/utils/code-challenge";
 
+import type { GrantProps, GrantResponse } from "@/types/connect";
 // Types
 import type { Response } from "@/types/response";
-import type { GrantProps, GrantResponse } from "@/types/connect";
+import { generateCodeChallenge } from "@/utils/code-challenge";
+import { generate } from "@/utils/tokens";
 
 /**
  * Returns a URL that the user can be redirected to in order to grant
@@ -17,55 +17,55 @@ import type { GrantProps, GrantResponse } from "@/types/connect";
  * @returns The URL to redirect to
  */
 export async function baseGrant({
-	base,
-	client_id,
-	redirect_uri,
-	scopes,
-	params = {},
-	delimiter = ",",
-	noChallenge = false,
+  base,
+  client_id,
+  redirect_uri,
+  scopes,
+  params = {},
+  delimiter = ",",
+  noChallenge = false,
 }: GrantProps & {
-	readonly base: string;
-	params?: Record<string, string>;
-	readonly delimiter?: string;
-	readonly noChallenge?: boolean;
+  readonly base: string;
+  params?: Record<string, string>;
+  readonly delimiter?: string;
+  readonly noChallenge?: boolean;
 }): Promise<Response<GrantResponse | null>> {
-	const url = new URL(base);
+  const url = new URL(base);
 
-	url.searchParams.set("client_id", client_id);
-	url.searchParams.set("response_type", "code");
-	url.searchParams.set("redirect_uri", redirect_uri);
-	url.searchParams.set("scope", scopes.join(delimiter));
+  url.searchParams.set("client_id", client_id);
+  url.searchParams.set("response_type", "code");
+  url.searchParams.set("redirect_uri", redirect_uri);
+  url.searchParams.set("scope", scopes.join(delimiter));
 
-	for (const [key, value] of Object.entries(params)) {
-		url.searchParams.set(key, value);
-	}
+  for (const [key, value] of Object.entries(params)) {
+    url.searchParams.set(key, value);
+  }
 
-	const { data: tokens, error: generateError } = await generate();
+  const { data: tokens, error: generateError } = await generate();
 
-	if (generateError) {
-		throw new Error(generateError.message);
-	}
+  if (generateError) {
+    throw new Error(generateError.message);
+  }
 
-	if (!tokens?.plain) {
-		throw new Error("CSRF token generation failed.");
-	}
+  if (!tokens?.plain) {
+    throw new Error("CSRF token generation failed.");
+  }
 
-	if (!noChallenge) {
-		const challenge = await generateCodeChallenge({
-			code: tokens.plain,
-		});
+  if (!noChallenge) {
+    const challenge = await generateCodeChallenge({
+      code: tokens.plain,
+    });
 
-		url.searchParams.set("state", tokens.plain);
-		url.searchParams.set("code_challenge", challenge);
-		url.searchParams.set("code_challenge_method", "S256");
-	}
+    url.searchParams.set("state", tokens.plain);
+    url.searchParams.set("code_challenge", challenge);
+    url.searchParams.set("code_challenge_method", "S256");
+  }
 
-	return {
-		data: {
-			url: url.toString(),
-			csrf_token: tokens.plain,
-		},
-		error: null,
-	};
+  return {
+    data: {
+      url: url.toString(),
+      csrf_token: tokens.plain,
+    },
+    error: null,
+  };
 }
