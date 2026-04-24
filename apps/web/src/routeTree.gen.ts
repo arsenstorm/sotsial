@@ -28,6 +28,7 @@ import { Route as appConnectionsRouteImport } from './routes/(app)/connections'
 import { Route as appSettingsRouteRouteImport } from './routes/(app)/settings/route'
 import { Route as appSettingsIndexRouteImport } from './routes/(app)/settings/index'
 import { Route as appPostsIndexRouteImport } from './routes/(app)/posts/index'
+import { Route as authInviteIdRouteImport } from './routes/(auth)/invite.$id'
 import { Route as appSettingsOrganizationRouteImport } from './routes/(app)/settings/organization'
 import { Route as appSettingsMembersRouteImport } from './routes/(app)/settings/members'
 import { Route as appSettingsIntegrationsRouteImport } from './routes/(app)/settings/integrations'
@@ -128,6 +129,11 @@ const appPostsIndexRoute = appPostsIndexRouteImport.update({
   path: '/posts/',
   getParentRoute: () => appRouteRoute,
 } as any)
+const authInviteIdRoute = authInviteIdRouteImport.update({
+  id: '/invite/$id',
+  path: '/invite/$id',
+  getParentRoute: () => authRouteRoute,
+} as any)
 const appSettingsOrganizationRoute = appSettingsOrganizationRouteImport.update({
   id: '/organization',
   path: '/organization',
@@ -186,6 +192,7 @@ export interface FileRoutesByFullPath {
   '/settings/integrations': typeof appSettingsIntegrationsRoute
   '/settings/members': typeof appSettingsMembersRoute
   '/settings/organization': typeof appSettingsOrganizationRoute
+  '/invite/$id': typeof authInviteIdRoute
   '/posts/': typeof appPostsIndexRoute
   '/settings/': typeof appSettingsIndexRoute
 }
@@ -210,6 +217,7 @@ export interface FileRoutesByTo {
   '/settings/integrations': typeof appSettingsIntegrationsRoute
   '/settings/members': typeof appSettingsMembersRoute
   '/settings/organization': typeof appSettingsOrganizationRoute
+  '/invite/$id': typeof authInviteIdRoute
   '/posts': typeof appPostsIndexRoute
   '/settings': typeof appSettingsIndexRoute
 }
@@ -239,6 +247,7 @@ export interface FileRoutesById {
   '/(app)/settings/integrations': typeof appSettingsIntegrationsRoute
   '/(app)/settings/members': typeof appSettingsMembersRoute
   '/(app)/settings/organization': typeof appSettingsOrganizationRoute
+  '/(auth)/invite/$id': typeof authInviteIdRoute
   '/(app)/posts/': typeof appPostsIndexRoute
   '/(app)/settings/': typeof appSettingsIndexRoute
 }
@@ -266,6 +275,7 @@ export interface FileRouteTypes {
     | '/settings/integrations'
     | '/settings/members'
     | '/settings/organization'
+    | '/invite/$id'
     | '/posts/'
     | '/settings/'
   fileRoutesByTo: FileRoutesByTo
@@ -290,6 +300,7 @@ export interface FileRouteTypes {
     | '/settings/integrations'
     | '/settings/members'
     | '/settings/organization'
+    | '/invite/$id'
     | '/posts'
     | '/settings'
   id:
@@ -318,6 +329,7 @@ export interface FileRouteTypes {
     | '/(app)/settings/integrations'
     | '/(app)/settings/members'
     | '/(app)/settings/organization'
+    | '/(auth)/invite/$id'
     | '/(app)/posts/'
     | '/(app)/settings/'
   fileRoutesById: FileRoutesById
@@ -466,6 +478,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appPostsIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
+    '/(auth)/invite/$id': {
+      id: '/(auth)/invite/$id'
+      path: '/invite/$id'
+      fullPath: '/invite/$id'
+      preLoaderRoute: typeof authInviteIdRouteImport
+      parentRoute: typeof authRouteRoute
+    }
     '/(app)/settings/organization': {
       id: '/(app)/settings/organization'
       path: '/organization'
@@ -578,12 +597,14 @@ interface authRouteRouteChildren {
   authOnboardingRoute: typeof authOnboardingRoute
   authSignInRoute: typeof authSignInRoute
   authSignUpRoute: typeof authSignUpRoute
+  authInviteIdRoute: typeof authInviteIdRoute
 }
 
 const authRouteRouteChildren: authRouteRouteChildren = {
   authOnboardingRoute: authOnboardingRoute,
   authSignInRoute: authSignInRoute,
   authSignUpRoute: authSignUpRoute,
+  authInviteIdRoute: authInviteIdRoute,
 }
 
 const authRouteRouteWithChildren = authRouteRoute._addFileChildren(

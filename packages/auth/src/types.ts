@@ -7,6 +7,7 @@ export type User = AuthContext["user"];
 export interface AuthEnv {
   APP_BASE_URL: string;
   AUTH_SECRET: string;
+  AUTH_URL: string;
   DATABASE: Hyperdrive;
   ENVIRONMENT: "production" | "development";
 }

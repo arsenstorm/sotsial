@@ -1,5 +1,6 @@
 import {
   Cancel01Icon,
+  Copy02Icon,
   Delete02Icon,
   Mail01Icon,
   UserIcon,
@@ -226,13 +227,29 @@ function MembersPage() {
                   </TableCell>
                   <TableCell className="text-right">
                     {inv.status === "pending" ? (
-                      <Button
-                        onClick={() => cancelInvite.mutate(inv.id)}
-                        size="icon-sm"
-                        variant="ghost"
-                      >
-                        <HugeiconsIcon icon={Cancel01Icon} />
-                      </Button>
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          aria-label="Copy invite link"
+                          onClick={() => {
+                            const url = `${window.location.origin}/invite/${inv.id}`;
+                            navigator.clipboard
+                              .writeText(url)
+                              .then(() => toast.success("Invite link copied"));
+                          }}
+                          size="icon-sm"
+                          variant="ghost"
+                        >
+                          <HugeiconsIcon icon={Copy02Icon} />
+                        </Button>
+                        <Button
+                          aria-label="Cancel invitation"
+                          onClick={() => cancelInvite.mutate(inv.id)}
+                          size="icon-sm"
+                          variant="ghost"
+                        >
+                          <HugeiconsIcon icon={Cancel01Icon} />
+                        </Button>
+                      </div>
                     ) : null}
                   </TableCell>
                 </TableRow>

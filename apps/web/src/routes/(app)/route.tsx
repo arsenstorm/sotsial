@@ -1,6 +1,7 @@
 import { SidebarInset, SidebarProvider } from "@sotsial/ui/components/sidebar";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { AppSidebar } from "@/components/app-sidebar";
+import { CommandPalette } from "@/components/command-palette";
 import { SiteHeader } from "@/components/site-header";
 import { sessionQuery } from "@/lib/auth";
 import { getSidebarStateServerFn } from "@/lib/sidebar-state";
@@ -45,6 +46,7 @@ function AppLayout() {
             </div>
           </SidebarInset>
         </div>
+        <CommandPalette />
       </SidebarProvider>
     </div>
   );

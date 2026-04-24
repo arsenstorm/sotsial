@@ -25,6 +25,7 @@ export const env = createEnv({
   server: {
     // Config
     APP_BASE_URL: z.string().url(),
+    AUTH_URL: z.string().url(),
     INTERNAL_PROXY_SECRET: z.string().min(1),
     ENVIRONMENT: z.enum(["production", "development"]).default("development"),
 

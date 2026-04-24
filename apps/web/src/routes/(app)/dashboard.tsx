@@ -7,7 +7,6 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@sotsial/ui/components/button";
 import {
   Empty,
-  EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
@@ -76,10 +75,14 @@ function DashboardPage() {
                 <HugeiconsIcon icon={Edit02Icon} />
               </EmptyMedia>
               <EmptyTitle>No posts yet</EmptyTitle>
-              <EmptyDescription>
-                Once you publish from Sotsial, recent activity will appear here.
-              </EmptyDescription>
             </EmptyHeader>
+            <Button
+              render={<Link to="/posts/create" />}
+              size="sm"
+              variant="outline"
+            >
+              Create your first post
+            </Button>
           </Empty>
         </section>
 

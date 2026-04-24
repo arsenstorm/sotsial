@@ -5,15 +5,22 @@ import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
+import { z } from "zod";
 import { authClient, sessionQuery } from "@/lib/auth";
 
+const searchSchema = z.object({
+  next: z.string().optional(),
+});
+
 export const Route = createFileRoute("/(auth)/sign-up")({
+  validateSearch: searchSchema,
   component: SignUpPage,
 });
 
 function SignUpPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { next } = Route.useSearch();
   const [pending, setPending] = useState(false);
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -37,7 +44,7 @@ function SignUpPage() {
     queryClient.removeQueries({ queryKey: sessionQuery.queryKey });
     await queryClient.fetchQuery(sessionQuery);
     await router.invalidate();
-    router.navigate({ to: "/onboarding" });
+    router.navigate({ to: next ?? "/onboarding" });
   };
 
   return (

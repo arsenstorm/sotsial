@@ -1,49 +1,47 @@
-import { Badge } from "@sotsial/ui/components/badge";
+import { ArrowLeft02Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@sotsial/ui/components/button";
 import { Field, FieldLabel } from "@sotsial/ui/components/field";
-import { Input } from "@sotsial/ui/components/input";
 import { PageHeading } from "@sotsial/ui/components/page-heading";
 import { Skeleton } from "@sotsial/ui/components/skeleton";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@sotsial/ui/components/table";
 import { Textarea } from "@sotsial/ui/components/textarea";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
+import {
+  AccountSelection,
+  type ConnectionOption,
+} from "@/components/posting/account-selection";
+import { type MediaItem, MediaUpload } from "@/components/posting/media-upload";
+import type { PathState } from "@/components/posting/path-state";
+import { PlatformSettings } from "@/components/posting/platform-settings";
+import { PostPreview } from "@/components/posting/post-preview";
 import { api } from "@/lib/api";
 
 export const Route = createFileRoute("/(app)/posts/create")({
   component: CreatePostPage,
 });
 
-interface ConnectionRow {
-  account: { name?: string; username?: string } | null;
-  account_id: string;
-  id: string;
-  platform: string;
-}
-
 interface PublishResult {
   error?: { message?: string } | null;
   platform?: string;
   success?: boolean;
-  [key: string]: unknown;
 }
 
 function CreatePostPage() {
-  const [text, setText] = useState("");
-  const [mediaUrl, setMediaUrl] = useState("");
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [results, setResults] = useState<PublishResult[] | null>(null);
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
-  const { data: connections, isLoading } = useQuery({
+  const [step, setStep] = useState<"accounts" | "compose">("accounts");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [text, setText] = useState("");
+  const [media, setMedia] = useState<MediaItem[]>([]);
+  const [platformState, setPlatformState] = useState<Record<string, PathState>>(
+    {}
+  );
+
+  const { data: connections = [], isLoading: connectionsLoading } = useQuery({
     queryKey: ["connections", "all"],
     queryFn: async () => {
       const res = await api.v1.connections.$get({
@@ -52,9 +50,57 @@ function CreatePostPage() {
       if (!res.ok) {
         throw new Error("Failed to load connections");
       }
-      const json = (await res.json()) as { data: ConnectionRow[] };
+      const json = (await res.json()) as { data: ConnectionOption[] };
       return json.data;
     },
+  });
+
+  const selectedConnections = useMemo(
+    () => connections.filter((c) => selectedIds.has(c.id)),
+    [connections, selectedIds]
+  );
+
+  const uniquePlatforms = useMemo(
+    () =>
+      Array.from(
+        new Set(selectedConnections.map((c) => c.platform).filter(Boolean))
+      ),
+    [selectedConnections]
+  );
+
+  const publishMutation = useMutation({
+    mutationFn: async () => {
+      const targets = selectedConnections.map(
+        (c) => `${c.platform}:${c.account?.username ?? c.account_id}`
+      );
+
+      const mediaPayload = media.map(({ url, type }) => ({ url, type }));
+
+      const post = {
+        text,
+        ...(mediaPayload.length > 0 ? { media: mediaPayload } : {}),
+        ...buildPlatformOverrides(uniquePlatforms, platformState),
+      };
+
+      const res = await api.v1.publish.$post({
+        json: { targets, post },
+      });
+      const json = (await res.json()) as
+        | { id: string; results: PublishResult[] }
+        | { error?: { message?: string } };
+
+      if (!res.ok) {
+        const err = (json as { error?: { message?: string } }).error;
+        throw new Error(err?.message ?? "Publish failed");
+      }
+      return json as { id: string; results: PublishResult[] };
+    },
+    onSuccess: () => {
+      toast.success("Post published");
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      router.navigate({ to: "/posts" });
+    },
+    onError: (error: Error) => toast.error(error.message),
   });
 
   const toggle = (id: string) => {
@@ -69,148 +115,224 @@ function CreatePostPage() {
     });
   };
 
-  const publishMutation = useMutation({
-    mutationFn: async () => {
-      const res = await api.v1.publish.$post({
-        json: {
-          targets: Array.from(selectedIds),
-          post: {
-            text,
-            ...(mediaUrl ? { media: [{ url: mediaUrl }] } : {}),
-          },
-        },
-      });
-      const json = (await res.json()) as
-        | { results: PublishResult[] }
-        | { error?: { message?: string } };
-      if (!res.ok) {
-        const err = (json as { error?: { message?: string } }).error;
-        throw new Error(err?.message ?? "Publish failed");
-      }
-      return (json as { results: PublishResult[] }).results;
-    },
-    onSuccess: (r) => {
-      setResults(r);
-      toast.success("Published");
-    },
-    onError: (error: Error) => toast.error(error.message),
-  });
+  const canPublish =
+    selectedIds.size > 0 &&
+    text.trim().length > 0 &&
+    !publishMutation.isPending;
+
+  if (step === "accounts") {
+    return (
+      <div className="space-y-6">
+        <PageHeading
+          description="Choose which connected accounts should receive this post."
+          title="New post"
+        />
+
+        {connectionsLoading ? (
+          <div className="grid @3xl:grid-cols-3 @xl:grid-cols-2 grid-cols-1 gap-2">
+            {Array.from({ length: 6 }).map((_, i) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: placeholders
+              <Skeleton className="h-16 w-full rounded-xl" key={i} />
+            ))}
+          </div>
+        ) : (
+          <AccountSelection
+            connections={connections}
+            onToggle={toggle}
+            selectedIds={selectedIds}
+          />
+        )}
+
+        <footer className="flex items-center justify-between border-border/60 border-t pt-4">
+          <p className="text-muted-foreground text-sm">
+            {selectedIds.size} account{selectedIds.size === 1 ? "" : "s"}{" "}
+            selected
+          </p>
+          <Button
+            disabled={selectedIds.size === 0}
+            onClick={() => setStep("compose")}
+          >
+            Continue
+          </Button>
+        </footer>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <PageHeading
-        description="Publish to every connected platform at once."
+        actions={
+          <Button
+            disabled={publishMutation.isPending}
+            onClick={() => setStep("accounts")}
+            size="sm"
+            variant="outline"
+          >
+            <HugeiconsIcon icon={ArrowLeft02Icon} />
+            Back
+          </Button>
+        }
+        description="Write once, publish everywhere you've connected."
         title="New post"
       />
 
-      <section className="space-y-3">
-        <h2 className="font-medium text-sm">Accounts</h2>
-        {isLoading ? (
-          <Skeleton className="h-24 w-full" />
-        ) : // biome-ignore lint/style/noNestedTernary: loading/data/empty render pattern
-        connections && connections.length > 0 ? (
-          <div className="flex flex-wrap gap-2">
-            {connections.map((c) => {
-              const active = selectedIds.has(c.id);
-              return (
-                <button
-                  className={
-                    active
-                      ? "rounded-md border border-primary bg-primary/10 px-3 py-2 text-left text-sm"
-                      : "rounded-md border border-border bg-background px-3 py-2 text-left text-sm hover:bg-muted"
-                  }
-                  key={c.id}
-                  onClick={() => toggle(c.id)}
-                  type="button"
-                >
-                  <div className="flex items-center gap-2">
-                    <Badge variant="secondary">{c.platform}</Badge>
-                    <span>{c.account?.name ?? c.account_id}</span>
-                  </div>
-                </button>
-              );
-            })}
+      <div className="grid @4xl:grid-cols-[3fr_2fr] grid-cols-1 gap-6">
+        <form
+          className="space-y-6"
+          onSubmit={(e) => {
+            e.preventDefault();
+            publishMutation.mutate();
+          }}
+        >
+          <Field>
+            <FieldLabel htmlFor="text">Text</FieldLabel>
+            <Textarea
+              id="text"
+              onChange={(e) => setText(e.target.value)}
+              placeholder="What's on your mind?"
+              rows={6}
+              value={text}
+            />
+          </Field>
+
+          <Field>
+            <FieldLabel>Media</FieldLabel>
+            <MediaUpload items={media} onChange={setMedia} />
+          </Field>
+
+          <PlatformSettings
+            onChange={setPlatformState}
+            platforms={uniquePlatforms}
+            state={platformState}
+          />
+
+          <div className="flex items-center justify-between border-border/60 border-t pt-4">
+            <p className="text-muted-foreground text-xs">
+              Publishing to {selectedIds.size} account
+              {selectedIds.size === 1 ? "" : "s"} across{" "}
+              {uniquePlatforms.length} platform
+              {uniquePlatforms.length === 1 ? "" : "s"}.
+            </p>
+            <Button disabled={!canPublish} type="submit">
+              {publishMutation.isPending ? "Publishing…" : "Publish"}
+            </Button>
           </div>
-        ) : (
-          <p className="text-muted-foreground text-sm">
-            No connections yet. Add one from Integrations.
-          </p>
-        )}
-      </section>
+        </form>
 
-      <form
-        className="space-y-4"
-        onSubmit={(e) => {
-          e.preventDefault();
-          publishMutation.mutate();
-        }}
-      >
-        <Field>
-          <FieldLabel htmlFor="text">Text</FieldLabel>
-          <Textarea
-            id="text"
-            onChange={(e) => setText(e.target.value)}
-            required
-            rows={6}
-            value={text}
-          />
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="media">Media URL (optional)</FieldLabel>
-          <Input
-            id="media"
-            onChange={(e) => setMediaUrl(e.target.value)}
-            placeholder="https://…"
-            value={mediaUrl}
-          />
-        </Field>
-        <div className="flex items-center gap-3">
-          <Button
-            disabled={
-              publishMutation.isPending || selectedIds.size === 0 || !text
-            }
-            type="submit"
-          >
-            {publishMutation.isPending ? "Publishing…" : "Publish"}
-          </Button>
-          <span className="text-muted-foreground text-xs">
-            {selectedIds.size} account
-            {selectedIds.size === 1 ? "" : "s"} selected
-          </span>
+        <div className="@4xl:sticky @4xl:top-[calc(var(--header-height)+1.5rem)] @4xl:self-start">
+          <PostPreview media={media} platforms={uniquePlatforms} text={text} />
         </div>
-      </form>
-
-      {results ? (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Platform</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Details</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {results.map((r, idx) => (
-              // biome-ignore lint/suspicious/noArrayIndexKey: render-only static result list
-              <TableRow key={idx}>
-                <TableCell>
-                  <Badge variant="secondary">{r.platform ?? "—"}</Badge>
-                </TableCell>
-                <TableCell>
-                  {r.success ? (
-                    <Badge>Success</Badge>
-                  ) : (
-                    <Badge variant="destructive">Failed</Badge>
-                  )}
-                </TableCell>
-                <TableCell className="text-xs">
-                  {r.error?.message ?? JSON.stringify(r)}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      ) : null}
+      </div>
     </div>
   );
+}
+
+/**
+ * Lift the flat `tk_*`/`ig_*`/`fb_*`/`yt_*` field state into the nested shape
+ * the publish endpoint expects under each platform key.
+ */
+function buildPlatformOverrides(
+  platforms: string[],
+  state: Record<string, PathState>
+): Record<string, unknown> {
+  const overrides: Record<string, unknown> = {};
+
+  for (const platform of platforms) {
+    const slice = state[platform];
+    if (!slice) {
+      continue;
+    }
+    const payload = platformPayload(platform, slice);
+    if (payload && Object.keys(payload).length > 0) {
+      overrides[platform] = payload;
+    }
+  }
+
+  return overrides;
+}
+
+function platformPayload(
+  platform: string,
+  slice: PathState
+): Record<string, unknown> | null {
+  if (platform === "tiktok") {
+    return tiktokPayload(slice);
+  }
+  if (platform === "instagram") {
+    return slice.ig_type ? { ig_type: slice.ig_type } : {};
+  }
+  if (platform === "facebook") {
+    return facebookPayload(slice);
+  }
+  if (platform === "youtube") {
+    return youtubePayload(slice);
+  }
+  return null;
+}
+
+function tiktokPayload(slice: PathState): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  if (slice.tk_type) {
+    out.tk_type = slice.tk_type;
+  }
+  if (slice.tk_privacy) {
+    out.privacy = slice.tk_privacy;
+  }
+  const safety = slice.tk_safety as Record<string, unknown> | undefined;
+  const promotion = slice.tk_promotion as Record<string, unknown> | undefined;
+  if (safety || promotion) {
+    out.options = {
+      ...(safety ? { safety } : {}),
+      ...(promotion ? { promotion } : {}),
+    };
+  }
+  return out;
+}
+
+function facebookPayload(slice: PathState): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  if (slice.fb_type) {
+    out.fb_type = slice.fb_type;
+  }
+  if (slice.fb_link) {
+    out.link = slice.fb_link;
+  }
+  if (slice.fb_options) {
+    out.options = slice.fb_options;
+  }
+  return out;
+}
+
+function youtubePayload(slice: PathState): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  if (slice.yt_description) {
+    out.description = slice.yt_description;
+  }
+  const options = youtubeOptions(slice);
+  if (Object.keys(options).length > 0) {
+    out.options = options;
+  }
+  return out;
+}
+
+function youtubeOptions(slice: PathState): Record<string, unknown> {
+  const options: Record<string, unknown> = {};
+  if (slice.yt_type) {
+    options.yt_type = slice.yt_type;
+  }
+  if (slice.yt_tags) {
+    options.tags = String(slice.yt_tags)
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
+  if (slice.yt_category_id) {
+    options.category_id = slice.yt_category_id;
+  }
+  const ytOptions = slice.yt_options as Record<string, unknown> | undefined;
+  if (ytOptions) {
+    Object.assign(options, ytOptions);
+  }
+  return options;
 }
