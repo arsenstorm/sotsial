@@ -1,8 +1,7 @@
-import { Delete02Icon } from "@hugeicons/core-free-icons";
+import { Delete02Icon, LinkSquare02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Badge } from "@sotsial/ui/components/badge";
 import { Button } from "@sotsial/ui/components/button";
-import { Empty } from "@sotsial/ui/components/empty";
 import { Input } from "@sotsial/ui/components/input";
 import { PageHeading } from "@sotsial/ui/components/page-heading";
 import { Skeleton } from "@sotsial/ui/components/skeleton";
@@ -15,7 +14,7 @@ import {
   TableRow,
 } from "@sotsial/ui/components/table";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
@@ -81,7 +80,12 @@ function ConnectionsPage() {
         value={query}
       />
       {isLoading ? (
-        <Skeleton className="h-48 w-full" />
+        <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-border bg-card px-6 py-16">
+          <Skeleton className="size-10 rounded-full" />
+          <Skeleton className="h-5 w-32" />
+          <Skeleton className="h-5 w-72 max-w-full" />
+          <Skeleton className="h-8 w-36 rounded-full" />
+        </div>
       ) : // biome-ignore lint/style/noNestedTernary: loading/data/empty render pattern
       data && data.length > 0 ? (
         <Table>
@@ -138,11 +142,18 @@ function ConnectionsPage() {
           </TableBody>
         </Table>
       ) : (
-        <Empty>
-          <p className="text-sm">
-            No connections yet. Head to Integrations to add one.
+        <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-border bg-card px-6 py-16 text-center">
+          <span className="inline-flex size-10 items-center justify-center rounded-full bg-muted text-muted-foreground">
+            <HugeiconsIcon className="size-5" icon={LinkSquare02Icon} />
+          </span>
+          <p className="font-medium text-sm">No connections yet</p>
+          <p className="max-w-[44ch] text-muted-foreground text-sm">
+            Link a social account to start publishing through Sotsial.
           </p>
-        </Empty>
+          <Button render={<Link to="/settings/integrations" />} size="sm">
+            Connect an account
+          </Button>
+        </div>
       )}
     </div>
   );

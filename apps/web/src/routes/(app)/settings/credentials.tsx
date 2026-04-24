@@ -48,6 +48,17 @@ const PLATFORMS = [
   "youtube",
 ] as const;
 
+const PLATFORM_LABELS: Record<(typeof PLATFORMS)[number], string> = {
+  facebook: "Facebook",
+  google: "Google",
+  instagram: "Instagram",
+  linkedin: "LinkedIn",
+  threads: "Threads",
+  tiktok: "TikTok",
+  twitter: "Twitter",
+  youtube: "YouTube",
+};
+
 export const Route = createFileRoute("/(app)/settings/credentials")({
   component: CredentialsPage,
 });
@@ -203,6 +214,7 @@ function CreateCredentialDialog() {
           <Field>
             <FieldLabel htmlFor="platform">Platform</FieldLabel>
             <Select
+              items={PLATFORM_LABELS}
               onValueChange={(value) => setPlatform(value ?? "")}
               value={platform}
             >
@@ -212,7 +224,7 @@ function CreateCredentialDialog() {
               <SelectContent>
                 {PLATFORMS.map((p) => (
                   <SelectItem key={p} value={p}>
-                    {p}
+                    {PLATFORM_LABELS[p]}
                   </SelectItem>
                 ))}
               </SelectContent>

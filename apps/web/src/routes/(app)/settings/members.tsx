@@ -36,6 +36,12 @@ export const Route = createFileRoute("/(app)/settings/members")({
 const ROLES = ["member", "admin", "owner"] as const;
 type OrgRole = (typeof ROLES)[number];
 
+const ROLE_LABELS: Record<OrgRole, string> = {
+  member: "Member",
+  admin: "Admin",
+  owner: "Owner",
+};
+
 const membersKey = ["org-members"] as const;
 const invitationsKey = ["org-invitations"] as const;
 
@@ -259,6 +265,7 @@ function InviteForm() {
       <Field className="w-40">
         <FieldLabel htmlFor="invite-role">Role</FieldLabel>
         <Select
+          items={ROLE_LABELS}
           onValueChange={(value) => setRole((value ?? "member") as OrgRole)}
           value={role}
         >
@@ -268,7 +275,7 @@ function InviteForm() {
           <SelectContent>
             {ROLES.map((r) => (
               <SelectItem key={r} value={r}>
-                {r}
+                {ROLE_LABELS[r]}
               </SelectItem>
             ))}
           </SelectContent>

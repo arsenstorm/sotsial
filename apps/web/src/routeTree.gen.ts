@@ -25,7 +25,6 @@ import { Route as appKeysRouteImport } from './routes/(app)/keys'
 import { Route as appHelpRouteImport } from './routes/(app)/help'
 import { Route as appDashboardRouteImport } from './routes/(app)/dashboard'
 import { Route as appConnectionsRouteImport } from './routes/(app)/connections'
-import { Route as appBillingRouteImport } from './routes/(app)/billing'
 import { Route as appSettingsRouteRouteImport } from './routes/(app)/settings/route'
 import { Route as appSettingsIndexRouteImport } from './routes/(app)/settings/index'
 import { Route as appPostsIndexRouteImport } from './routes/(app)/posts/index'
@@ -33,6 +32,7 @@ import { Route as appSettingsOrganizationRouteImport } from './routes/(app)/sett
 import { Route as appSettingsMembersRouteImport } from './routes/(app)/settings/members'
 import { Route as appSettingsIntegrationsRouteImport } from './routes/(app)/settings/integrations'
 import { Route as appSettingsCredentialsRouteImport } from './routes/(app)/settings/credentials'
+import { Route as appSettingsBillingRouteImport } from './routes/(app)/settings/billing'
 import { Route as appPostsCreateRouteImport } from './routes/(app)/posts/create'
 import { Route as appKeysIdRouteImport } from './routes/(app)/keys.$id'
 
@@ -113,11 +113,6 @@ const appConnectionsRoute = appConnectionsRouteImport.update({
   path: '/connections',
   getParentRoute: () => appRouteRoute,
 } as any)
-const appBillingRoute = appBillingRouteImport.update({
-  id: '/billing',
-  path: '/billing',
-  getParentRoute: () => appRouteRoute,
-} as any)
 const appSettingsRouteRoute = appSettingsRouteRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -153,6 +148,11 @@ const appSettingsCredentialsRoute = appSettingsCredentialsRouteImport.update({
   path: '/credentials',
   getParentRoute: () => appSettingsRouteRoute,
 } as any)
+const appSettingsBillingRoute = appSettingsBillingRouteImport.update({
+  id: '/billing',
+  path: '/billing',
+  getParentRoute: () => appSettingsRouteRoute,
+} as any)
 const appPostsCreateRoute = appPostsCreateRouteImport.update({
   id: '/posts/create',
   path: '/posts/create',
@@ -167,7 +167,6 @@ const appKeysIdRoute = appKeysIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/settings': typeof appSettingsRouteRouteWithChildren
-  '/billing': typeof appBillingRoute
   '/connections': typeof appConnectionsRoute
   '/dashboard': typeof appDashboardRoute
   '/help': typeof appHelpRoute
@@ -182,6 +181,7 @@ export interface FileRoutesByFullPath {
   '/v1/$': typeof V1SplatRoute
   '/keys/$id': typeof appKeysIdRoute
   '/posts/create': typeof appPostsCreateRoute
+  '/settings/billing': typeof appSettingsBillingRoute
   '/settings/credentials': typeof appSettingsCredentialsRoute
   '/settings/integrations': typeof appSettingsIntegrationsRoute
   '/settings/members': typeof appSettingsMembersRoute
@@ -191,7 +191,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/billing': typeof appBillingRoute
   '/connections': typeof appConnectionsRoute
   '/dashboard': typeof appDashboardRoute
   '/help': typeof appHelpRoute
@@ -206,6 +205,7 @@ export interface FileRoutesByTo {
   '/v1/$': typeof V1SplatRoute
   '/keys/$id': typeof appKeysIdRoute
   '/posts/create': typeof appPostsCreateRoute
+  '/settings/billing': typeof appSettingsBillingRoute
   '/settings/credentials': typeof appSettingsCredentialsRoute
   '/settings/integrations': typeof appSettingsIntegrationsRoute
   '/settings/members': typeof appSettingsMembersRoute
@@ -220,7 +220,6 @@ export interface FileRoutesById {
   '/(auth)': typeof authRouteRouteWithChildren
   '/(legal)': typeof legalRouteRouteWithChildren
   '/(app)/settings': typeof appSettingsRouteRouteWithChildren
-  '/(app)/billing': typeof appBillingRoute
   '/(app)/connections': typeof appConnectionsRoute
   '/(app)/dashboard': typeof appDashboardRoute
   '/(app)/help': typeof appHelpRoute
@@ -235,6 +234,7 @@ export interface FileRoutesById {
   '/v1/$': typeof V1SplatRoute
   '/(app)/keys/$id': typeof appKeysIdRoute
   '/(app)/posts/create': typeof appPostsCreateRoute
+  '/(app)/settings/billing': typeof appSettingsBillingRoute
   '/(app)/settings/credentials': typeof appSettingsCredentialsRoute
   '/(app)/settings/integrations': typeof appSettingsIntegrationsRoute
   '/(app)/settings/members': typeof appSettingsMembersRoute
@@ -247,7 +247,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/settings'
-    | '/billing'
     | '/connections'
     | '/dashboard'
     | '/help'
@@ -262,6 +261,7 @@ export interface FileRouteTypes {
     | '/v1/$'
     | '/keys/$id'
     | '/posts/create'
+    | '/settings/billing'
     | '/settings/credentials'
     | '/settings/integrations'
     | '/settings/members'
@@ -271,7 +271,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/billing'
     | '/connections'
     | '/dashboard'
     | '/help'
@@ -286,6 +285,7 @@ export interface FileRouteTypes {
     | '/v1/$'
     | '/keys/$id'
     | '/posts/create'
+    | '/settings/billing'
     | '/settings/credentials'
     | '/settings/integrations'
     | '/settings/members'
@@ -299,7 +299,6 @@ export interface FileRouteTypes {
     | '/(auth)'
     | '/(legal)'
     | '/(app)/settings'
-    | '/(app)/billing'
     | '/(app)/connections'
     | '/(app)/dashboard'
     | '/(app)/help'
@@ -314,6 +313,7 @@ export interface FileRouteTypes {
     | '/v1/$'
     | '/(app)/keys/$id'
     | '/(app)/posts/create'
+    | '/(app)/settings/billing'
     | '/(app)/settings/credentials'
     | '/(app)/settings/integrations'
     | '/(app)/settings/members'
@@ -445,13 +445,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appConnectionsRouteImport
       parentRoute: typeof appRouteRoute
     }
-    '/(app)/billing': {
-      id: '/(app)/billing'
-      path: '/billing'
-      fullPath: '/billing'
-      preLoaderRoute: typeof appBillingRouteImport
-      parentRoute: typeof appRouteRoute
-    }
     '/(app)/settings': {
       id: '/(app)/settings'
       path: '/settings'
@@ -501,6 +494,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appSettingsCredentialsRouteImport
       parentRoute: typeof appSettingsRouteRoute
     }
+    '/(app)/settings/billing': {
+      id: '/(app)/settings/billing'
+      path: '/billing'
+      fullPath: '/settings/billing'
+      preLoaderRoute: typeof appSettingsBillingRouteImport
+      parentRoute: typeof appSettingsRouteRoute
+    }
     '/(app)/posts/create': {
       id: '/(app)/posts/create'
       path: '/posts/create'
@@ -519,6 +519,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface appSettingsRouteRouteChildren {
+  appSettingsBillingRoute: typeof appSettingsBillingRoute
   appSettingsCredentialsRoute: typeof appSettingsCredentialsRoute
   appSettingsIntegrationsRoute: typeof appSettingsIntegrationsRoute
   appSettingsMembersRoute: typeof appSettingsMembersRoute
@@ -527,6 +528,7 @@ interface appSettingsRouteRouteChildren {
 }
 
 const appSettingsRouteRouteChildren: appSettingsRouteRouteChildren = {
+  appSettingsBillingRoute: appSettingsBillingRoute,
   appSettingsCredentialsRoute: appSettingsCredentialsRoute,
   appSettingsIntegrationsRoute: appSettingsIntegrationsRoute,
   appSettingsMembersRoute: appSettingsMembersRoute,
@@ -550,7 +552,6 @@ const appKeysRouteWithChildren =
 
 interface appRouteRouteChildren {
   appSettingsRouteRoute: typeof appSettingsRouteRouteWithChildren
-  appBillingRoute: typeof appBillingRoute
   appConnectionsRoute: typeof appConnectionsRoute
   appDashboardRoute: typeof appDashboardRoute
   appHelpRoute: typeof appHelpRoute
@@ -561,7 +562,6 @@ interface appRouteRouteChildren {
 
 const appRouteRouteChildren: appRouteRouteChildren = {
   appSettingsRouteRoute: appSettingsRouteRouteWithChildren,
-  appBillingRoute: appBillingRoute,
   appConnectionsRoute: appConnectionsRoute,
   appDashboardRoute: appDashboardRoute,
   appHelpRoute: appHelpRoute,

@@ -19,6 +19,7 @@ const SECTIONS = [
     items: [
       { to: "/settings/organization", label: "Organization" },
       { to: "/settings/members", label: "Members" },
+      { to: "/settings/billing", label: "Billing" },
     ],
   },
   {

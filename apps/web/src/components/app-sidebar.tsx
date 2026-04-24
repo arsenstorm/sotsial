@@ -3,7 +3,6 @@ import {
   Home01Icon,
   KeyIcon,
   LinkSquare02Icon,
-  Settings02Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -26,7 +25,6 @@ const NAV = [
   { to: "/connections", label: "Connections", icon: LinkSquare02Icon },
   { to: "/keys", label: "API keys", icon: KeyIcon },
   { to: "/posts", label: "Posts", icon: Edit02Icon },
-  { to: "/settings", label: "Settings", icon: Settings02Icon },
 ] as const;
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

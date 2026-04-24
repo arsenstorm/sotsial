@@ -1,8 +1,8 @@
 import {
+  Building02Icon,
   Logout02Icon,
-  Moon02Icon,
   PlusSignIcon,
-  Sun02Icon,
+  Settings02Icon,
   Tick02Icon,
   UnfoldMoreIcon,
 } from "@hugeicons/core-free-icons";
@@ -24,6 +24,9 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@sotsial/ui/components/dropdown-menu";
 import { Field, FieldLabel } from "@sotsial/ui/components/field";
@@ -35,10 +38,9 @@ import {
   useSidebar,
 } from "@sotsial/ui/components/sidebar";
 import { useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useTheme } from "@/components/theme-provider";
 import { authClient, sessionQuery } from "@/lib/auth";
 
 const slugify = (value: string) =>
@@ -54,9 +56,7 @@ export function NavUser({ name, email }: { name: string; email: string }) {
   const { isMobile } = useSidebar();
   const { data: orgs } = authClient.useListOrganizations();
   const { data: activeOrg } = authClient.useActiveOrganization();
-  const { theme, setTheme } = useTheme();
   const [createOpen, setCreateOpen] = useState(false);
-  const isDark = theme === "dark";
 
   const initials = (name || email)
     .split(" ")
@@ -144,43 +144,52 @@ export function NavUser({ name, email }: { name: string; email: string }) {
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuLabel className="font-mono text-muted-foreground text-xs uppercase tracking-wide">
-                  Organizations
-                </DropdownMenuLabel>
-                {orgs?.map((org) => {
-                  const isActive = org.id === activeOrg?.id;
-                  return (
-                    <DropdownMenuItem
-                      key={org.id}
-                      onClick={() => onSelectOrg(org.id)}
-                    >
-                      <span className="flex-1 truncate">{org.name}</span>
-                      {isActive ? (
-                        <HugeiconsIcon
-                          className="size-4 text-muted-foreground"
-                          icon={Tick02Icon}
-                          strokeWidth={2}
-                        />
-                      ) : null}
-                    </DropdownMenuItem>
-                  );
-                })}
-                <DropdownMenuItem onClick={() => setCreateOpen(true)}>
-                  <HugeiconsIcon icon={PlusSignIcon} strokeWidth={2} />
-                  Create organization
-                </DropdownMenuItem>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>
+                    <HugeiconsIcon icon={Building02Icon} strokeWidth={2} />
+                    <span className="flex-1 truncate">
+                      {activeOrg?.name ?? "No organization"}
+                    </span>
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent className="min-w-56">
+                    <DropdownMenuGroup>
+                      <DropdownMenuLabel className="font-mono text-muted-foreground text-xs uppercase tracking-wide">
+                        Switch organization
+                      </DropdownMenuLabel>
+                      {orgs?.map((org) => {
+                        const isActive = org.id === activeOrg?.id;
+                        return (
+                          <DropdownMenuItem
+                            key={org.id}
+                            onClick={() => onSelectOrg(org.id)}
+                          >
+                            <span className="flex-1 truncate">{org.name}</span>
+                            {isActive ? (
+                              <HugeiconsIcon
+                                className="size-4 text-muted-foreground"
+                                icon={Tick02Icon}
+                                strokeWidth={2}
+                              />
+                            ) : null}
+                          </DropdownMenuItem>
+                        );
+                      })}
+                    </DropdownMenuGroup>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuGroup>
+                      <DropdownMenuItem onClick={() => setCreateOpen(true)}>
+                        <HugeiconsIcon icon={PlusSignIcon} strokeWidth={2} />
+                        Create organization
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem
-                  closeOnClick={false}
-                  onClick={() => setTheme(isDark ? "light" : "dark")}
-                >
-                  <HugeiconsIcon
-                    icon={isDark ? Sun02Icon : Moon02Icon}
-                    strokeWidth={2}
-                  />
-                  {isDark ? "Light mode" : "Dark mode"}
+                <DropdownMenuItem render={<Link to="/settings" />}>
+                  <HugeiconsIcon icon={Settings02Icon} strokeWidth={2} />
+                  Settings
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={onSignOut}>
                   <HugeiconsIcon icon={Logout02Icon} strokeWidth={2} />

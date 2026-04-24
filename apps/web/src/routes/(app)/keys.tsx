@@ -1,6 +1,7 @@
 import {
   ArrowRight01Icon,
   Delete02Icon,
+  KeyIcon,
   PlusSignIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -14,7 +15,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@sotsial/ui/components/dialog";
-import { Empty } from "@sotsial/ui/components/empty";
 import { Field, FieldLabel } from "@sotsial/ui/components/field";
 import { Input } from "@sotsial/ui/components/input";
 import { PageHeading } from "@sotsial/ui/components/page-heading";
@@ -88,7 +88,12 @@ function KeysPage() {
         title="API keys"
       />
       {isLoading ? (
-        <Skeleton className="h-48 w-full" />
+        <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-border bg-card px-6 py-16">
+          <Skeleton className="size-10 rounded-full" />
+          <Skeleton className="h-5 w-32" />
+          <Skeleton className="h-5 w-72 max-w-full" />
+          <Skeleton className="h-8 w-36 rounded-full" />
+        </div>
       ) : // biome-ignore lint/style/noNestedTernary: loading/data/empty render pattern
       data && data.length > 0 ? (
         <Table>
@@ -137,9 +142,17 @@ function KeysPage() {
           </TableBody>
         </Table>
       ) : (
-        <Empty>
-          <p className="text-sm">No API keys yet.</p>
-        </Empty>
+        <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-border bg-card px-6 py-16 text-center">
+          <span className="inline-flex size-10 items-center justify-center rounded-full bg-muted text-muted-foreground">
+            <HugeiconsIcon className="size-5" icon={KeyIcon} />
+          </span>
+          <p className="font-medium text-sm">No API keys yet</p>
+          <p className="max-w-[44ch] text-muted-foreground text-sm">
+            Create a key to call the Sotsial API from your own code or
+            integrations. Keys inherit access from this organization.
+          </p>
+          <CreateKeyDialog />
+        </div>
       )}
     </div>
   );

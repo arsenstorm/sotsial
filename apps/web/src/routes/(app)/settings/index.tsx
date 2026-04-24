@@ -8,21 +8,36 @@ import { Field, FieldLabel } from "@sotsial/ui/components/field";
 import { Input } from "@sotsial/ui/components/input";
 import { PageHeading } from "@sotsial/ui/components/page-heading";
 import { PageSubheading } from "@sotsial/ui/components/page-subheading";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@sotsial/ui/components/select";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useTheme } from "@/components/theme-provider";
 import { authClient, sessionQuery } from "@/lib/auth";
+import type { Theme } from "@/lib/theme";
 
 export const Route = createFileRoute("/(app)/settings/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(sessionQuery),
   component: AccountPage,
 });
 
+const THEME_ITEMS: Record<Theme, string> = {
+  light: "Light",
+  dark: "Dark",
+};
+
 function AccountPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const session = Route.useLoaderData();
+  const { theme, setTheme } = useTheme();
   const [name, setName] = useState(session?.user.name ?? "");
 
   useEffect(() => {
@@ -91,6 +106,26 @@ function AccountPage() {
             {updateMutation.isPending ? "Saving…" : "Save"}
           </Button>
         </form>
+      </section>
+
+      <section className="space-y-4">
+        <PageSubheading title="Preferences" />
+        <Field className="max-w-xs">
+          <FieldLabel htmlFor="theme">Theme</FieldLabel>
+          <Select
+            items={THEME_ITEMS}
+            onValueChange={(value) => setTheme((value ?? "light") as Theme)}
+            value={theme}
+          >
+            <SelectTrigger id="theme">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="light">Light</SelectItem>
+              <SelectItem value="dark">Dark</SelectItem>
+            </SelectContent>
+          </Select>
+        </Field>
       </section>
 
       <section className="space-y-4">
