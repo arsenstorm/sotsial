@@ -18,7 +18,10 @@
     "check": "ultracite check",
     "fix": "ultracite fix",
     "prepare": "husky",
-    "cf:types": "turbo cf:types"
+    "cf:types": "turbo cf:types",
+    "db:generate": "cd packages/db && bun run db:generate",
+    "db:migrate": "cd packages/db && bun run db:migrate",
+    "db:migrate:prod": "cd packages/db && NODE_ENV=production bun run db:migrate"
   },
   "type": "module",
   "workspaces": [

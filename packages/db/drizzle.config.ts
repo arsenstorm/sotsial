@@ -1,4 +1,13 @@
+import { config } from "dotenv";
 import { defineConfig } from "drizzle-kit";
+
+config({
+  path:
+    process.env.NODE_ENV === "production"
+      ? "../../.env.production"
+      : "../../.env",
+  override: true,
+});
 
 const databaseUrl = process.env.DATABASE_URL;
 

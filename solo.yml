@@ -1,6 +1,13 @@
 name: sotsial
 icon: null
 processes:
+  Types:
+    command: bun cf:types
+    working_dir: null
+    auto_start: false
+    auto_restart: false
+    restart_when_changed: []
+    env: {}
   Start:
     command: bun run dev
     working_dir: ./apps/web
@@ -8,8 +15,8 @@ processes:
     auto_restart: false
     restart_when_changed: []
     env: {}
-  Types:
-    command: bun cf:types
+  Database:
+    command: ./infra/postgres/launch.sh
     working_dir: null
     auto_start: false
     auto_restart: false
