@@ -2,6 +2,13 @@ import { Delete02Icon, LinkSquare02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Badge } from "@sotsial/ui/components/badge";
 import { Button } from "@sotsial/ui/components/button";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@sotsial/ui/components/empty";
 import { Input } from "@sotsial/ui/components/input";
 import { PageHeading } from "@sotsial/ui/components/page-heading";
 import { Skeleton } from "@sotsial/ui/components/skeleton";
@@ -80,12 +87,14 @@ function ConnectionsPage() {
         value={query}
       />
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-border bg-card px-6 py-16">
-          <Skeleton className="size-10 rounded-full" />
-          <Skeleton className="h-5 w-32" />
-          <Skeleton className="h-5 w-72 max-w-full" />
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon" />
+            <Skeleton className="h-6 w-32" />
+            <Skeleton className="h-5 w-72 max-w-full" />
+          </EmptyHeader>
           <Skeleton className="h-8 w-36 rounded-full" />
-        </div>
+        </Empty>
       ) : // biome-ignore lint/style/noNestedTernary: loading/data/empty render pattern
       data && data.length > 0 ? (
         <Table>
@@ -142,18 +151,20 @@ function ConnectionsPage() {
           </TableBody>
         </Table>
       ) : (
-        <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-border bg-card px-6 py-16 text-center">
-          <span className="inline-flex size-10 items-center justify-center rounded-full bg-muted text-muted-foreground">
-            <HugeiconsIcon className="size-5" icon={LinkSquare02Icon} />
-          </span>
-          <p className="font-medium text-sm">No connections yet</p>
-          <p className="max-w-[44ch] text-muted-foreground text-sm">
-            Link a social account to start publishing through Sotsial.
-          </p>
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <HugeiconsIcon icon={LinkSquare02Icon} />
+            </EmptyMedia>
+            <EmptyTitle>No connections yet</EmptyTitle>
+            <EmptyDescription>
+              Link a social account to start publishing through Sotsial.
+            </EmptyDescription>
+          </EmptyHeader>
           <Button render={<Link to="/settings/integrations" />} size="sm">
             Connect an account
           </Button>
-        </div>
+        </Empty>
       )}
     </div>
   );

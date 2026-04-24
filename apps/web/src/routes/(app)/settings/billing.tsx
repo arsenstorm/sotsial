@@ -1,3 +1,12 @@
+import { Invoice01Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@sotsial/ui/components/empty";
 import { PageHeading } from "@sotsial/ui/components/page-heading";
 import { PageSubheading } from "@sotsial/ui/components/page-subheading";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -76,17 +85,18 @@ function BillingPage() {
 
       <section className="space-y-4">
         <PageSubheading title="Invoices" />
-        <div className="rounded-xl border border-border border-dashed bg-card/30 px-5 py-10 text-center">
-          <p className="font-medium text-sm">No invoices yet</p>
-          <p className="mx-auto mt-1 max-w-[40ch] text-muted-foreground text-sm leading-6">
-            Invoices will appear here once paid plans are available. Preview the
-            upcoming tiers on the{" "}
-            <Link className="underline underline-offset-4" to="/pricing">
-              pricing page
-            </Link>
-            .
-          </p>
-        </div>
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <HugeiconsIcon icon={Invoice01Icon} />
+            </EmptyMedia>
+            <EmptyTitle>No invoices yet</EmptyTitle>
+            <EmptyDescription>
+              Invoices will appear here once paid plans are available. Preview
+              the upcoming tiers on the <Link to="/pricing">pricing page</Link>.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
       </section>
     </div>
   );

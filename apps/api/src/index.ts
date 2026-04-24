@@ -5,7 +5,9 @@ import connections from "./routes/connections";
 import connectionsVerify from "./routes/connections-verify";
 import credentials from "./routes/credentials";
 import keys from "./routes/keys";
+import posts from "./routes/posts";
 import publish from "./routes/publish";
+import upload from "./routes/upload";
 
 const app = new Hono<{
   Bindings: CloudflareBindings;
@@ -21,8 +23,10 @@ const app = new Hono<{
   .route("/v1/connections/verify", connectionsVerify)
   .route("/v1/connections", connections)
   .route("/v1/publish", publish)
+  .route("/v1/posts", posts)
   .route("/v1/credentials", credentials)
   .route("/v1/keys", keys)
+  .route("/v1/upload", upload)
   .route("/v1/callback", callback);
 
 export type AppType = typeof app;

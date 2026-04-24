@@ -1,4 +1,8 @@
-import { Delete02Icon, PlusSignIcon } from "@hugeicons/core-free-icons";
+import {
+  CreditCardIcon,
+  Delete02Icon,
+  PlusSignIcon,
+} from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Badge } from "@sotsial/ui/components/badge";
 import { Button } from "@sotsial/ui/components/button";
@@ -11,7 +15,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@sotsial/ui/components/dialog";
-import { Empty } from "@sotsial/ui/components/empty";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@sotsial/ui/components/empty";
 import { Field, FieldLabel } from "@sotsial/ui/components/field";
 import { Input } from "@sotsial/ui/components/input";
 import { PageHeading } from "@sotsial/ui/components/page-heading";
@@ -109,7 +119,14 @@ function CredentialsPage() {
         title="Credentials"
       />
       {isLoading ? (
-        <Skeleton className="h-48 w-full" />
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon" />
+            <Skeleton className="h-6 w-32" />
+            <Skeleton className="h-5 w-72 max-w-full" />
+          </EmptyHeader>
+          <Skeleton className="h-8 w-36 rounded-full" />
+        </Empty>
       ) : // biome-ignore lint/style/noNestedTernary: loading/data/empty render pattern
       data && data.length > 0 ? (
         <Table>
@@ -148,7 +165,17 @@ function CredentialsPage() {
         </Table>
       ) : (
         <Empty>
-          <p className="text-sm">No credentials yet.</p>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <HugeiconsIcon icon={CreditCardIcon} />
+            </EmptyMedia>
+            <EmptyTitle>No credentials yet</EmptyTitle>
+            <EmptyDescription>
+              Bring your own OAuth client ID and secret for a supported platform
+              to publish under your own brand.
+            </EmptyDescription>
+          </EmptyHeader>
+          <CreateCredentialDialog />
         </Empty>
       )}
     </div>

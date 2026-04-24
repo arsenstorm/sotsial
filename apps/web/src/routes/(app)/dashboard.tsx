@@ -1,5 +1,17 @@
-import { ArrowRight02Icon, LinkSquare02Icon } from "@hugeicons/core-free-icons";
+import {
+  ArrowRight02Icon,
+  Edit02Icon,
+  LinkSquare02Icon,
+} from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { Button } from "@sotsial/ui/components/button";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@sotsial/ui/components/empty";
 import { PageHeading } from "@sotsial/ui/components/page-heading";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
@@ -58,12 +70,17 @@ function DashboardPage() {
               <HugeiconsIcon className="size-3.5" icon={ArrowRight02Icon} />
             </Link>
           </header>
-          <div className="flex flex-col items-center justify-center gap-2 px-5 py-12 text-center">
-            <p className="font-medium text-sm">No posts yet</p>
-            <p className="max-w-[36ch] text-muted-foreground text-sm">
-              Once you publish from Sotsial, recent activity will appear here.
-            </p>
-          </div>
+          <Empty className="p-8">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <HugeiconsIcon icon={Edit02Icon} />
+              </EmptyMedia>
+              <EmptyTitle>No posts yet</EmptyTitle>
+              <EmptyDescription>
+                Once you publish from Sotsial, recent activity will appear here.
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
         </section>
 
         <section className="overflow-hidden rounded-xl border border-border bg-card">
@@ -77,18 +94,21 @@ function DashboardPage() {
               <HugeiconsIcon className="size-3.5" icon={ArrowRight02Icon} />
             </Link>
           </header>
-          <div className="flex flex-col items-center justify-center gap-3 px-5 py-12 text-center">
-            <span className="inline-flex size-10 items-center justify-center rounded-full bg-muted text-muted-foreground">
-              <HugeiconsIcon className="size-5" icon={LinkSquare02Icon} />
-            </span>
-            <p className="font-medium text-sm">No accounts connected</p>
-            <Link
-              className="text-foreground text-sm underline-offset-4 hover:underline"
-              to="/settings/integrations"
+          <Empty className="p-8">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <HugeiconsIcon icon={LinkSquare02Icon} />
+              </EmptyMedia>
+              <EmptyTitle>No accounts connected</EmptyTitle>
+            </EmptyHeader>
+            <Button
+              render={<Link to="/settings/integrations" />}
+              size="sm"
+              variant="outline"
             >
               Connect an account
-            </Link>
-          </div>
+            </Button>
+          </Empty>
         </section>
       </div>
     </div>

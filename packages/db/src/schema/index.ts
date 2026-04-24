@@ -3,3 +3,4 @@ export * from "./api-key";
 export * from "./auth";
 export * from "./domain";
 export * from "./organization";
+export * from "./post";

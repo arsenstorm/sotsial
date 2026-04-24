@@ -1,7 +1,9 @@
 import { zValidator } from "@hono/zod-validator";
+import { posts } from "@sotsial/db/schema";
 import { Hono } from "hono";
 import { z } from "zod";
 import type { AuthContext } from "../db";
+import { db } from "../db";
 import { getAccounts } from "../lib/accounts";
 import { authorise } from "../lib/auth";
 import { createCdnUrl } from "../lib/cdn";
@@ -159,7 +161,32 @@ const app = new Hono<{
       } as any,
     });
 
-    return c.json({ results });
+    // Split per-platform overrides from the baseline post so we can store
+    // them as a separate column without losing the publish envelope.
+    const {
+      text: postText,
+      media: _media,
+      ...platformSettings
+    } = body.post as {
+      text?: string;
+      media?: unknown;
+      [platform: string]: unknown;
+    };
+
+    const [row] = await db()
+      .insert(posts)
+      .values({
+        organizationId,
+        text: typeof postText === "string" ? postText : null,
+        media: mediaInput ?? null,
+        targets,
+        platformSettings:
+          Object.keys(platformSettings).length > 0 ? platformSettings : null,
+        results: results as unknown,
+      })
+      .returning({ id: posts.id });
+
+    return c.json({ id: row.id, results });
   });
 
 export default app;

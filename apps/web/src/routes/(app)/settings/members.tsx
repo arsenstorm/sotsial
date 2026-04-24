@@ -1,8 +1,19 @@
-import { Cancel01Icon, Delete02Icon } from "@hugeicons/core-free-icons";
+import {
+  Cancel01Icon,
+  Delete02Icon,
+  Mail01Icon,
+  UserIcon,
+} from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Badge } from "@sotsial/ui/components/badge";
 import { Button } from "@sotsial/ui/components/button";
-import { Empty } from "@sotsial/ui/components/empty";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@sotsial/ui/components/empty";
 import { Field, FieldLabel } from "@sotsial/ui/components/field";
 import { Input } from "@sotsial/ui/components/input";
 import { PageHeading } from "@sotsial/ui/components/page-heading";
@@ -131,7 +142,13 @@ function MembersPage() {
       <section className="space-y-4">
         <PageSubheading title="Members" />
         {membersLoading ? (
-          <Skeleton className="h-32 w-full" />
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon" />
+              <Skeleton className="h-6 w-32" />
+              <Skeleton className="h-5 w-72 max-w-full" />
+            </EmptyHeader>
+          </Empty>
         ) : // biome-ignore lint/style/noNestedTernary: loading/data/empty render pattern
         members && members.length > 0 ? (
           <Table>
@@ -171,7 +188,15 @@ function MembersPage() {
           </Table>
         ) : (
           <Empty>
-            <p className="text-sm">No members yet.</p>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <HugeiconsIcon icon={UserIcon} />
+              </EmptyMedia>
+              <EmptyTitle>No members yet</EmptyTitle>
+              <EmptyDescription>
+                Invite teammates to collaborate in this organization.
+              </EmptyDescription>
+            </EmptyHeader>
           </Empty>
         )}
       </section>
@@ -215,9 +240,17 @@ function MembersPage() {
             </TableBody>
           </Table>
         ) : (
-          <p className="text-muted-foreground text-sm">
-            No pending invitations.
-          </p>
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <HugeiconsIcon icon={Mail01Icon} />
+              </EmptyMedia>
+              <EmptyTitle>No pending invitations</EmptyTitle>
+              <EmptyDescription>
+                Use the form above to invite someone to this organization.
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
         )}
       </section>
     </div>

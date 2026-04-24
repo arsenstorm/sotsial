@@ -10,8 +10,10 @@
   },
   "dependencies": {
     "@better-auth/api-key": "^1.6.9",
+    "@better-auth/stripe": "^1.6.9",
     "@sotsial/db": "workspace:*",
-    "better-auth": "^1.6.2"
+    "better-auth": "^1.6.2",
+    "stripe": "^22.1.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260412.1",
