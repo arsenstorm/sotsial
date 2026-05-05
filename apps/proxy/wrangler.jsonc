@@ -1,0 +1,40 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "sotsial-proxy",
+  "main": "src/index.ts",
+  "account_id": "8dd0864e5cce87fba700990f062744f0",
+  "compatibility_date": "2026-04-24",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+    "logs": {
+      "enabled": true
+    }
+  },
+  "routes": [
+    {
+      "pattern": "https://proxy.sotsial.com/*",
+      "zone_name": "sotsial.com",
+      "custom_domain": false
+    },
+    {
+      "pattern": "proxy.sotsial.com",
+      "zone_name": "sotsial.com",
+      "custom_domain": true
+    }
+  ],
+  "vars": {
+    "ENVIRONMENT": "development"
+  },
+  "secrets": {
+    "required": ["SOTSIAL_PROXY_KEY"]
+  },
+  "env": {
+    "production": {
+      "vars": {
+        "ENVIRONMENT": "production"
+      }
+    }
+  }
+}

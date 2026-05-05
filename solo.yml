@@ -1,0 +1,31 @@
+name: sotsial
+icon: null
+processes:
+  Database:
+    command: ./infra/postgres/launch.sh
+    working_dir: null
+    auto_start: false
+    auto_restart: false
+    restart_when_changed: []
+    env: {}
+  Types:
+    command: bun cf:types
+    working_dir: null
+    auto_start: false
+    auto_restart: false
+    restart_when_changed: []
+    env: {}
+  Web:
+    command: bun run dev
+    working_dir: ./apps/web
+    auto_start: false
+    auto_restart: false
+    restart_when_changed: []
+    env: {}
+  API:
+    command: bun run dev
+    working_dir: ./apps/api
+    auto_start: false
+    auto_restart: false
+    restart_when_changed: []
+    env: {}

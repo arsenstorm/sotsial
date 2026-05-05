@@ -1,0 +1,45 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "sotsial",
+  "account_id": "8dd0864e5cce87fba700990f062744f0",
+  "compatibility_date": "2026-04-24",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "src/entrypoint.ts",
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+    "logs": {
+      "enabled": true
+    }
+  },
+  "routes": [
+    {
+      "pattern": "https://sotsial.com/*",
+      "zone_name": "sotsial.com",
+      "custom_domain": false
+    },
+    {
+      "pattern": "sotsial.com",
+      "zone_name": "sotsial.com",
+      "custom_domain": true
+    }
+  ],
+  "vars": {
+    "APP_BASE_URL": "https://sotsial.com",
+    "AUTH_URL": "https://sotsial.com",
+    "ENVIRONMENT": "production"
+  },
+  "hyperdrive": [
+    {
+      "binding": "DATABASE",
+      "id": "REPLACE_WITH_HYPERDRIVE_ID",
+      "localConnectionString": "postgresql://postgres:postgres@127.0.0.1:54322/postgres"
+    }
+  ],
+  "services": [
+    {
+      "binding": "API",
+      "service": "sotsial-api"
+    }
+  ]
+}

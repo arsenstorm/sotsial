@@ -1,116 +1,220 @@
-import { Card } from "@/components/ui/card";
-import { platformDetails } from "@/config/platform-details";
-import { platformFormConfigs } from "@/config/platform-form-fields";
-import { PlatformFormField } from "@/components/platform-form-field";
-import type { PlatformFormState } from "@/app/(app)/posting/page.client";
-
-interface PlatformSettingsProps {
-	platform: string;
-	formState: PlatformFormState;
-	onChange: (platform: string, field: string, value: any) => void;
-}
+import { Checkbox } from "@sotsial/ui/components/checkbox";
+import { Field, FieldLabel } from "@sotsial/ui/components/field";
+import { Input } from "@sotsial/ui/components/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@sotsial/ui/components/select";
+import { Textarea } from "@sotsial/ui/components/textarea";
+import { useMemo } from "react";
+import {
+  getPath,
+  type PathState,
+  setPath,
+} from "@/components/posting/path-state";
+import {
+  type FormField,
+  type PlatformConfig,
+  platformFormConfigs,
+} from "@/config/platform-form-fields";
 
 export function PlatformSettings({
-	platform,
-	formState,
-	onChange,
-}: PlatformSettingsProps) {
-	const PlatformLogo =
-		platformDetails[platform as keyof typeof platformDetails]?.logo;
-	const platformName =
-		platformDetails[platform as keyof typeof platformDetails]?.name ?? platform;
-	const config = platformFormConfigs[platform];
+  platforms,
+  state,
+  onChange,
+}: {
+  /** Unique platforms currently selected. */
+  platforms: string[];
+  state: Record<string, PathState>;
+  onChange: (next: Record<string, PathState>) => void;
+}) {
+  const configured = useMemo(
+    () => platforms.filter((p) => Boolean(platformFormConfigs[p])),
+    [platforms]
+  );
 
-	// Render platform-specific form fields
-	const renderPlatformFields = () => {
-		if (!config) return null;
+  if (configured.length === 0) {
+    return null;
+  }
 
-		return (
-			<div className="space-y-6">
-				{config.sections.map((section) => (
-					<div key={section.fields.join(",")}>
-						{section.title && (
-							<h3 className="text-sm font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400 mb-3">
-								{section.title}
-							</h3>
-						)}
-						<div className="space-y-4">
-							{section.fields.map((fieldName) => {
-								const field = config.fields.find((f) => f.name === fieldName);
-								if (!field) return null;
+  return (
+    <div className="space-y-4">
+      {configured.map((platform) => {
+        const config = platformFormConfigs[platform];
+        if (!config) {
+          return null;
+        }
+        return (
+          <PlatformCard
+            config={config}
+            key={platform}
+            onChange={(next) => onChange({ ...state, [platform]: next })}
+            platform={platform}
+            state={state[platform] ?? {}}
+          />
+        );
+      })}
+    </div>
+  );
+}
 
-								// Check if field should be shown based on conditions
-								if (field.conditional) {
-									const [parentField, childField] =
-										field.conditional.field.split(".");
-									const parentKey = `${parentField}` as keyof PlatformFormState;
-									const parentObj = formState[parentKey] as Record<string, any>;
-									const parentValue = childField
-										? parentObj?.[childField]
-										: formState[parentKey];
+function PlatformCard({
+  platform,
+  config,
+  state,
+  onChange,
+}: {
+  platform: string;
+  config: PlatformConfig;
+  state: PathState;
+  onChange: (next: PathState) => void;
+}) {
+  const fieldByName = useMemo(
+    () => new Map(config.fields.map((field) => [field.name, field])),
+    [config.fields]
+  );
 
-									if (parentValue !== field.conditional.value) return null;
-								}
+  const readField = (name: string): unknown => {
+    const value = getPath(state, name);
+    if (value !== undefined) {
+      return value;
+    }
+    return fieldByName.get(name)?.defaultValue;
+  };
 
-								// Get the value from the nested state
-								const stateKey = field.name.includes(".")
-									? field.name.split(".")[0]
-									: field.name;
+  const writeField = (name: string, value: unknown) => {
+    onChange(setPath(state, name, value));
+  };
 
-								const fullKey = `${stateKey}` as keyof PlatformFormState;
-								let value: any = undefined;
+  return (
+    <section className="rounded-xl border border-border bg-card p-5">
+      <header className="flex items-center justify-between">
+        <h3 className="font-mono text-muted-foreground text-xs uppercase tracking-wide">
+          {platform}
+        </h3>
+      </header>
+      <div className="mt-4 space-y-5">
+        {config.sections.map((section, idx) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: stable config ordering
+          <div className="space-y-3" key={idx}>
+            {section.title ? (
+              <p className="font-medium text-sm">{section.title}</p>
+            ) : null}
+            {section.fields.map((name) => {
+              const field = fieldByName.get(name);
+              if (!field) {
+                return null;
+              }
+              if (!shouldShowField(field, readField)) {
+                return null;
+              }
+              return (
+                <FieldRenderer
+                  field={field}
+                  key={field.name}
+                  onChange={(value) => writeField(field.name, value)}
+                  value={readField(field.name)}
+                />
+              );
+            })}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
 
-								if (field.name.includes(".")) {
-									const [parent, child] = field.name.split(".");
-									const parentObj = formState[fullKey] as Record<string, any>;
-									value = parentObj?.[child];
-								} else {
-									value = formState[fullKey];
-								}
+function shouldShowField(
+  field: FormField,
+  read: (name: string) => unknown
+): boolean {
+  if (!field.conditional) {
+    return true;
+  }
+  return read(field.conditional.field) === field.conditional.value;
+}
 
-								return (
-									<div
-										key={field.name}
-										className={
-											field.type === "checkbox"
-												? "bg-zinc-50 dark:bg-zinc-900/50 rounded-lg p-3"
-												: ""
-										}
-									>
-										<PlatformFormField
-											{...field}
-											value={value}
-											onChange={(newValue: any) => {
-												// Handle nested state updates
-												if (field.name.includes(".")) {
-													const [parent, child] = field.name.split(".");
-													onChange(platform, `${parent}.${child}`, newValue);
-												} else {
-													onChange(platform, field.name, newValue);
-												}
-											}}
-										/>
-									</div>
-								);
-							})}
-						</div>
-					</div>
-				))}
-			</div>
-		);
-	};
+function FieldRenderer({
+  field,
+  value,
+  onChange,
+}: {
+  field: FormField;
+  value: unknown;
+  onChange: (value: unknown) => void;
+}) {
+  const id = `field-${field.name.replace(/\./g, "-")}`;
 
-	if (!config?.sections || config?.sections.length === 0) return null;
+  if (field.type === "select") {
+    const items = Object.fromEntries(
+      (field.options ?? []).map((option) => [option.value, option.label])
+    );
+    return (
+      <Field>
+        <FieldLabel htmlFor={id}>{field.label}</FieldLabel>
+        <Select
+          items={items}
+          onValueChange={(next) => onChange(next ?? "")}
+          value={(value as string) ?? ""}
+        >
+          <SelectTrigger id={id}>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {(field.options ?? []).map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </Field>
+    );
+  }
 
-	return (
-		<Card>
-			<div className="p-4">
-				<div className="flex items-center gap-2 mb-4">
-					{PlatformLogo && <PlatformLogo className="size-5" />}
-					<h3 className="text-base font-medium">{platformName} Settings</h3>
-				</div>
-				{renderPlatformFields()}
-			</div>
-		</Card>
-	);
+  if (field.type === "checkbox") {
+    return (
+      <label
+        className="flex cursor-pointer items-center gap-2 text-sm"
+        htmlFor={id}
+      >
+        <Checkbox
+          checked={Boolean(value)}
+          id={id}
+          onCheckedChange={(next) => onChange(next === true)}
+        />
+        <span>{field.label}</span>
+      </label>
+    );
+  }
+
+  if (field.type === "textarea") {
+    return (
+      <Field>
+        <FieldLabel htmlFor={id}>{field.label}</FieldLabel>
+        <Textarea
+          id={id}
+          onChange={(e) => onChange(e.target.value)}
+          rows={3}
+          value={(value as string) ?? ""}
+        />
+      </Field>
+    );
+  }
+
+  // text and url
+  return (
+    <Field>
+      <FieldLabel htmlFor={id}>{field.label}</FieldLabel>
+      <Input
+        id={id}
+        onChange={(e) => onChange(e.target.value)}
+        type={field.type === "url" ? "url" : "text"}
+        value={(value as string) ?? ""}
+      />
+    </Field>
+  );
 }

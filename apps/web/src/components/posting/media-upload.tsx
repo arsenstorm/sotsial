@@ -1,156 +1,171 @@
-import { useState } from "react";
-import { useDropzone } from "react-dropzone";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Listbox, ListboxOption } from "@/components/ui/listbox";
-import { Text } from "@/components/ui/text";
-import { PlusIcon, XMarkIcon } from "@/icons/ui";
-import type { MediaItem } from "@/app/(app)/posting/page.client";
-import clsx from "clsx";
+import { Delete02Icon, Upload04Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Button } from "@sotsial/ui/components/button";
+import { Field, FieldLabel } from "@sotsial/ui/components/field";
+import { Input } from "@sotsial/ui/components/input";
+import { useMutation } from "@tanstack/react-query";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
 
-interface MediaUploadProps {
-	mediaItems: MediaItem[];
-	onAddMedia: (items: MediaItem[]) => void;
-	onRemoveMedia: (id: string) => void;
-	onClearAllMedia: () => void;
+export interface MediaItem {
+  id: string;
+  type: "image" | "video";
+  url: string;
+}
+
+interface UploadResponse {
+  size: number;
+  type: "image" | "video";
+  url: string;
+}
+
+const IMAGE_EXT = /\.(jpe?g|png|webp|gif)$/i;
+const VIDEO_EXT = /\.(mp4|mov|quicktime)$/i;
+
+function guessType(url: string): "image" | "video" | null {
+  if (IMAGE_EXT.test(url)) {
+    return "image";
+  }
+  if (VIDEO_EXT.test(url)) {
+    return "video";
+  }
+  return null;
 }
 
 export function MediaUpload({
-	mediaItems,
-	onAddMedia,
-	onRemoveMedia,
-	onClearAllMedia,
-}: MediaUploadProps) {
-	const [mediaUrl, setMediaUrl] = useState("");
-	const [mediaType, setMediaType] = useState<"image" | "video">("image");
+  items,
+  onChange,
+}: {
+  items: MediaItem[];
+  onChange: (next: MediaItem[]) => void;
+}) {
+  const [url, setUrl] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-	// File upload handling
-	const { getRootProps, getInputProps, isDragActive } = useDropzone({
-		accept: {
-			"image/*": [],
-			"video/*": [],
-		},
-		maxFiles: 10,
-		onDrop: (acceptedFiles: File[]) => {
-			// TODO: Upload files to server and get back URLs
-			const newMediaItems = acceptedFiles.map((file: File) => ({
-				type: file.type.startsWith("image/")
-					? ("image" as const)
-					: ("video" as const),
-				url: URL.createObjectURL(file),
-				id: `${file.name}-${Date.now()}`,
-			}));
+  const uploadMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const form = new FormData();
+      form.set("file", file);
+      const res = await fetch("/v1/upload", {
+        method: "POST",
+        body: form,
+      });
+      if (!res.ok) {
+        const body = (await res.json().catch(() => ({}))) as {
+          error?: string;
+        };
+        throw new Error(body.error ?? "Upload failed");
+      }
+      return (await res.json()) as UploadResponse;
+    },
+    onSuccess: (data) => {
+      onChange([
+        ...items,
+        { id: crypto.randomUUID(), url: data.url, type: data.type },
+      ]);
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
 
-			onAddMedia(newMediaItems);
-		},
-	});
+  const addFromUrl = () => {
+    const trimmed = url.trim();
+    if (!trimmed) {
+      return;
+    }
+    const type = guessType(trimmed);
+    if (!type) {
+      toast.error("Unsupported media URL (expect jpg/png/webp/gif/mp4/mov)");
+      return;
+    }
+    onChange([...items, { id: crypto.randomUUID(), url: trimmed, type }]);
+    setUrl("");
+  };
 
-	// Add media from URL
-	const addMediaFromUrl = () => {
-		if (!mediaUrl) return;
+  const remove = (id: string) => {
+    onChange(items.filter((item) => item.id !== id));
+  };
 
-		onAddMedia([
-			{
-				type: mediaType,
-				url: mediaUrl,
-				id: `${mediaType}-${mediaUrl}-${Date.now()}`,
-			},
-		]);
-		setMediaUrl("");
-	};
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <Button
+          disabled={uploadMutation.isPending}
+          onClick={() => fileInputRef.current?.click()}
+          type="button"
+          variant="outline"
+        >
+          <HugeiconsIcon icon={Upload04Icon} />
+          {uploadMutation.isPending ? "Uploading…" : "Upload file"}
+        </Button>
+        <input
+          accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/quicktime"
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+              uploadMutation.mutate(file);
+              e.target.value = "";
+            }
+          }}
+          ref={fileInputRef}
+          type="file"
+        />
+        <Field className="flex-1">
+          <FieldLabel className="sr-only" htmlFor="media-url">
+            Media URL
+          </FieldLabel>
+          <div className="flex gap-2">
+            <Input
+              id="media-url"
+              onChange={(e) => setUrl(e.target.value)}
+              placeholder="…or paste an https URL"
+              value={url}
+            />
+            <Button
+              disabled={!url.trim()}
+              onClick={addFromUrl}
+              type="button"
+              variant="outline"
+            >
+              Add
+            </Button>
+          </div>
+        </Field>
+      </div>
 
-	return (
-		<div>
-			{/* Modern file dropzone */}
-			<div
-				{...getRootProps()}
-				className={clsx(
-					"border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer",
-					isDragActive
-						? "border-blue-400 bg-blue-50 dark:bg-blue-900/20"
-						: "border-zinc-300 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-600",
-				)}
-			>
-				<input {...getInputProps()} />
-				<div className="flex flex-col items-center">
-					<PlusIcon className="h-8 w-8 text-zinc-400 dark:text-zinc-500 mb-2" />
-					<p className="text-base text-zinc-600 dark:text-zinc-400">
-						Drag & drop images or videos here, or click to select files
-					</p>
-					<p className="text-sm text-zinc-500 dark:text-zinc-500 mt-1">
-						Supported formats: JPG, PNG, MP4, MOV
-					</p>
-				</div>
-			</div>
-
-			{/* URL-based media option */}
-			<div className="mt-4">
-				<Text className="font-medium mb-2">Or add media via URL</Text>
-				<div className="flex gap-2">
-					<div className="flex-1">
-						<Input
-							type="url"
-							value={mediaUrl}
-							onChange={(e) => setMediaUrl(e.target.value)}
-							placeholder="Enter media URL"
-						/>
-					</div>
-					<div className="w-28">
-						<Listbox value={mediaType} onChange={setMediaType}>
-							<ListboxOption value="image">Image</ListboxOption>
-							<ListboxOption value="video">Video</ListboxOption>
-						</Listbox>
-					</div>
-					<Button type="button" onClick={addMediaFromUrl}>
-						Add
-					</Button>
-				</div>
-			</div>
-
-			{/* Attached media preview */}
-			{mediaItems.length > 0 && (
-				<div className="mt-4 border-t border-zinc-200 dark:border-zinc-800 pt-4">
-					<div className="flex justify-between items-center mb-2">
-						<Text className="font-medium">Attached Media</Text>
-						<Button
-							plain
-							onClick={onClearAllMedia}
-							className="text-red-500 text-sm"
-						>
-							Clear All
-						</Button>
-					</div>
-					<div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-						{mediaItems.map((item) => (
-							<div key={item.id} className="relative group">
-								<div className="aspect-square rounded-lg overflow-hidden bg-zinc-100 dark:bg-zinc-800">
-									{item.type === "image" ? (
-										<img
-											src={item.url}
-											alt=""
-											className="w-full h-full object-cover"
-										/>
-									) : (
-										<video
-											src={item.url}
-											className="w-full h-full object-cover"
-										>
-											<track kind="captions" label="English captions" />
-										</video>
-									)}
-								</div>
-								<button
-									type="button"
-									onClick={() => onRemoveMedia(item.id)}
-									className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-								>
-									<XMarkIcon className="size-4" />
-								</button>
-							</div>
-						))}
-					</div>
-				</div>
-			)}
-		</div>
-	);
+      {items.length > 0 ? (
+        <ul className="grid @3xl:grid-cols-4 @xl:grid-cols-3 grid-cols-2 gap-2">
+          {items.map((item) => (
+            <li
+              className="group relative aspect-square overflow-hidden rounded-lg border border-border bg-muted"
+              key={item.id}
+            >
+              {item.type === "image" ? (
+                // biome-ignore lint/correctness/useImageSize: user-supplied URL, intrinsic dims unknown
+                <img
+                  alt="media preview"
+                  className="size-full object-cover"
+                  src={item.url}
+                />
+              ) : (
+                <video className="size-full object-cover" muted src={item.url}>
+                  <track kind="captions" />
+                </video>
+              )}
+              <Button
+                aria-label="Remove media"
+                className="absolute top-1.5 right-1.5 size-7 bg-background/80 opacity-0 backdrop-blur transition-opacity group-hover:opacity-100"
+                onClick={() => remove(item.id)}
+                size="icon-sm"
+                type="button"
+                variant="ghost"
+              >
+                <HugeiconsIcon icon={Delete02Icon} />
+              </Button>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
+  );
 }

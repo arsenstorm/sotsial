@@ -1,0 +1,103 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "sotsial-api",
+  "main": "src/index.ts",
+  "account_id": "8dd0864e5cce87fba700990f062744f0",
+  "compatibility_date": "2026-04-24",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+    "logs": {
+      "enabled": true
+    }
+  },
+  "routes": [
+    {
+      "pattern": "https://api.sotsial.com/*",
+      "zone_name": "sotsial.com",
+      "custom_domain": false
+    },
+    {
+      "pattern": "api.sotsial.com",
+      "zone_name": "sotsial.com",
+      "custom_domain": true
+    }
+  ],
+  "vars": {
+    "APP_BASE_URL": "http://localhost:3000",
+    "AUTH_URL": "http://localhost:3000",
+    "ENVIRONMENT": "development",
+    "MEDIA_PUBLIC_BASE_URL": "https://media.sotsial.com",
+    "STRIPE_PRICE_TEAM": "price_1QZ002FZ0000000000000000",
+    "STRIPE_PRICE_ENTERPRISE": "price_1QZ002FZ0000000000000000"
+  },
+  "env": {
+    "production": {
+      "vars": {
+        "APP_BASE_URL": "https://api.sotsial.com",
+        "AUTH_URL": "https://sotsial.com",
+        "ENVIRONMENT": "production",
+        "MEDIA_PUBLIC_BASE_URL": "https://media.sotsial.com",
+        "STRIPE_PRICE_TEAM": "price_1QZ002FZ0000000000000000",
+        "STRIPE_PRICE_ENTERPRISE": "price_1QZ002FZ0000000000000000"
+      },
+      "secrets": {
+        "required": [
+          // API secrets
+          "INTERNAL_PROXY_SECRET",
+          "SOTSIAL_PROXY_KEY",
+          "ENCRYPTION_KEY",
+
+          // Stripe secrets
+          "STRIPE_SECRET_KEY",
+          "STRIPE_WEBHOOK_SECRET",
+
+          // Auth secrets
+          "AUTH_SECRET",
+
+          // Platform secrets
+          "GITHUB_CLIENT_ID",
+          "GITHUB_CLIENT_SECRET",
+
+          "THREADS_CLIENT_ID",
+          "THREADS_CLIENT_SECRET",
+
+          "INSTAGRAM_CLIENT_ID",
+          "INSTAGRAM_CLIENT_SECRET",
+
+          "FACEBOOK_CLIENT_ID",
+          "FACEBOOK_CLIENT_SECRET",
+
+          "TIKTOK_CLIENT_ID",
+          "TIKTOK_CLIENT_SECRET",
+
+          "LINKEDIN_CLIENT_ID",
+          "LINKEDIN_CLIENT_SECRET",
+
+          "TWITTER_CLIENT_ID",
+          "TWITTER_CLIENT_SECRET",
+
+          "GOOGLE_CLIENT_ID",
+          "GOOGLE_CLIENT_SECRET",
+
+          "YOUTUBE_CLIENT_ID",
+          "YOUTUBE_CLIENT_SECRET"
+        ]
+      }
+    }
+  },
+  "hyperdrive": [
+    {
+      "binding": "DATABASE",
+      "id": "REPLACE_WITH_HYPERDRIVE_ID",
+      "localConnectionString": "postgresql://postgres:postgres@127.0.0.1:6432/sotsial"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "R2_MEDIA",
+      "bucket_name": "sotsial-media"
+    }
+  ]
+}

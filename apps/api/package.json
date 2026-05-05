@@ -1,0 +1,31 @@
+{
+  "name": "api",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./types": "./src/types.ts"
+  },
+  "scripts": {
+    "dev": "wrangler dev --env-file ../../.env",
+    "deploy": "wrangler deploy --minify",
+    "typecheck": "tsc --noEmit",
+    "cf:types": "wrangler types workers.d.ts --env-interface CloudflareBindings"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.7.0",
+    "@sotsial/auth": "workspace:*",
+    "@sotsial/db": "workspace:*",
+    "@t3-oss/env-core": "^0.13.11",
+    "drizzle-orm": "^0.45.2",
+    "hono": "^4.12.15",
+    "sotsial": "workspace:*",
+    "stripe": "^22.1.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260412.1",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.4.0"
+  }
+}

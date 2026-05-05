@@ -1,8 +1,8 @@
 import {
-	createCipheriv,
-	createDecipheriv,
-	randomBytes,
-	scryptSync,
+  createCipheriv,
+  createDecipheriv,
+  randomBytes,
+  scryptSync,
 } from "node:crypto";
 
 /**
@@ -14,21 +14,25 @@ import {
  * @returns The encrypted text
  */
 export async function encrypt(
-	text?: string | null,
-	{ secret = process.env.ENCRYPTION_KEY }: { secret?: string } = {},
+  text?: string | null,
+  { secret = process.env.ENCRYPTION_KEY }: { secret?: string } = {}
 ): Promise<string | null> {
-	if (!text) return null;
-	if (!secret) throw new Error("Encryption key is required");
+  if (!text) {
+    return null;
+  }
+  if (!secret) {
+    throw new Error("Encryption key is required");
+  }
 
-	const iv = randomBytes(16);
-	const cipher = createCipheriv(
-		"aes-256-cbc",
-		scryptSync(secret, "salt", 32),
-		iv,
-	);
+  const iv = randomBytes(16);
+  const cipher = createCipheriv(
+    "aes-256-cbc",
+    scryptSync(secret, "salt", 32),
+    iv
+  );
 
-	const encrypted = cipher.update(text, "utf8", "hex") + cipher.final("hex");
-	return `${iv.toString("hex")}:${encrypted}`;
+  const encrypted = cipher.update(text, "utf8", "hex") + cipher.final("hex");
+  return `${iv.toString("hex")}:${encrypted}`;
 }
 
 /**
@@ -40,19 +44,23 @@ export async function encrypt(
  * @returns The decrypted text
  */
 export async function decrypt(
-	text: string,
-	{ secret = process.env.ENCRYPTION_KEY }: { secret?: string } = {},
+  text: string,
+  { secret = process.env.ENCRYPTION_KEY }: { secret?: string } = {}
 ): Promise<string | null> {
-	if (!text || !secret) return null;
+  if (!(text && secret)) {
+    return null;
+  }
 
-	const [ivHex, encryptedText] = text.split(":");
-	if (!ivHex || !encryptedText) return null;
+  const [ivHex, encryptedText] = text.split(":");
+  if (!(ivHex && encryptedText)) {
+    return null;
+  }
 
-	const decipher = createDecipheriv(
-		"aes-256-cbc",
-		scryptSync(secret, "salt", 32),
-		Buffer.from(ivHex, "hex"),
-	);
+  const decipher = createDecipheriv(
+    "aes-256-cbc",
+    scryptSync(secret, "salt", 32),
+    Buffer.from(ivHex, "hex")
+  );
 
-	return decipher.update(encryptedText, "hex", "utf8") + decipher.final("utf8");
+  return decipher.update(encryptedText, "hex", "utf8") + decipher.final("utf8");
 }
