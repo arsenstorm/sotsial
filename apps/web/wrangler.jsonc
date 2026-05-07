@@ -25,9 +25,9 @@
     }
   ],
   "vars": {
-    "APP_BASE_URL": "https://sotsial.com",
-    "AUTH_URL": "https://sotsial.com",
-    "ENVIRONMENT": "production"
+    "APP_BASE_URL": "http://localhost:3000",
+    "AUTH_URL": "http://localhost:3000",
+    "ENVIRONMENT": "development"
   },
   "hyperdrive": [
     {
@@ -41,5 +41,14 @@
       "binding": "API",
       "service": "sotsial-api"
     }
-  ]
+  ],
+  "env": {
+    "production": {
+      "vars": {
+        "APP_BASE_URL": "https://sotsial.com",
+        "AUTH_URL": "https://sotsial.com",
+        "ENVIRONMENT": "production"
+      }
+    }
+  }
 }
