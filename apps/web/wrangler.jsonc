@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "sotsial",
+  "name": "sotsial-web",
   "account_id": "8dd0864e5cce87fba700990f062744f0",
   "compatibility_date": "2026-04-24",
   "compatibility_flags": ["nodejs_compat"],
@@ -24,11 +24,6 @@
       "custom_domain": true
     }
   ],
-  "vars": {
-    "APP_BASE_URL": "http://localhost:3000",
-    "AUTH_URL": "http://localhost:3000",
-    "ENVIRONMENT": "development"
-  },
   "hyperdrive": [
     {
       "binding": "DATABASE",
@@ -41,14 +36,5 @@
       "binding": "API",
       "service": "sotsial-api"
     }
-  ],
-  "env": {
-    "production": {
-      "vars": {
-        "APP_BASE_URL": "https://sotsial.com",
-        "AUTH_URL": "https://sotsial.com",
-        "ENVIRONMENT": "production"
-      }
-    }
-  }
+  ]
 }

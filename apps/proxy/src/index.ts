@@ -285,11 +285,11 @@ app.options("/", () => {
 
 app.get("/", async (c) => {
   const log = createWorkersLogger(c.req.raw);
-  const secret = c.env.SOTSIAL_PROXY_KEY;
+  const secret = c.env.INTERNAL_PROXY_SECRET;
   if (!secret) {
     if (!hasLoggedMissingSecret) {
       hasLoggedMissingSecret = true;
-      log.error(new Error("SOTSIAL_PROXY_KEY is not set"));
+      log.error(new Error("INTERNAL_PROXY_SECRET is not set"));
     }
     return c.text("Internal server error", 500);
   }

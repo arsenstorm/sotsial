@@ -24,17 +24,7 @@
       "custom_domain": true
     }
   ],
-  "vars": {
-    "ENVIRONMENT": "development"
-  },
   "secrets": {
-    "required": ["SOTSIAL_PROXY_KEY"]
-  },
-  "env": {
-    "production": {
-      "vars": {
-        "ENVIRONMENT": "production"
-      }
-    }
+    "required": ["INTERNAL_PROXY_SECRET"]
   }
 }

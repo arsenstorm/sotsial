@@ -38,9 +38,6 @@ export const env = createEnv({
     // Encryption (OAuth tokens, CSRF tokens, client secrets at rest)
     ENCRYPTION_KEY: z.string().min(1),
 
-    // HMAC signing key for the CDN proxy
-    SOTSIAL_PROXY_KEY: z.string().min(1),
-
     // Stripe (optional — billing features activate when set)
     STRIPE_SECRET_KEY: z.string().optional(),
     STRIPE_WEBHOOK_SECRET: z.string().optional(),

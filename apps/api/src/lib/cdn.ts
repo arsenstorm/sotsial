@@ -31,7 +31,7 @@ export const createCdnUrl = async (url: string): Promise<string> => {
 
   const key = await crypto.subtle.importKey(
     "raw",
-    encoder.encode(env.SOTSIAL_PROXY_KEY),
+    encoder.encode(env.INTERNAL_PROXY_SECRET),
     { name: "HMAC", hash: "SHA-256" },
     false,
     ["sign"]

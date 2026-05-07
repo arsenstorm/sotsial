@@ -24,29 +24,12 @@
       "custom_domain": true
     }
   ],
-  "vars": {
-    "APP_BASE_URL": "http://localhost:3000",
-    "AUTH_URL": "http://localhost:3000",
-    "ENVIRONMENT": "development",
-    "MEDIA_PUBLIC_BASE_URL": "https://media.sotsial.com",
-    "STRIPE_PRICE_TEAM": "price_1QZ002FZ0000000000000000",
-    "STRIPE_PRICE_ENTERPRISE": "price_1QZ002FZ0000000000000000"
-  },
   "env": {
     "production": {
-      "vars": {
-        "APP_BASE_URL": "https://api.sotsial.com",
-        "AUTH_URL": "https://sotsial.com",
-        "ENVIRONMENT": "production",
-        "MEDIA_PUBLIC_BASE_URL": "https://media.sotsial.com",
-        "STRIPE_PRICE_TEAM": "price_1QZ002FZ0000000000000000",
-        "STRIPE_PRICE_ENTERPRISE": "price_1QZ002FZ0000000000000000"
-      },
       "secrets": {
         "required": [
           // API secrets
           "INTERNAL_PROXY_SECRET",
-          "SOTSIAL_PROXY_KEY",
           "ENCRYPTION_KEY",
 
           // Stripe secrets

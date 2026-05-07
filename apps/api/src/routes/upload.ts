@@ -56,7 +56,7 @@ const app = new Hono<{
 
     const envBindings = c.env as unknown as {
       R2_MEDIA?: R2Bucket;
-      MEDIA_PUBLIC_BASE_URL?: string;
+      MEDIA_BASE_URL?: string;
     };
     const bucket = envBindings.R2_MEDIA;
     if (!bucket) {
@@ -70,8 +70,7 @@ const app = new Hono<{
       httpMetadata: { contentType: mime },
     });
 
-    const base =
-      envBindings.MEDIA_PUBLIC_BASE_URL ?? "https://media.sotsial.com";
+    const base = envBindings.MEDIA_BASE_URL ?? "https://media.sotsial.com";
     const url = `${base.replace(TRAILING_SLASH, "")}/${key}`;
 
     return c.json({ url, type: family, size: file.size });
