@@ -24,71 +24,6 @@
       "custom_domain": true
     }
   ],
-  "env": {
-    "production": {
-      "name": "sotsial-api",
-      "hyperdrive": [
-        {
-          "binding": "DATABASE",
-          "id": "e126e4e36c154ce78ae8f94b72269da9",
-          "localConnectionString": "postgresql://postgres:postgres@127.0.0.1:6432/sotsial"
-        }
-      ],
-      "r2_buckets": [
-        {
-          "binding": "R2_MEDIA",
-          "bucket_name": "sotsial-media"
-        }
-      ],
-      "secrets": {
-        "required": [
-          // Config
-          "APP_BASE_URL",
-          "ENVIRONMENT",
-          "MEDIA_BASE_URL",
-
-          // API secrets
-          "INTERNAL_PROXY_SECRET",
-          "ENCRYPTION_KEY",
-
-          // Stripe secrets
-          "STRIPE_SECRET_KEY",
-          "STRIPE_WEBHOOK_SECRET",
-
-          // Auth secrets
-          "AUTH_SECRET",
-
-          // Platform secrets
-          "GITHUB_CLIENT_ID",
-          "GITHUB_CLIENT_SECRET",
-
-          "THREADS_CLIENT_ID",
-          "THREADS_CLIENT_SECRET",
-
-          "INSTAGRAM_CLIENT_ID",
-          "INSTAGRAM_CLIENT_SECRET",
-
-          "FACEBOOK_CLIENT_ID",
-          "FACEBOOK_CLIENT_SECRET",
-
-          "TIKTOK_CLIENT_ID",
-          "TIKTOK_CLIENT_SECRET",
-
-          "LINKEDIN_CLIENT_ID",
-          "LINKEDIN_CLIENT_SECRET",
-
-          "TWITTER_CLIENT_ID",
-          "TWITTER_CLIENT_SECRET",
-
-          "GOOGLE_CLIENT_ID",
-          "GOOGLE_CLIENT_SECRET",
-
-          "YOUTUBE_CLIENT_ID",
-          "YOUTUBE_CLIENT_SECRET"
-        ]
-      }
-    }
-  },
   "hyperdrive": [
     {
       "binding": "DATABASE",
@@ -101,5 +36,52 @@
       "binding": "R2_MEDIA",
       "bucket_name": "sotsial-media"
     }
-  ]
+  ],
+  "secrets": {
+    "required": [
+      // Config
+      "APP_BASE_URL",
+      "ENVIRONMENT",
+      "MEDIA_BASE_URL",
+
+      // API secrets
+      "INTERNAL_PROXY_SECRET",
+      "ENCRYPTION_KEY",
+
+      // Stripe secrets
+      "STRIPE_SECRET_KEY",
+      "STRIPE_WEBHOOK_SECRET",
+
+      // Auth secrets
+      "AUTH_SECRET",
+
+      // Platform secrets
+      "GITHUB_CLIENT_ID",
+      "GITHUB_CLIENT_SECRET",
+
+      "THREADS_CLIENT_ID",
+      "THREADS_CLIENT_SECRET",
+
+      "INSTAGRAM_CLIENT_ID",
+      "INSTAGRAM_CLIENT_SECRET",
+
+      "FACEBOOK_CLIENT_ID",
+      "FACEBOOK_CLIENT_SECRET",
+
+      "TIKTOK_CLIENT_ID",
+      "TIKTOK_CLIENT_SECRET",
+
+      "LINKEDIN_CLIENT_ID",
+      "LINKEDIN_CLIENT_SECRET",
+
+      "TWITTER_CLIENT_ID",
+      "TWITTER_CLIENT_SECRET",
+
+      "GOOGLE_CLIENT_ID",
+      "GOOGLE_CLIENT_SECRET",
+
+      "YOUTUBE_CLIENT_ID",
+      "YOUTUBE_CLIENT_SECRET"
+    ]
+  }
 }
