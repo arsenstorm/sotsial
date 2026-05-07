@@ -354,8 +354,10 @@ export class Threads extends Provider<ThreadsConfig, Account> {
         // Publish the container
         const result = await this.publishContainer(account, containerId);
 
-        if (result.error) {
-          errors.push(result.error);
+        if (result.error || !result.data) {
+          if (result.error) {
+            errors.push(result.error);
+          }
           continue;
         }
 
