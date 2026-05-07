@@ -76,7 +76,7 @@ export const core = (env: AuthEnv, _cf?: CfProperties<unknown>) => {
         sendInvitationEmail: ({ invitation, organization: org }) => {
           // Email delivery is deferred; log the invite URL so the owner can
           // copy it by hand. The Members page also exposes a Copy link button.
-          const inviteUrl = `${env.AUTH_URL}/invite/${invitation.id}`;
+          const inviteUrl = `${env.APP_BASE_URL}/invite/${invitation.id}`;
           console.log(
             `[invite] ${org.name} → ${invitation.email} (${invitation.role}): ${inviteUrl}`
           );
