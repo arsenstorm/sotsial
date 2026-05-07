@@ -42,6 +42,11 @@
       ],
       "secrets": {
         "required": [
+          // Config
+          "APP_BASE_URL",
+          "ENVIRONMENT",
+          "MEDIA_BASE_URL",
+
           // API secrets
           "INTERNAL_PROXY_SECRET",
           "ENCRYPTION_KEY",
