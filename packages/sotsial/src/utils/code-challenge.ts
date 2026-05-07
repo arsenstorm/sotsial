@@ -1,6 +1,10 @@
 // Types
 import type { GetCodeChallengeProps } from "@/types/security";
 
+const PLUS_REGEX = /\+/g;
+const SLASH_REGEX = /\//g;
+const TRAILING_EQUALS_REGEX = /=+$/;
+
 /**
  * Generates a code challenge for the given code.
  *
@@ -18,9 +22,9 @@ export async function generateCodeChallenge({ code }: GetCodeChallengeProps) {
   const base64Url = btoa(
     hashArray.map((byte) => String.fromCharCode(byte)).join("")
   )
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
+    .replace(PLUS_REGEX, "-")
+    .replace(SLASH_REGEX, "_")
+    .replace(TRAILING_EQUALS_REGEX, "");
 
   return base64Url;
 }

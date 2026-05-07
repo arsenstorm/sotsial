@@ -54,7 +54,7 @@ export class Twitter extends Provider<TwitterConfig, Account> {
    *
    * @returns The URL to redirect to
    */
-  async grant(
+  grant(
     { scopes }: Omit<GrantProps, "client_id" | "redirect_uri"> = {
       scopes: this.config.scopes ?? [],
     }
@@ -74,7 +74,7 @@ export class Twitter extends Provider<TwitterConfig, Account> {
    *
    * @returns The granted scopes and the expiry date of the access token.
    */
-  async validate({
+  validate({
     access_token,
     scopes,
   }: Omit<ValidateProps, "client_id" | "client_secret">): Promise<
@@ -198,36 +198,34 @@ export class Twitter extends Provider<TwitterConfig, Account> {
   /**
    * Refreshes a Twitter access token.
    *
-   * @param token - The token to refresh
-   * @param option - The token to refresh
+   * @param _props - The refresh props (not yet implemented)
    *
    * @returns The new access token, refresh token, and expiry date
    */
-  async refresh({
-    token,
-    option = "refresh_token",
-  }: Omit<RefreshAccessTokenProps, "client_id" | "client_secret"> & {
-    option?: "refresh_token";
-  }): Promise<Response<RefreshAccessTokenResponse | null>> {
+  refresh(
+    _props: Omit<RefreshAccessTokenProps, "client_id" | "client_secret"> & {
+      option?: "refresh_token";
+    }
+  ): Promise<Response<RefreshAccessTokenResponse | null>> {
     // TODO: Implement this
 
-    return {
+    return Promise.resolve({
       data: {
         token: "",
         expires_in: 0,
       },
       error: null,
-    };
+    });
   }
 
   /**
    * Publishes a post to Twitter.
    *
-   * @param post - The post to publish
+   * @param _props - The post to publish (Twitter publishing is not supported)
    *
    * @returns The response from the publish request
    */
-  async publish({ post }: Omit<PublishProps<"twitter">, "account">): Promise<
+  publish(_props: Omit<PublishProps<"twitter">, "account">): Promise<
     Response<
       | {
           success: boolean;
@@ -237,12 +235,12 @@ export class Twitter extends Provider<TwitterConfig, Account> {
       | null
     >
   > {
-    return {
+    return Promise.resolve({
       data: null,
       error: {
         message: "Twitter publishing is not supported",
       },
-    };
+    });
   }
 }
 

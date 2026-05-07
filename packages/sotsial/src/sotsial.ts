@@ -26,14 +26,26 @@ export type ProviderOptions = {
 };
 
 // Type for unified post content structure
-export type UnifiedPostContent = {
+export interface UnifiedPostContent {
   // Common content for all providers
   content: PostContent;
-  // Which providers to publish to (default: all enabled providers)
-  providers?: Provider[];
   // Provider-specific additional options
   options?: ProviderOptions;
-};
+  // Which providers to publish to (default: all enabled providers)
+  providers?: Provider[];
+}
+
+type ProviderInstance =
+  | Facebook
+  | Google
+  | Instagram
+  | LinkedIn
+  | Threads
+  | TikTok
+  | Twitter
+  | YouTube;
+
+type PublishResult = Awaited<ReturnType<ProviderInstance["publish"]>>;
 
 export class Sotsial {
   tiktok!: TikTok;
@@ -44,7 +56,7 @@ export class Sotsial {
   linkedin!: LinkedIn;
   twitter!: Twitter;
   youtube!: YouTube;
-  providers: Array<Provider> = [];
+  providers: Provider[] = [];
 
   constructor({
     threads,
@@ -97,9 +109,9 @@ export class Sotsial {
     }
   }
 
-  private async callProvider<T>(
+  private callProvider<T>(
     provider: Provider,
-    method: (provider: any) => Promise<T>
+    method: (provider: ProviderInstance) => Promise<T>
   ): Promise<T> {
     switch (provider) {
       case "threads":
@@ -153,7 +165,7 @@ export class Sotsial {
    * @param provider - The provider to create an authorisation URL for.
    * @returns The authorisation URL for the provider.
    */
-  async grant<T extends Provider>(provider: T) {
+  grant<T extends Provider>(provider: T) {
     return this.callProvider(provider, (p) => p.grant());
   }
 
@@ -165,7 +177,7 @@ export class Sotsial {
    * @param csrf_token - The CSRF token to exchange for an access token.
    * @returns The results of the exchange operation.
    */
-  async exchange<T extends Provider>(
+  exchange<T extends Provider>(
     provider: T,
     {
       code,
@@ -176,7 +188,7 @@ export class Sotsial {
     }>
   ) {
     return this.callProvider(provider, (p) =>
-      p.exchange({ code, csrf_token })
+      (p as Facebook).exchange({ code, csrf_token })
     ) as Promise<
       Response<T extends "facebook" ? ExchangeResponse[] : ExchangeResponse>
     >;
@@ -198,7 +210,7 @@ export class Sotsial {
       [P in Provider]?: Partial<PlatformContent[P]>;
     };
   }>) {
-    const results: Record<Provider, any> = {
+    const results: Record<Provider, PublishResult | undefined> = {
       threads: undefined,
       instagram: undefined,
       tiktok: undefined,
@@ -217,9 +229,9 @@ export class Sotsial {
         ...(post?.[provider] ?? {}),
       };
 
-      results[provider] = await this[provider].publish({
-        post: providerContent as unknown as any,
-      });
+      results[provider] = (await this[provider].publish({
+        post: providerContent as never,
+      })) as PublishResult;
     }
 
     return results;

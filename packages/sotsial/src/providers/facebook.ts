@@ -24,10 +24,10 @@ import type {
 import { timestamp } from "@/utils/timestamp";
 
 // Helper types for the Facebook provider
-type MediaItem = {
+interface MediaItem {
   type: string;
   url: string;
-};
+}
 
 type PublishResult = {
   success: boolean;
@@ -35,8 +35,18 @@ type PublishResult = {
   account_id: string;
 } | null;
 
+function toMediaArray<T>(media: T | T[] | undefined): T[] {
+  if (Array.isArray(media)) {
+    return media;
+  }
+  if (media) {
+    return [media];
+  }
+  return [];
+}
+
 export class Facebook extends Provider<FacebookConfig, Account> {
-  private version: "v21.0" | "v22.0" = "v22.0";
+  private readonly version: "v21.0" | "v22.0";
 
   constructor({
     config,
@@ -74,7 +84,7 @@ export class Facebook extends Provider<FacebookConfig, Account> {
    *
    * @returns The URL to redirect to
    */
-  async grant(
+  grant(
     { scopes }: Omit<GrantProps, "client_id" | "redirect_uri"> = {
       scopes: this.config.scopes ?? [],
     }
@@ -221,23 +231,20 @@ export class Facebook extends Provider<FacebookConfig, Account> {
   /**
    * Refreshes a Facebook access token or refresh token.
    *
-   * @param token - The token to refresh
-   * @param option - The token to refresh
+   * @param _props - The refresh props (not yet implemented)
    *
    * @returns The new access token, refresh token, and expiry date
    */
-  async refresh({
-    token,
-  }: Omit<RefreshAccessTokenProps, "client_id" | "client_secret">): Promise<
-    Response<RefreshAccessTokenResponse | null>
-  > {
-    return {
+  refresh(
+    _props: Omit<RefreshAccessTokenProps, "client_id" | "client_secret">
+  ): Promise<Response<RefreshAccessTokenResponse | null>> {
+    return Promise.resolve({
       data: {
         token: "",
         expires_in: 0,
       },
       error: null,
-    };
+    });
   }
 
   /**
@@ -270,11 +277,7 @@ export class Facebook extends Provider<FacebookConfig, Account> {
       const errors: ErrorResponse[] = [];
 
       // Convert media to array format for easier processing
-      const mediaArray: MediaItem[] = Array.isArray(post?.media)
-        ? post.media
-        : post?.media
-          ? [post.media]
-          : [];
+      const mediaArray: MediaItem[] = toMediaArray(post?.media);
 
       for (const page of this.accounts) {
         try {
@@ -330,71 +333,14 @@ export class Facebook extends Provider<FacebookConfig, Account> {
     mediaArray: MediaItem[],
     errors: ErrorResponse[]
   ): Promise<PublishResult> {
-    const attachedMedia: { media_fbid: string }[] = [];
+    const attachedMedia = await this.uploadMedia(
+      page,
+      mediaArray,
+      Boolean(post.options?.publish_at),
+      errors
+    );
 
-    // Upload images if any
-    if (mediaArray.length > 0) {
-      for (const media of mediaArray) {
-        if (media.type === "video") {
-          errors.push({
-            message:
-              "For multiple videos, please upload them one at a time or use a reel",
-            details: { account_id: page.id },
-          });
-          continue;
-        }
-
-        const uploadUrl = new URL(
-          `https://graph.facebook.com/${this.version}/${page.id}/photos`
-        );
-
-        const uploadBody = {
-          url: media.url,
-          published: false,
-          access_token: page.access_token,
-          ...(post.options?.publish_at ? { temporary: true } : {}),
-        };
-
-        const uploadResponse = await fetch(uploadUrl.toString(), {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(uploadBody),
-        });
-
-        if (!uploadResponse.ok) {
-          const error = await uploadResponse.json();
-          throw new Error(
-            `Failed to upload media: ${error?.error?.message ?? "Unknown error"}`
-          );
-        }
-
-        const { id } = await uploadResponse.json();
-        attachedMedia.push({ media_fbid: id });
-      }
-    }
-
-    // Build the post body
-    const postBody: Record<string, any> = {
-      message: post.text ?? "",
-      access_token: page.access_token,
-      published: true,
-      ...(post.link ? { link: post.link } : {}),
-      ...(attachedMedia.length > 0 ? { attached_media: attachedMedia } : {}),
-    };
-
-    // Handle scheduled posts
-    if (post.options?.publish_at) {
-      const publishTime = Math.floor(
-        new Date(post.options.publish_at).getTime() / 1000
-      );
-      Object.assign(postBody, {
-        scheduled_publish_time: publishTime,
-        published: false,
-        ...(attachedMedia.length > 0
-          ? { unpublished_content_type: "SCHEDULED" }
-          : {}),
-      });
-    }
+    const postBody = buildFacebookPostBody(page, post, attachedMedia);
 
     const publishUrl = new URL(
       `https://graph.facebook.com/${this.version}/${page.id}/feed`
@@ -420,6 +366,99 @@ export class Facebook extends Provider<FacebookConfig, Account> {
       account_id: page.id,
     };
   }
+
+  /**
+   * Uploads images and returns their attachment refs for use in a post body.
+   */
+  private async uploadMedia(
+    page: Account,
+    mediaArray: MediaItem[],
+    isScheduled: boolean,
+    errors: ErrorResponse[]
+  ): Promise<{ media_fbid: string }[]> {
+    const attachedMedia: { media_fbid: string }[] = [];
+
+    if (mediaArray.length === 0) {
+      return attachedMedia;
+    }
+
+    for (const media of mediaArray) {
+      if (media.type === "video") {
+        errors.push({
+          message:
+            "For multiple videos, please upload them one at a time or use a reel",
+          details: { account_id: page.id },
+        });
+        continue;
+      }
+
+      const uploadUrl = new URL(
+        `https://graph.facebook.com/${this.version}/${page.id}/photos`
+      );
+
+      const uploadBody = {
+        url: media.url,
+        published: false,
+        access_token: page.access_token,
+        ...(isScheduled ? { temporary: true } : {}),
+      };
+
+      const uploadResponse = await fetch(uploadUrl.toString(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(uploadBody),
+      });
+
+      if (!uploadResponse.ok) {
+        const error = await uploadResponse.json();
+        throw new Error(
+          `Failed to upload media: ${error?.error?.message ?? "Unknown error"}`
+        );
+      }
+
+      const { id } = await uploadResponse.json();
+      attachedMedia.push({ media_fbid: id });
+    }
+
+    return attachedMedia;
+  }
+}
+
+interface FacebookPostBody {
+  access_token: string;
+  attached_media?: { media_fbid: string }[];
+  link?: string;
+  message: string;
+  published: boolean;
+  scheduled_publish_time?: number;
+  unpublished_content_type?: string;
+}
+
+function buildFacebookPostBody(
+  page: Account,
+  post: PublishProps<"facebook">["post"],
+  attachedMedia: { media_fbid: string }[]
+): FacebookPostBody {
+  const isScheduled = Boolean(post.options?.publish_at);
+
+  const body: FacebookPostBody = {
+    message: post.text ?? "",
+    access_token: page.access_token,
+    published: !isScheduled,
+    ...(post.link ? { link: post.link } : {}),
+    ...(attachedMedia.length > 0 ? { attached_media: attachedMedia } : {}),
+  };
+
+  if (post.options?.publish_at) {
+    body.scheduled_publish_time = Math.floor(
+      new Date(post.options.publish_at).getTime() / 1000
+    );
+    if (attachedMedia.length > 0) {
+      body.unpublished_content_type = "SCHEDULED";
+    }
+  }
+
+  return body;
 }
 
 export default Facebook;

@@ -14,6 +14,7 @@ import type {
 import type { ErrorResponse } from "@/types/error";
 import type { ThreadsConfig } from "@/types/providers";
 import type { PublishProps } from "@/types/publish";
+import type { StandardMediaOptions } from "@/types/publish/posts";
 import type { Response } from "@/types/response";
 import type {
   RefreshAccessTokenProps,
@@ -22,6 +23,24 @@ import type {
 
 // Security
 import { timestamp } from "@/utils/timestamp";
+
+function toMediaArray(
+  media: StandardMediaOptions | StandardMediaOptions[] | undefined
+): StandardMediaOptions[] {
+  if (Array.isArray(media)) {
+    return media;
+  }
+  if (media) {
+    return [media];
+  }
+  return [];
+}
+
+interface PublishContainerSuccess {
+  account_id: string;
+  post_id: string;
+  success: boolean;
+}
 
 export class Threads extends Provider<ThreadsConfig, Account> {
   constructor({
@@ -50,7 +69,7 @@ export class Threads extends Provider<ThreadsConfig, Account> {
    *
    * @returns The URL to redirect to
    */
-  async grant(
+  grant(
     { scopes }: Omit<GrantProps, "client_id" | "redirect_uri"> = {
       scopes: this.config.scopes ?? [],
     }
@@ -69,7 +88,7 @@ export class Threads extends Provider<ThreadsConfig, Account> {
    *
    * @returns The granted scopes and the expiry date of the access token.
    */
-  async validate({
+  validate({
     access_token,
     scopes,
   }: Omit<ValidateProps, "client_id" | "client_secret">): Promise<
@@ -133,8 +152,9 @@ export class Threads extends Provider<ThreadsConfig, Account> {
     "client_id" | "client_secret" | "redirect_uri"
   >): Promise<Response<ExchangeResponse | null>> {
     // Log warning if CSRF token is missing
-    csrf_token ??
+    if (!csrf_token) {
       console.warn("CSRF token may be required for Threads authorisation.");
+    }
 
     try {
       if (!this.config.redirectUri) {
@@ -231,7 +251,6 @@ export class Threads extends Provider<ThreadsConfig, Account> {
    * Refreshes a Threads access token or refresh token.
    *
    * @param token - The token to refresh
-   * @param option - The token to refresh
    *
    * @returns The new access token, refresh token, and expiry date
    */
@@ -244,7 +263,7 @@ export class Threads extends Provider<ThreadsConfig, Account> {
     url.searchParams.set("grant_type", "th_refresh_token");
     url.searchParams.set("access_token", token);
 
-    const response = await fetch(url, {
+    await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -284,11 +303,7 @@ export class Threads extends Provider<ThreadsConfig, Account> {
     }
 
     try {
-      const mediaArray = Array.isArray(post?.media)
-        ? post.media
-        : post?.media
-          ? [post.media]
-          : [];
+      const mediaArray = toMediaArray(post?.media);
       const mediaCount = mediaArray.length;
       const data: {
         success: boolean;
@@ -398,12 +413,7 @@ export class Threads extends Provider<ThreadsConfig, Account> {
     url.searchParams.set("media_type", "TEXT");
     url.searchParams.set("text", post?.text ?? "");
 
-    const mediaArray = Array.isArray(post?.media)
-      ? post.media
-      : post?.media
-        ? [post.media]
-        : [];
-    const media = mediaArray[0];
+    const media = toMediaArray(post?.media)[0];
 
     if (media) {
       if (media.type === "image") {
@@ -564,7 +574,7 @@ export class Threads extends Provider<ThreadsConfig, Account> {
   private async publishContainer(
     account: Account,
     containerId: string
-  ): Promise<Response<any | null>> {
+  ): Promise<Response<PublishContainerSuccess | null>> {
     if (!account?.access_token) {
       throw new Error("No access token found");
     }

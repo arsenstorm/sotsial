@@ -13,15 +13,15 @@ import {
  *
  * @returns The encrypted text
  */
-export async function encrypt(
+export function encrypt(
   text?: string | null,
   { secret = process.env.ENCRYPTION_KEY }: { secret?: string } = {}
 ): Promise<string | null> {
   if (!text) {
-    return null;
+    return Promise.resolve(null);
   }
   if (!secret) {
-    throw new Error("Encryption key is required");
+    return Promise.reject(new Error("Encryption key is required"));
   }
 
   const iv = randomBytes(16);
@@ -32,7 +32,7 @@ export async function encrypt(
   );
 
   const encrypted = cipher.update(text, "utf8", "hex") + cipher.final("hex");
-  return `${iv.toString("hex")}:${encrypted}`;
+  return Promise.resolve(`${iv.toString("hex")}:${encrypted}`);
 }
 
 /**
@@ -43,17 +43,17 @@ export async function encrypt(
  *
  * @returns The decrypted text
  */
-export async function decrypt(
+export function decrypt(
   text: string,
   { secret = process.env.ENCRYPTION_KEY }: { secret?: string } = {}
 ): Promise<string | null> {
   if (!(text && secret)) {
-    return null;
+    return Promise.resolve(null);
   }
 
   const [ivHex, encryptedText] = text.split(":");
   if (!(ivHex && encryptedText)) {
-    return null;
+    return Promise.resolve(null);
   }
 
   const decipher = createDecipheriv(
@@ -62,5 +62,7 @@ export async function decrypt(
     Buffer.from(ivHex, "hex")
   );
 
-  return decipher.update(encryptedText, "hex", "utf8") + decipher.final("utf8");
+  return Promise.resolve(
+    decipher.update(encryptedText, "hex", "utf8") + decipher.final("utf8")
+  );
 }

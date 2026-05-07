@@ -5,9 +5,9 @@
     "moduleResolution": "Bundler",
     "lib": ["ES2020", "DOM"],
     "jsx": "preserve",
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "*": ["./*"],
+      "@/*": ["./src/*"]
     },
     "declaration": true,
     "declarationMap": false,

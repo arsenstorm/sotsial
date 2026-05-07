@@ -14,6 +14,7 @@ import type {
 import type { ErrorResponse } from "@/types/error";
 import type { InstagramConfig } from "@/types/providers";
 import type { PublishProps } from "@/types/publish";
+import type { StandardMediaOptions } from "@/types/publish/posts";
 import type { Response } from "@/types/response";
 import type {
   RefreshAccessTokenProps,
@@ -22,6 +23,24 @@ import type {
 
 // Security
 import { timestamp } from "@/utils/timestamp";
+
+function toMediaArray(
+  media: StandardMediaOptions | StandardMediaOptions[] | undefined
+): StandardMediaOptions[] {
+  if (Array.isArray(media)) {
+    return media;
+  }
+  if (media) {
+    return [media];
+  }
+  return [];
+}
+
+interface PublishContainerSuccess {
+  account_id: string;
+  post_id: string;
+  success: boolean;
+}
 
 export class Instagram extends Provider<InstagramConfig, Account> {
   constructor({
@@ -53,7 +72,7 @@ export class Instagram extends Provider<InstagramConfig, Account> {
    *
    * @returns The URL to redirect to
    */
-  async grant(
+  grant(
     { scopes }: Omit<GrantProps, "client_id" | "redirect_uri"> = {
       scopes: this.config.scopes ?? [],
     }
@@ -133,8 +152,9 @@ export class Instagram extends Provider<InstagramConfig, Account> {
     "client_id" | "client_secret" | "redirect_uri"
   >): Promise<Response<ExchangeResponse | null>> {
     // Log warning if CSRF token is missing
-    csrf_token ??
+    if (!csrf_token) {
       console.warn("CSRF token may be required for Instagram authorisation.");
+    }
 
     try {
       if (!this.config.redirectUri) {
@@ -231,7 +251,6 @@ export class Instagram extends Provider<InstagramConfig, Account> {
    * Refreshes a Instagram access token or refresh token.
    *
    * @param token - The token to refresh
-   * @param option - The token to refresh
    *
    * @returns The new access token, refresh token, and expiry date
    */
@@ -244,7 +263,7 @@ export class Instagram extends Provider<InstagramConfig, Account> {
     url.searchParams.set("grant_type", "ig_refresh_token");
     url.searchParams.set("access_token", token);
 
-    const response = await fetch(url, {
+    await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -284,12 +303,7 @@ export class Instagram extends Provider<InstagramConfig, Account> {
     }
 
     try {
-      const mediaArray = Array.isArray(post?.media)
-        ? post.media
-        : post?.media
-          ? [post.media]
-          : [];
-      const mediaCount = mediaArray.length;
+      const mediaArray = toMediaArray(post?.media);
       const data: {
         success: boolean;
         post_id: string;
@@ -298,77 +312,35 @@ export class Instagram extends Provider<InstagramConfig, Account> {
       const errors: ErrorResponse[] = [];
 
       for (const account of this.accounts) {
-        let containerId: string | undefined;
-        let media_type: "REELS" | "STORIES" | undefined;
+        const containerResult = await this.createContainerForPost(
+          account,
+          post,
+          mediaArray
+        );
 
-        if (post.ig_type === "reel") {
-          if (!mediaArray.length || mediaArray[0]?.type !== "video") {
-            errors.push({
-              message: "Instagram only allows videos for reels.",
-            });
-            continue;
-          }
-          const result = await this.createSingleContainer(account, post);
-          if (result.error) {
-            errors.push(result.error);
-            continue;
-          }
-          containerId = result.data?.container_id;
-          media_type = "REELS";
-        } else if (post.ig_type === "story") {
-          const result = await this.createSingleContainer(account, post);
-          if (result.error) {
-            errors.push(result.error);
-            continue;
-          }
-          containerId = result.data?.container_id;
-          media_type = "STORIES";
-        } else {
-          // Default feed post
-          if (mediaCount === 0) {
-            errors.push({
-              message:
-                "You must provide at least one media item for a post on Instagram.",
-            });
-            continue;
-          }
-
-          if (mediaCount === 1) {
-            const result = await this.createSingleContainer(account, post);
-            if (result.error) {
-              errors.push(result.error);
-              continue;
-            }
-            containerId = result.data?.container_id;
-          } else {
-            const result = await this.createCarouselContainer(account, post);
-            if (result.error) {
-              errors.push(result.error);
-              continue;
-            }
-            containerId = result.data?.container_id;
-          }
+        if (containerResult.error) {
+          errors.push(containerResult.error);
+          continue;
         }
 
-        if (!containerId) {
+        if (!containerResult.containerId) {
           errors.push({
             message: "Failed to create container",
-            details: {
-              account_id: account.id,
-            },
+            details: { account_id: account.id },
           });
           continue;
         }
 
-        // Publish the container
         const result = await this.publishContainer(
           account,
-          containerId,
-          media_type
+          containerResult.containerId,
+          containerResult.mediaType
         );
 
-        if (result.error) {
-          errors.push(result.error);
+        if (result.error || !result.data) {
+          if (result.error) {
+            errors.push(result.error);
+          }
           continue;
         }
 
@@ -399,6 +371,65 @@ export class Instagram extends Provider<InstagramConfig, Account> {
   }
 
   /**
+   * Resolves the media container for an Instagram post based on its type.
+   */
+  private async createContainerForPost(
+    account: Account,
+    post: PublishProps<"instagram">["post"],
+    mediaArray: StandardMediaOptions[]
+  ): Promise<{
+    containerId?: string;
+    mediaType?: "REELS" | "STORIES";
+    error?: ErrorResponse;
+  }> {
+    if (post.ig_type === "reel") {
+      if (!mediaArray.length || mediaArray[0]?.type !== "video") {
+        return {
+          error: { message: "Instagram only allows videos for reels." },
+        };
+      }
+      const result = await this.createSingleContainer(account, post);
+      return {
+        containerId: result.data?.container_id,
+        mediaType: "REELS",
+        error: result.error ?? undefined,
+      };
+    }
+
+    if (post.ig_type === "story") {
+      const result = await this.createSingleContainer(account, post);
+      return {
+        containerId: result.data?.container_id,
+        mediaType: "STORIES",
+        error: result.error ?? undefined,
+      };
+    }
+
+    if (mediaArray.length === 0) {
+      return {
+        error: {
+          message:
+            "You must provide at least one media item for a post on Instagram.",
+        },
+      };
+    }
+
+    if (mediaArray.length === 1) {
+      const result = await this.createSingleContainer(account, post);
+      return {
+        containerId: result.data?.container_id,
+        error: result.error ?? undefined,
+      };
+    }
+
+    const result = await this.createCarouselContainer(account, post);
+    return {
+      containerId: result.data?.container_id,
+      error: result.error ?? undefined,
+    };
+  }
+
+  /**
    * Creates a single container with 0 or 1 media items
    */
   private async createSingleContainer(
@@ -422,11 +453,7 @@ export class Instagram extends Provider<InstagramConfig, Account> {
     const url = new URL(`https://graph.instagram.com/${account?.id}/media`);
     url.searchParams.set("access_token", account?.access_token);
 
-    const mediaArray = Array.isArray(post?.media)
-      ? post.media
-      : post?.media
-        ? [post.media]
-        : [];
+    const mediaArray = toMediaArray(post?.media);
     const media = mediaArray[0];
 
     if (media) {
@@ -596,7 +623,7 @@ export class Instagram extends Provider<InstagramConfig, Account> {
     account: Account,
     containerId: string,
     media_type?: "REELS" | "STORIES"
-  ): Promise<Response<any | null>> {
+  ): Promise<Response<PublishContainerSuccess | null>> {
     if (!account?.access_token) {
       throw new Error("No access token found");
     }

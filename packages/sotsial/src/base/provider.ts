@@ -13,6 +13,16 @@ import type {
 import type { ProviderConfig } from "@/types/providers";
 import type { Response } from "@/types/response";
 
+function toAccountArray<T>(accounts?: T | T[]): T[] {
+  if (Array.isArray(accounts)) {
+    return accounts;
+  }
+  if (accounts) {
+    return [accounts];
+  }
+  return [];
+}
+
 export class Provider<
   Config extends ProviderConfig,
   ProviderAccount extends {
@@ -35,11 +45,7 @@ export class Provider<
       scopes: config.scopes ?? [],
     };
 
-    this.accounts = Array.isArray(accounts)
-      ? accounts
-      : accounts
-        ? [accounts]
-        : [];
+    this.accounts = toAccountArray(accounts);
   }
 
   /**
@@ -89,7 +95,7 @@ export class Provider<
    *
    * @returns The URL to redirect to
    */
-  async grant({
+  grant({
     base,
     scopes,
     params = {},
@@ -103,7 +109,7 @@ export class Provider<
   }): Promise<Response<GrantResponse | null>> {
     if (!this.config.redirectUri) {
       console.warn(this.config);
-      throw new Error("Redirect URI is required");
+      return Promise.reject(new Error("Redirect URI is required"));
     }
 
     return baseGrant({
@@ -125,7 +131,7 @@ export class Provider<
    *
    * @returns The granted scopes and the expiry date of the access token.
    */
-  async validate({
+  validate({
     access_token,
     scopes: requestedScopes,
   }: Omit<ValidateProps, "client_id" | "client_secret">): Promise<
@@ -140,37 +146,32 @@ export class Provider<
       access_token?.trim() ?? account?.access_token?.trim() ?? undefined;
 
     if (!token) {
-      throw new Error("No token provided");
+      return Promise.reject(new Error("No token provided"));
     }
 
-    return {
+    return Promise.resolve({
       data: {
         scopes,
         expires: undefined,
       },
       error: null,
-    };
+    });
   }
 
   /**
    * Exchanges a provider code for useful tokens.
    *
-   * @param code - The code to exchange
-   * @param csrf_token - The CSRF token
+   * @param _props - The exchange props (unused in the base implementation)
    *
    * @returns The refresh token, long-lived access token, account ID, and expiry date
    */
-  async exchange({
-    code,
-    csrf_token,
-  }: Omit<
-    ExchangeProps,
-    "client_id" | "client_secret" | "redirect_uri"
-  >): Promise<Response<ExchangeResponse | ExchangeResponse[] | null>> {
-    return {
+  exchange(
+    _props: Omit<ExchangeProps, "client_id" | "client_secret" | "redirect_uri">
+  ): Promise<Response<ExchangeResponse | ExchangeResponse[] | null>> {
+    return Promise.resolve({
       data: null,
       error: null,
-    };
+    });
   }
 }
 

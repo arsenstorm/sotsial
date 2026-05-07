@@ -1,3 +1,5 @@
+// biome-ignore-all lint/performance/noBarrelFile: package entry point
+
 // Utils
 
 export * from "./code-challenge";

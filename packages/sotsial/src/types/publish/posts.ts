@@ -318,16 +318,16 @@ export interface YouTubePostContent extends PostContent {
   text: string;
 }
 
-export type PlatformContent = {
-  threads: ThreadsPostContent;
-  instagram: InstagramPostContent;
-  tiktok: TikTokPostContent;
+export interface PlatformContent {
   facebook: FacebookPostContent;
-  linkedin: LinkedInPostContent;
-  twitter: TwitterPostContent;
   google: GooglePostContent;
+  instagram: InstagramPostContent;
+  linkedin: LinkedInPostContent;
+  threads: ThreadsPostContent;
+  tiktok: TikTokPostContent;
+  twitter: TwitterPostContent;
   youtube: YouTubePostContent;
-};
+}
 
 export type Post<P extends keyof PlatformContent = keyof PlatformContent> =
   P extends keyof PlatformContent ? PlatformContent[P] : never;

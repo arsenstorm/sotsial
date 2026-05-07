@@ -7,11 +7,6 @@
     "ultracite/biome/remix"
   ],
   "files": {
-    "includes": [
-      "!apps/old-web",
-      "!packages/ui",
-      "!packages/sotsial",
-      "!**/workers.d.ts"
-    ]
+    "includes": ["!packages/ui", "!**/workers.d.ts", "!**/routeTree.gen.ts"]
   }
 }

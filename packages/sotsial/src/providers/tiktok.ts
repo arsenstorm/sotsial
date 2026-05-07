@@ -14,6 +14,7 @@ import type {
 import type { ErrorResponse } from "@/types/error";
 import type { TikTokConfig } from "@/types/providers";
 import type { PublishProps } from "@/types/publish";
+import type { StandardMediaOptions } from "@/types/publish/posts";
 import type { Response } from "@/types/response";
 import type {
   RefreshAccessTokenProps,
@@ -22,6 +23,56 @@ import type {
 
 // Security
 import { timestamp } from "@/utils/timestamp";
+
+interface TikTokProfileData {
+  data?: {
+    user?: {
+      avatar_url?: string;
+      display_name?: string;
+      username?: string;
+    };
+  };
+}
+
+interface TikTokCreatorInfo {
+  data: {
+    comment_disabled: boolean;
+    duet_disabled: boolean;
+    max_video_post_duration_sec: number;
+    privacy_level_options: string[];
+    stitch_disabled: boolean;
+  };
+  error?: { code?: string };
+}
+
+interface TikTokPostInfo {
+  disable_comment: boolean;
+  disable_duet: boolean;
+  disable_stitch: boolean;
+  privacy_level: string;
+  title: string;
+}
+
+const PRIVACY_MAP = {
+  public: "PUBLIC_TO_EVERYONE",
+  mutual: "MUTUAL_FOLLOW_FRIENDS",
+  private: "SELF_ONLY",
+} as const;
+
+const STATUS_POLL_MAX_ATTEMPTS = 30;
+const STATUS_POLL_INTERVAL_MS = 10_000;
+
+function toMediaArray(
+  media: StandardMediaOptions | StandardMediaOptions[] | undefined
+): StandardMediaOptions[] {
+  if (Array.isArray(media)) {
+    return media;
+  }
+  if (media) {
+    return [media];
+  }
+  return [];
+}
 
 export class TikTok extends Provider<TikTokConfig, Account> {
   constructor({
@@ -55,7 +106,7 @@ export class TikTok extends Provider<TikTokConfig, Account> {
    *
    * @returns The URL to redirect to
    */
-  async grant(
+  grant(
     { scopes }: Omit<GrantProps, "client_id" | "redirect_uri"> = {
       scopes: this.config.scopes ?? [],
     }
@@ -78,7 +129,7 @@ export class TikTok extends Provider<TikTokConfig, Account> {
    *
    * @returns The granted scopes and the expiry date of the access token.
    */
-  async validate({
+  validate({
     access_token,
     scopes,
   }: Omit<ValidateProps, "client_id" | "client_secret">): Promise<
@@ -146,7 +197,7 @@ export class TikTok extends Provider<TikTokConfig, Account> {
         scope,
       } = data;
 
-      let profileData;
+      let profileData: TikTokProfileData | undefined;
 
       if (scope.split(",").includes("user.info.profile")) {
         const response = await fetch(
@@ -268,12 +319,7 @@ export class TikTok extends Provider<TikTokConfig, Account> {
     console.warn("Publishing to TikTok is not yet stable. Use at own risk.");
 
     try {
-      const mediaArray = Array.isArray(post?.media)
-        ? post.media
-        : post?.media
-          ? [post.media]
-          : [];
-      const mediaCount = mediaArray.length;
+      const mediaArray = toMediaArray(post?.media);
       const data: {
         success: boolean;
         post_id: string;
@@ -281,267 +327,22 @@ export class TikTok extends Provider<TikTokConfig, Account> {
       }[] = [];
       const errors: ErrorResponse[] = [];
 
-      // Validate media type consistency
-      if (mediaCount > 0) {
-        const mediaType = mediaArray[0].type;
-        const hasMixedTypes = mediaArray.some(
-          (media) => media.type !== mediaType
-        );
-        if (hasMixedTypes) {
-          return {
-            data: null,
-            error: {
-              message:
-                "TikTok posts must contain either all images or all videos, not a mix of both",
-            },
-          };
-        }
+      const mixedTypeError = checkMixedMediaTypes(mediaArray);
+      if (mixedTypeError) {
+        return { data: null, error: mixedTypeError };
       }
 
       for (const account of this.accounts) {
-        // Step 1: Get creator info
-        const creatorInfoResponse = await fetch(
-          "https://open.tiktokapis.com/v2/post/publish/creator_info/query/",
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${account.access_token}`,
-              "Content-Type": "application/json; charset=UTF-8",
-            },
-          }
-        );
+        const result = await this.publishForAccount(account, post, mediaArray);
 
-        if (!creatorInfoResponse.ok) {
-          errors.push({
-            message: "Failed to get creator info",
-            details: {
-              account_id: account.id,
-            },
-          });
+        if (result.error) {
+          errors.push(result.error);
           continue;
         }
 
-        const creatorInfo = await creatorInfoResponse.json();
-
-        // Check if creator can post more content
-        if (creatorInfo.error?.code !== "ok") {
-          errors.push({
-            message: "Creator cannot post more content at this time",
-            details: {
-              account_id: account.id,
-            },
-          });
-          continue;
+        if (result.data) {
+          data.push(result.data);
         }
-
-        // Validate video duration if it's a video
-        if (mediaCount > 0 && mediaArray[0].type === "video") {
-          const maxDuration = creatorInfo.data.max_video_post_duration_sec;
-          // TODO: Add video duration check once we have video metadata
-        }
-
-        // Validate media requirement
-        if (mediaCount === 0) {
-          errors.push({
-            message: "TikTok requires at least one media item (photo or video)",
-            details: {
-              account_id: account.id,
-            },
-          });
-          continue;
-        }
-
-        // Get default privacy level from creator info
-        const defaultPrivacyLevel =
-          creatorInfo.data.privacy_level_options[0] ?? "PUBLIC_TO_EVERYONE";
-
-        // Get privacy level from post options or use default
-        const privacyLevel = post.privacy
-          ? {
-              public: "PUBLIC_TO_EVERYONE",
-              mutual: "MUTUAL_FOLLOW_FRIENDS",
-              private: "SELF_ONLY",
-            }[post.privacy]
-          : defaultPrivacyLevel;
-
-        // Check if privacy level is allowed
-        if (!creatorInfo.data.privacy_level_options.includes(privacyLevel)) {
-          errors.push({
-            message: `Privacy level ${privacyLevel} is not allowed for this creator`,
-            details: {
-              account_id: account.id,
-            },
-          });
-          continue;
-        }
-
-        // Handle commercial content settings
-        const isCommercialContent =
-          post.options?.promotion?.self_promotion ||
-          post.options?.promotion?.is_branded_content;
-
-        // Validate privacy level for commercial content
-        if (isCommercialContent && privacyLevel === "SELF_ONLY") {
-          errors.push({
-            message: "Commercial content cannot be set to private visibility",
-            details: {
-              account_id: account.id,
-            },
-          });
-          continue;
-        }
-
-        // Get interaction settings from post options or creator info
-        const disableComment =
-          post.options?.safety?.allow_comments === false ||
-          creatorInfo.data.comment_disabled;
-        const disableDuet =
-          post.options?.safety?.allow_duet === false ||
-          creatorInfo.data.duet_disabled;
-        const disableStitch =
-          post.options?.safety?.allow_stitch === false ||
-          creatorInfo.data.stitch_disabled;
-
-        // Common post info for all types
-        const postInfo = {
-          title: post.text ?? "",
-          privacy_level: privacyLevel,
-          disable_comment: disableComment,
-          disable_duet: disableDuet,
-          disable_stitch: disableStitch,
-        };
-
-        let publishId: string | undefined;
-        const mediaType = mediaArray[0]?.type;
-
-        if (mediaType === "image") {
-          // Photo post
-          const response = await fetch(
-            "https://open.tiktokapis.com/v2/post/publish/content/init/",
-            {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${account.access_token}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                post_info: postInfo,
-                source_info: {
-                  source: "PULL_FROM_URL",
-                  photo_cover_index: 0,
-                  photo_images: mediaArray.map((media) => media.url),
-                },
-                post_mode: "DIRECT_POST",
-                media_type: "PHOTO",
-              }),
-            }
-          );
-
-          if (!response.ok) {
-            console.error(response.statusText);
-            console.error(await response.json());
-            errors.push({
-              message: "Failed to create photo post",
-              details: {
-                account_id: account.id,
-              },
-            });
-            continue;
-          }
-
-          const result = await response.json();
-          publishId = result.data.publish_id;
-        } else if (mediaType === "video") {
-          // Video post
-          const response = await fetch(
-            "https://open.tiktokapis.com/v2/post/publish/video/init/",
-            {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${account.access_token}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                post_info: postInfo,
-                source_info: {
-                  source: "PULL_FROM_URL",
-                  video_url: mediaArray[0].url,
-                },
-              }),
-            }
-          );
-
-          if (!response.ok) {
-            errors.push({
-              message: "Failed to create video post",
-              details: {
-                account_id: account.id,
-              },
-            });
-            continue;
-          }
-
-          const result = await response.json();
-          publishId = result.data.publish_id;
-        }
-
-        if (!publishId) {
-          errors.push({
-            message: "Failed to get publish ID",
-            details: {
-              account_id: account.id,
-            },
-          });
-          continue;
-        }
-
-        // Poll for status until complete
-        let status = "PROCESSING";
-        let attempts = 0;
-        const maxAttempts = 30; // 5 minutes with 10-second intervals
-
-        while (status === "PROCESSING" && attempts < maxAttempts) {
-          await new Promise((resolve) => setTimeout(resolve, 10_000)); // Wait 10 seconds
-          attempts++;
-
-          const statusResponse = await fetch(
-            "https://open.tiktokapis.com/v2/post/publish/status/fetch/",
-            {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${account.access_token}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                publish_id: publishId,
-              }),
-            }
-          );
-
-          if (!statusResponse.ok) {
-            continue;
-          }
-
-          const statusResult = await statusResponse.json();
-          status = statusResult.data.status;
-        }
-
-        if (status !== "SUCCESS") {
-          errors.push({
-            message: "Failed to publish post",
-            details: {
-              account_id: account.id,
-              status,
-            },
-          });
-          continue;
-        }
-
-        data.push({
-          success: true,
-          post_id: publishId,
-          account_id: account.id,
-        });
       }
 
       return {
@@ -566,6 +367,316 @@ export class TikTok extends Provider<TikTokConfig, Account> {
       };
     }
   }
+
+  /**
+   * Publishes a TikTok post for a single account.
+   */
+  private async publishForAccount(
+    account: Account,
+    post: PublishProps<"tiktok">["post"],
+    mediaArray: StandardMediaOptions[]
+  ): Promise<
+    Response<{
+      success: boolean;
+      post_id: string;
+      account_id: string;
+    } | null>
+  > {
+    const creatorInfo = await this.fetchCreatorInfo(account);
+
+    if (!creatorInfo) {
+      return makeAccountError("Failed to get creator info", account.id);
+    }
+
+    if (creatorInfo.error?.code !== "ok") {
+      return makeAccountError(
+        "Creator cannot post more content at this time",
+        account.id
+      );
+    }
+
+    if (mediaArray.length === 0) {
+      return makeAccountError(
+        "TikTok requires at least one media item (photo or video)",
+        account.id
+      );
+    }
+
+    const privacyLevel = resolvePrivacyLevel(post.privacy, creatorInfo);
+    const privacyError = validatePrivacy(privacyLevel, creatorInfo, post);
+    if (privacyError) {
+      return makeAccountError(privacyError, account.id);
+    }
+
+    const postInfo = buildPostInfo(post, creatorInfo, privacyLevel);
+
+    const publishId = await this.initPublish(account, mediaArray, postInfo);
+
+    if (!publishId) {
+      return makeAccountError("Failed to create post", account.id);
+    }
+
+    const status = await this.pollStatus(account, publishId);
+
+    if (status !== "SUCCESS") {
+      return {
+        data: null,
+        error: {
+          message: "Failed to publish post",
+          details: { account_id: account.id, status },
+        },
+      };
+    }
+
+    return {
+      data: {
+        success: true,
+        post_id: publishId,
+        account_id: account.id,
+      },
+      error: null,
+    };
+  }
+
+  /**
+   * Fetches creator info for an account.
+   */
+  private async fetchCreatorInfo(
+    account: Account
+  ): Promise<TikTokCreatorInfo | null> {
+    const response = await fetch(
+      "https://open.tiktokapis.com/v2/post/publish/creator_info/query/",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${account.access_token}`,
+          "Content-Type": "application/json; charset=UTF-8",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      return null;
+    }
+
+    return (await response.json()) as TikTokCreatorInfo;
+  }
+
+  /**
+   * Initializes a publish request and returns the publish ID, or undefined on failure.
+   */
+  private async initPublish(
+    account: Account,
+    mediaArray: StandardMediaOptions[],
+    postInfo: TikTokPostInfo
+  ): Promise<string | undefined> {
+    const mediaType = mediaArray[0]?.type;
+
+    if (mediaType === "image") {
+      return await this.initPhotoPost(account, mediaArray, postInfo);
+    }
+
+    if (mediaType === "video") {
+      return await this.initVideoPost(account, mediaArray[0], postInfo);
+    }
+
+    return;
+  }
+
+  private async initPhotoPost(
+    account: Account,
+    mediaArray: StandardMediaOptions[],
+    postInfo: TikTokPostInfo
+  ): Promise<string | undefined> {
+    const response = await fetch(
+      "https://open.tiktokapis.com/v2/post/publish/content/init/",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${account.access_token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          post_info: postInfo,
+          source_info: {
+            source: "PULL_FROM_URL",
+            photo_cover_index: 0,
+            photo_images: mediaArray.map((media) => media.url),
+          },
+          post_mode: "DIRECT_POST",
+          media_type: "PHOTO",
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      console.error(response.statusText);
+      console.error(await response.json());
+      return;
+    }
+
+    const result = await response.json();
+    return result.data.publish_id;
+  }
+
+  private async initVideoPost(
+    account: Account,
+    media: StandardMediaOptions,
+    postInfo: TikTokPostInfo
+  ): Promise<string | undefined> {
+    const response = await fetch(
+      "https://open.tiktokapis.com/v2/post/publish/video/init/",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${account.access_token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          post_info: postInfo,
+          source_info: {
+            source: "PULL_FROM_URL",
+            video_url: media.url,
+          },
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      return;
+    }
+
+    const result = await response.json();
+    return result.data.publish_id;
+  }
+
+  /**
+   * Polls the publish status until it reaches a terminal state or the
+   * maximum number of attempts is exceeded.
+   */
+  private async pollStatus(
+    account: Account,
+    publishId: string
+  ): Promise<string> {
+    let status = "PROCESSING";
+    let attempts = 0;
+
+    while (status === "PROCESSING" && attempts < STATUS_POLL_MAX_ATTEMPTS) {
+      await new Promise((resolve) =>
+        setTimeout(resolve, STATUS_POLL_INTERVAL_MS)
+      );
+      attempts++;
+
+      const statusResponse = await fetch(
+        "https://open.tiktokapis.com/v2/post/publish/status/fetch/",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${account.access_token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ publish_id: publishId }),
+        }
+      );
+
+      if (!statusResponse.ok) {
+        continue;
+      }
+
+      const statusResult = await statusResponse.json();
+      status = statusResult.data.status;
+    }
+
+    return status;
+  }
+}
+
+function checkMixedMediaTypes(
+  mediaArray: StandardMediaOptions[]
+): ErrorResponse | null {
+  if (mediaArray.length === 0) {
+    return null;
+  }
+
+  const firstType = mediaArray[0].type;
+  const hasMixedTypes = mediaArray.some((media) => media.type !== firstType);
+
+  if (hasMixedTypes) {
+    return {
+      message:
+        "TikTok posts must contain either all images or all videos, not a mix of both",
+    };
+  }
+
+  return null;
+}
+
+function resolvePrivacyLevel(
+  postPrivacy: PublishProps<"tiktok">["post"]["privacy"] | undefined,
+  creatorInfo: TikTokCreatorInfo
+): string {
+  const defaultLevel =
+    creatorInfo.data.privacy_level_options[0] ?? "PUBLIC_TO_EVERYONE";
+
+  if (!postPrivacy) {
+    return defaultLevel;
+  }
+
+  return PRIVACY_MAP[postPrivacy as keyof typeof PRIVACY_MAP] ?? defaultLevel;
+}
+
+function validatePrivacy(
+  privacyLevel: string,
+  creatorInfo: TikTokCreatorInfo,
+  post: PublishProps<"tiktok">["post"]
+): string | null {
+  if (!creatorInfo.data.privacy_level_options.includes(privacyLevel)) {
+    return `Privacy level ${privacyLevel} is not allowed for this creator`;
+  }
+
+  const isCommercialContent = Boolean(
+    post.options?.promotion?.self_promotion ||
+      post.options?.promotion?.is_branded_content
+  );
+
+  if (isCommercialContent && privacyLevel === "SELF_ONLY") {
+    return "Commercial content cannot be set to private visibility";
+  }
+
+  return null;
+}
+
+function buildPostInfo(
+  post: PublishProps<"tiktok">["post"],
+  creatorInfo: TikTokCreatorInfo,
+  privacyLevel: string
+): TikTokPostInfo {
+  return {
+    title: post.text ?? "",
+    privacy_level: privacyLevel,
+    disable_comment:
+      post.options?.safety?.allow_comments === false ||
+      creatorInfo.data.comment_disabled,
+    disable_duet:
+      post.options?.safety?.allow_duet === false ||
+      creatorInfo.data.duet_disabled,
+    disable_stitch:
+      post.options?.safety?.allow_stitch === false ||
+      creatorInfo.data.stitch_disabled,
+  };
+}
+
+function makeAccountError(
+  message: string,
+  accountId: string
+): Response<{ success: boolean; post_id: string; account_id: string } | null> {
+  return {
+    data: null,
+    error: {
+      message,
+      details: { account_id: accountId },
+    },
+  };
 }
 
 export default TikTok;
