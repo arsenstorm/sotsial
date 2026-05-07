@@ -47,10 +47,10 @@ export const env = createEnv({
     ...platformCredentials,
   },
 
-  runtimeEnv: {
-    ...process.env,
-    ...(cloudflareEnv as unknown as Record<string, string>),
-  },
+  // The `cloudflare:workers` env is a Proxy: spreading it returns `{}` because
+  // it doesn't expose enumerable own keys, only the `[[Get]]` trap. Pass it
+  // through directly so t3-env reads each key via property access.
+  runtimeEnv: cloudflareEnv as unknown as Record<string, string | undefined>,
 
   emptyStringAsUndefined: true,
 });
