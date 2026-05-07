@@ -9,6 +9,7 @@
     "lint": "eslint",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "cf:types": "wrangler types workers.d.ts --env-interface CloudflareBindings",
+    "deploy": "wrangler deploy --minify --env production",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
