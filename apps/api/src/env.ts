@@ -2,25 +2,6 @@ import { env as cloudflareEnv } from "cloudflare:workers";
 import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod";
 
-const platformCredentials = {
-  THREADS_CLIENT_ID: z.string().optional(),
-  THREADS_CLIENT_SECRET: z.string().optional(),
-  INSTAGRAM_CLIENT_ID: z.string().optional(),
-  INSTAGRAM_CLIENT_SECRET: z.string().optional(),
-  TIKTOK_CLIENT_ID: z.string().optional(),
-  TIKTOK_CLIENT_SECRET: z.string().optional(),
-  FACEBOOK_CLIENT_ID: z.string().optional(),
-  FACEBOOK_CLIENT_SECRET: z.string().optional(),
-  GOOGLE_CLIENT_ID: z.string().optional(),
-  GOOGLE_CLIENT_SECRET: z.string().optional(),
-  YOUTUBE_CLIENT_ID: z.string().optional(),
-  YOUTUBE_CLIENT_SECRET: z.string().optional(),
-  TWITTER_CLIENT_ID: z.string().optional(),
-  TWITTER_CLIENT_SECRET: z.string().optional(),
-  LINKEDIN_CLIENT_ID: z.string().optional(),
-  LINKEDIN_CLIENT_SECRET: z.string().optional(),
-};
-
 export const env = createEnv({
   server: {
     // Config
@@ -43,13 +24,32 @@ export const env = createEnv({
     STRIPE_PRICE_TEAM: z.string().optional(),
     STRIPE_PRICE_ENTERPRISE: z.string().optional(),
 
-    // Platform credentials (Sotsial-provided fallbacks)
-    ...platformCredentials,
+    // Platform credentials
+    THREADS_CLIENT_ID: z.string().optional(),
+    THREADS_CLIENT_SECRET: z.string().optional(),
+
+    INSTAGRAM_CLIENT_ID: z.string().optional(),
+    INSTAGRAM_CLIENT_SECRET: z.string().optional(),
+
+    TIKTOK_CLIENT_ID: z.string().optional(),
+    TIKTOK_CLIENT_SECRET: z.string().optional(),
+
+    FACEBOOK_CLIENT_ID: z.string().optional(),
+    FACEBOOK_CLIENT_SECRET: z.string().optional(),
+
+    GOOGLE_CLIENT_ID: z.string().optional(),
+    GOOGLE_CLIENT_SECRET: z.string().optional(),
+
+    YOUTUBE_CLIENT_ID: z.string().optional(),
+    YOUTUBE_CLIENT_SECRET: z.string().optional(),
+
+    TWITTER_CLIENT_ID: z.string().optional(),
+    TWITTER_CLIENT_SECRET: z.string().optional(),
+
+    LINKEDIN_CLIENT_ID: z.string().optional(),
+    LINKEDIN_CLIENT_SECRET: z.string().optional(),
   },
 
-  // The `cloudflare:workers` env is a Proxy: spreading it returns `{}` because
-  // it doesn't expose enumerable own keys, only the `[[Get]]` trap. Pass it
-  // through directly so t3-env reads each key via property access.
   runtimeEnv: cloudflareEnv as unknown as Record<string, string | undefined>,
 
   emptyStringAsUndefined: true,
