@@ -26,6 +26,20 @@
   ],
   "env": {
     "production": {
+      "name": "sotsial-api",
+      "hyperdrive": [
+        {
+          "binding": "DATABASE",
+          "id": "e126e4e36c154ce78ae8f94b72269da9",
+          "localConnectionString": "postgresql://postgres:postgres@127.0.0.1:6432/sotsial"
+        }
+      ],
+      "r2_buckets": [
+        {
+          "binding": "R2_MEDIA",
+          "bucket_name": "sotsial-media"
+        }
+      ],
       "secrets": {
         "required": [
           // API secrets

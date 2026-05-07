@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "wrangler dev --env-file ../../.env",
+    "predeploy": "cd ../../packages/sotsial && bun run bundle",
     "deploy": "wrangler deploy --minify --env production",
     "typecheck": "tsc --noEmit",
     "cf:types": "wrangler types workers.d.ts --env-interface CloudflareBindings"
