@@ -1,7 +1,9 @@
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion";
-import { ArrowDown01Icon, ArrowUp01Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { cn } from "@sotsial/ui/lib/utils";
+import {
+  IconChevronDownOutlineDuo18,
+  IconChevronUpOutlineDuo18,
+} from "nucleo-ui-outline-duo-18";
 
 function Accordion({ className, ...props }: AccordionPrimitive.Root.Props) {
   return (
@@ -42,16 +44,14 @@ function AccordionTrigger({
         {...props}
       >
         {children}
-        <HugeiconsIcon
+        <IconChevronDownOutlineDuo18
           className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden"
           data-slot="accordion-trigger-icon"
-          icon={ArrowDown01Icon}
           strokeWidth={2}
         />
-        <HugeiconsIcon
+        <IconChevronUpOutlineDuo18
           className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline"
           data-slot="accordion-trigger-icon"
-          icon={ArrowUp01Icon}
           strokeWidth={2}
         />
       </AccordionPrimitive.Trigger>

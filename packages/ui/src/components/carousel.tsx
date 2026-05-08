@@ -1,12 +1,14 @@
 "use client";
 
-import { ArrowLeft01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@sotsial/ui/components/button";
 import { cn } from "@sotsial/ui/lib/utils";
 import useEmblaCarousel, {
   type UseEmblaCarouselType,
 } from "embla-carousel-react";
+import {
+  IconChevronLeftOutlineDuo18,
+  IconChevronRightOutlineDuo18,
+} from "nucleo-ui-outline-duo-18";
 import * as React from "react";
 
 type CarouselApi = UseEmblaCarouselType[1];
@@ -201,7 +203,7 @@ function CarouselPrevious({
       variant={variant}
       {...props}
     >
-      <HugeiconsIcon icon={ArrowLeft01Icon} strokeWidth={2} />
+      <IconChevronLeftOutlineDuo18 strokeWidth={2} />
       <span className="sr-only">Previous slide</span>
     </Button>
   );
@@ -231,7 +233,7 @@ function CarouselNext({
       variant={variant}
       {...props}
     >
-      <HugeiconsIcon icon={ArrowRight01Icon} strokeWidth={2} />
+      <IconChevronRightOutlineDuo18 strokeWidth={2} />
       <span className="sr-only">Next slide</span>
     </Button>
   );

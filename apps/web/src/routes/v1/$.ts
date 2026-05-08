@@ -66,7 +66,7 @@ export const Route = createFileRoute("/v1/$")({
   server: {
     handlers: {
       ANY: async ({ request }) => {
-        const host = env.PUBLIC_APP_BASE_URL;
+        const host = env.APP_BASE_URL;
         const url = new URL(request.url, host);
         const targetPath = normalizeProxyPath(url.pathname);
 

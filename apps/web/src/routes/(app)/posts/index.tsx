@@ -1,5 +1,3 @@
-import { Edit02Icon, PlusSignIcon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { Badge } from "@sotsial/ui/components/badge";
 import { Button } from "@sotsial/ui/components/button";
 import {
@@ -21,6 +19,8 @@ import {
 } from "@sotsial/ui/components/table";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { IconPencil } from "nucleo-isometric";
+import { IconPlusOutlineDuo18 } from "nucleo-ui-outline-duo-18";
 import { api } from "@/lib/api";
 
 export const Route = createFileRoute("/(app)/posts/")({
@@ -63,7 +63,7 @@ function PostsListPage() {
       <PageHeading
         actions={
           <Button render={<Link to="/posts/create" />}>
-            <HugeiconsIcon icon={PlusSignIcon} />
+            <IconPlusOutlineDuo18 strokeWidth={2} />
             New post
           </Button>
         }
@@ -101,7 +101,7 @@ function PostsListPage() {
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon">
-              <HugeiconsIcon icon={Edit02Icon} />
+              <IconPencil />
             </EmptyMedia>
             <EmptyTitle>No posts yet</EmptyTitle>
             <EmptyDescription>

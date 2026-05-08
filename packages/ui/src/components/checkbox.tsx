@@ -1,9 +1,8 @@
 "use client";
 
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox";
-import { Tick02Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { cn } from "@sotsial/ui/lib/utils";
+import { IconCheckOutlineDuo18 } from "nucleo-ui-outline-duo-18";
 
 function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
   return (
@@ -19,7 +18,7 @@ function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
         className="grid place-content-center text-current transition-none [&>svg]:size-3.5"
         data-slot="checkbox-indicator"
       >
-        <HugeiconsIcon icon={Tick02Icon} strokeWidth={2} />
+        <IconCheckOutlineDuo18 strokeWidth={2} />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   );

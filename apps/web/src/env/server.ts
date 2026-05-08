@@ -4,7 +4,7 @@ import { z } from "zod";
 
 export const env = createEnv({
   server: {
-    PUBLIC_APP_BASE_URL: z.string().url(),
+    APP_BASE_URL: z.string().url(),
     INTERNAL_PROXY_SECRET: z.string().min(1),
     API: z.custom<Fetcher>(),
   },

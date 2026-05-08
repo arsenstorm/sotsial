@@ -1,8 +1,6 @@
-import { MinusSignIcon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-
 import { cn } from "@sotsial/ui/lib/utils";
 import { OTPInput, OTPInputContext } from "input-otp";
+import { IconMinusOutlineDuo18 } from "nucleo-ui-outline-duo-18";
 import * as React from "react";
 
 function InputOTP({
@@ -77,7 +75,7 @@ function InputOTPSeparator({ ...props }: React.ComponentProps<"div">) {
       role="separator"
       {...props}
     >
-      <HugeiconsIcon icon={MinusSignIcon} strokeWidth={2} />
+      <IconMinusOutlineDuo18 strokeWidth={2} />
     </div>
   );
 }

@@ -42,7 +42,7 @@ export function MarketingShell({ children }: { children: ReactNode }) {
 export function MarketingNav() {
   return (
     <header className="sticky top-0 z-40 border-border/60 border-b bg-background/80 backdrop-blur">
-      <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-3.5">
+      <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3.5">
         <Link
           aria-label="Homepage"
           className="flex items-center gap-2 font-semibold text-sm tracking-tight"
@@ -76,7 +76,7 @@ export function MarketingNav() {
 export function MarketingFooter() {
   return (
     <footer>
-      <div className="mx-auto max-w-3xl px-6 py-14">
+      <div className="mx-auto max-w-5xl px-6 py-14">
         <div className="grid gap-10 md:grid-cols-[1fr_auto_auto_auto] md:gap-16">
           <div className="space-y-3">
             <Link

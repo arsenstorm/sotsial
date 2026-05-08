@@ -13,8 +13,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@hugeicons/core-free-icons": "^4.1.1",
-    "@hugeicons/react": "^1.1.6",
     "@sotsial/auth": "workspace:*",
     "@sotsial/db": "workspace:*",
     "@sotsial/ui": "workspace:*",
@@ -27,9 +25,13 @@
     "api": "workspace:*",
     "better-auth": "^1.6.2",
     "hono": "^4.12.15",
-    "sonner": "^2.0.7",
+    "nucleo-isometric": "^1.0.0",
+    "nucleo-social-media": "^1.0.2",
+    "nucleo-ui-fill-duo-18": "^1.4.0",
+    "nucleo-ui-outline-duo-18": "^1.4.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+    "sonner": "^2.0.7",
     "tailwindcss": "^4.1.18",
     "vite-tsconfig-paths": "^5.1.4",
     "zod": "^4.3.6"

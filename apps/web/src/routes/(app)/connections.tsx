@@ -1,5 +1,3 @@
-import { Delete02Icon, LinkSquare02Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { Badge } from "@sotsial/ui/components/badge";
 import { Button } from "@sotsial/ui/components/button";
 import {
@@ -22,6 +20,8 @@ import {
 } from "@sotsial/ui/components/table";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { IconNet } from "nucleo-isometric";
+import { IconTrashOutlineDuo18 } from "nucleo-ui-outline-duo-18";
 import { useState } from "react";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
@@ -143,7 +143,7 @@ function ConnectionsPage() {
                     size="icon-sm"
                     variant="ghost"
                   >
-                    <HugeiconsIcon icon={Delete02Icon} />
+                    <IconTrashOutlineDuo18 strokeWidth={2} />
                   </Button>
                 </TableCell>
               </TableRow>
@@ -154,7 +154,7 @@ function ConnectionsPage() {
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon">
-              <HugeiconsIcon icon={LinkSquare02Icon} />
+              <IconNet />
             </EmptyMedia>
             <EmptyTitle>No connections yet</EmptyTitle>
             <EmptyDescription>

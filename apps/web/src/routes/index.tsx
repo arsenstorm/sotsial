@@ -1,17 +1,16 @@
-import {
-  ArrowRight02Icon,
-  FacebookFreeIcons,
-  GoogleFreeIcons,
-  InstagramFreeIcons,
-  LinkedinIcon,
-  ThreadsFreeIcons,
-  TiktokIcon,
-  TwitterFreeIcons,
-  YoutubeIcon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@sotsial/ui/components/button";
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import {
+  IconFacebook,
+  IconGoogle,
+  IconInstagram,
+  IconLinkedin,
+  IconThreads,
+  IconTikTok,
+  IconXTwitter,
+  IconYoutube,
+} from "nucleo-social-media";
+import { IconArrowRightOutlineDuo18 } from "nucleo-ui-outline-duo-18";
 import { MarketingShell } from "@/components/marketing/shell";
 import { sessionQuery } from "@/lib/auth";
 
@@ -26,14 +25,14 @@ export const Route = createFileRoute("/")({
 });
 
 const PLATFORMS = [
-  { name: "Twitter", icon: TwitterFreeIcons },
-  { name: "Instagram", icon: InstagramFreeIcons },
-  { name: "LinkedIn", icon: LinkedinIcon },
-  { name: "Threads", icon: ThreadsFreeIcons },
-  { name: "Facebook", icon: FacebookFreeIcons },
-  { name: "YouTube", icon: YoutubeIcon },
-  { name: "TikTok", icon: TiktokIcon },
-  { name: "Google", icon: GoogleFreeIcons },
+  { name: "Twitter", icon: IconXTwitter },
+  { name: "Instagram", icon: IconInstagram },
+  { name: "LinkedIn", icon: IconLinkedin },
+  { name: "Threads", icon: IconThreads },
+  { name: "Facebook", icon: IconFacebook },
+  { name: "YouTube", icon: IconYoutube },
+  { name: "TikTok", icon: IconTikTok },
+  { name: "Google", icon: IconGoogle },
 ] as const;
 
 const STEPS = [
@@ -86,76 +85,75 @@ function LandingPage() {
   return (
     <MarketingShell>
       <section className="border-border/60 border-b">
-        <div className="mx-auto max-w-3xl px-6 py-20">
-          <p className="mb-5 font-mono text-muted-foreground text-xs tracking-wide">
-            <span className="mr-2 rounded-sm bg-emerald-500/10 px-1.5 py-0.5 text-emerald-700 dark:text-emerald-400">
-              POST
-            </span>
-            /v1/publish
-          </p>
-          <h1 className="max-w-[24ch] text-balance font-semibold text-4xl tracking-tight">
-            Publish to every social network from a single API call.
-          </h1>
-          <p className="mt-5 max-w-[58ch] text-pretty text-muted-foreground">
-            Sotsial is the distribution layer for modern teams. Connect your
-            accounts once, then POST to one endpoint to reach every timeline —
-            Twitter, Instagram, LinkedIn, Threads, Facebook, YouTube, TikTok,
-            and Google.
-          </p>
-          <div className="mt-7 flex items-center gap-4">
-            <Button render={<Link to="/sign-up" />} size="sm">
-              Get started
-            </Button>
-            <Link
-              className="group inline-flex items-center gap-1.5 text-muted-foreground text-sm hover:text-foreground"
-              to="/sign-in"
-            >
-              Read the docs
-              <HugeiconsIcon
-                className="size-3.5 transition-transform group-hover:translate-x-0.5"
-                icon={ArrowRight02Icon}
-              />
-            </Link>
-          </div>
-          <div className="mt-10">
-            <TerminalCard />
-          </div>
-        </div>
-      </section>
-
-      <section className="border-border/60 border-b">
-        <div className="mx-auto max-w-3xl px-6 py-14">
-          <p className="mb-8 font-mono text-muted-foreground text-xs tracking-wide">
-            Supported networks
-          </p>
-          <div className="grid grid-cols-4 gap-x-6 gap-y-6 sm:grid-cols-8">
-            {PLATFORMS.map((p) => (
-              <div
-                className="flex flex-col items-start gap-1.5 text-muted-foreground/80"
-                key={p.name}
-              >
-                <HugeiconsIcon className="size-4" icon={p.icon} />
-                <span className="text-xs">{p.name}</span>
+        <div className="mx-auto max-w-5xl px-6 py-20">
+          <div className="grid items-center gap-10 md:grid-cols-2 md:gap-12">
+            <div>
+              <p className="mb-5 font-mono text-muted-foreground text-xs tracking-wide">
+                <span className="mr-2 rounded-sm bg-emerald-500/10 px-1.5 py-0.5 text-emerald-700 dark:text-emerald-400">
+                  POST
+                </span>
+                /v1/publish
+              </p>
+              <h1 className="max-w-[20ch] text-balance font-semibold text-4xl tracking-tight">
+                Publish to every social network from a single API call.
+              </h1>
+              <p className="mt-5 max-w-[44ch] text-pretty text-muted-foreground">
+                Sotsial is the distribution layer for modern teams. Connect
+                once, POST to one endpoint, reach every timeline.
+              </p>
+              <div className="mt-7 flex items-center gap-4">
+                <Button render={<Link to="/sign-up" />} size="sm">
+                  Get started
+                </Button>
+                <Link
+                  className="group inline-flex items-center gap-1.5 text-muted-foreground text-sm hover:text-foreground"
+                  to="/sign-in"
+                >
+                  Read the docs
+                  <IconArrowRightOutlineDuo18
+                    className="size-3.5 transition-transform group-hover:translate-x-0.5"
+                    strokeWidth={2}
+                  />
+                </Link>
               </div>
-            ))}
+            </div>
+            <div>
+              <TerminalCard />
+            </div>
           </div>
         </div>
       </section>
 
       <section className="border-border/60 border-b">
-        <div className="mx-auto max-w-3xl px-6 py-14">
+        <div className="mx-auto max-w-5xl px-6 py-14">
+          <ul className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-border/70 sm:grid-cols-4">
+            {PLATFORMS.map((p) => {
+              const Icon = p.icon;
+              return (
+                <li
+                  className="flex items-center gap-3 bg-background px-5 py-4 text-foreground/85"
+                  key={p.name}
+                >
+                  <Icon className="size-5 shrink-0" />
+                  <span className="text-sm">{p.name}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </section>
+
+      <section className="border-border/60 border-b">
+        <div className="mx-auto max-w-5xl px-6 py-14">
           <p className="mb-2 font-mono text-muted-foreground text-xs tracking-wide">
             Product
           </p>
-          <h2 className="font-semibold text-2xl tracking-tight">
+          <h2 className="max-w-[35ch] text-balance font-semibold text-2xl tracking-tight">
             Everything a distribution layer needs.
           </h2>
-          <dl className="mt-8 divide-y divide-border/70">
+          <dl className="mt-10 grid gap-x-10 gap-y-8 md:grid-cols-3">
             {FEATURES.map((f) => (
-              <div
-                className="grid gap-6 py-6 md:grid-cols-[12rem_1fr]"
-                key={f.label}
-              >
+              <div className="border-border/70 border-t pt-5" key={f.label}>
                 <dt className="space-y-1">
                   <p className="font-mono text-muted-foreground text-xs tracking-wide">
                     {f.label}
@@ -164,7 +162,7 @@ function LandingPage() {
                     {f.title}
                   </p>
                 </dt>
-                <dd className="text-muted-foreground text-sm leading-6">
+                <dd className="mt-2 text-muted-foreground text-sm leading-6">
                   {f.description}
                 </dd>
               </div>
@@ -174,28 +172,23 @@ function LandingPage() {
       </section>
 
       <section className="border-border/60 border-b">
-        <div className="mx-auto max-w-3xl px-6 py-14">
+        <div className="mx-auto max-w-5xl px-6 py-14">
           <p className="mb-2 font-mono text-muted-foreground text-xs tracking-wide">
             Getting started
           </p>
           <h2 className="font-semibold text-2xl tracking-tight">
             Three steps, ten minutes.
           </h2>
-          <ol className="mt-8 divide-y divide-border/70">
+          <ol className="mt-10 grid gap-x-10 gap-y-8 md:grid-cols-3">
             {STEPS.map((step, idx) => (
-              <li
-                className="grid gap-6 py-6 md:grid-cols-[12rem_1fr]"
-                key={step.title}
-              >
-                <div className="flex items-start gap-3">
-                  <span className="font-mono text-muted-foreground text-xs tabular-nums">
-                    {String(idx + 1).padStart(2, "0")}
-                  </span>
-                  <p className="font-semibold text-sm tracking-tight">
-                    {step.title}
-                  </p>
-                </div>
-                <p className="text-muted-foreground text-sm leading-6">
+              <li className="border-border/70 border-t pt-5" key={step.title}>
+                <p className="font-mono text-muted-foreground text-xs tabular-nums tracking-wide">
+                  {String(idx + 1).padStart(2, "0")}
+                </p>
+                <p className="mt-2 font-semibold text-sm tracking-tight">
+                  {step.title}
+                </p>
+                <p className="mt-2 text-muted-foreground text-sm leading-6">
                   {step.description}
                 </p>
               </li>
@@ -205,7 +198,7 @@ function LandingPage() {
       </section>
 
       <section className="border-border/60 border-b">
-        <div className="mx-auto max-w-3xl px-6 py-14">
+        <div className="mx-auto max-w-5xl px-6 py-14">
           <div className="flex flex-col items-start gap-4">
             <h2 className="text-balance font-semibold text-2xl tracking-tight">
               Ship to every timeline at once.

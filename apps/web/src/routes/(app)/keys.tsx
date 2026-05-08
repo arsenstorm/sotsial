@@ -1,10 +1,3 @@
-import {
-  ArrowRight01Icon,
-  Delete02Icon,
-  KeyIcon,
-  PlusSignIcon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@sotsial/ui/components/button";
 import {
   Dialog,
@@ -36,6 +29,12 @@ import {
 } from "@sotsial/ui/components/table";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { IconShield } from "nucleo-isometric";
+import {
+  IconChevronRightOutlineDuo18,
+  IconPlusOutlineDuo18,
+  IconTrashOutlineDuo18,
+} from "nucleo-ui-outline-duo-18";
 import { useState } from "react";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth";
@@ -136,14 +135,14 @@ function KeysPage() {
                     size="icon-sm"
                     variant="ghost"
                   >
-                    <HugeiconsIcon icon={ArrowRight01Icon} />
+                    <IconChevronRightOutlineDuo18 strokeWidth={2} />
                   </Button>
                   <Button
                     onClick={() => deleteMutation.mutate(k.id)}
                     size="icon-sm"
                     variant="ghost"
                   >
-                    <HugeiconsIcon icon={Delete02Icon} />
+                    <IconTrashOutlineDuo18 strokeWidth={2} />
                   </Button>
                 </TableCell>
               </TableRow>
@@ -154,7 +153,7 @@ function KeysPage() {
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon">
-              <HugeiconsIcon icon={KeyIcon} />
+              <IconShield strokeWidth={2} />
             </EmptyMedia>
             <EmptyTitle>No API keys yet</EmptyTitle>
             <EmptyDescription>
@@ -205,7 +204,7 @@ function CreateKeyDialog() {
       <DialogTrigger
         render={
           <Button>
-            <HugeiconsIcon icon={PlusSignIcon} />
+            <IconPlusOutlineDuo18 strokeWidth={2} />
             New key
           </Button>
         }

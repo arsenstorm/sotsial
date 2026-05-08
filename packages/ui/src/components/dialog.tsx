@@ -1,8 +1,7 @@
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
-import { Cancel01Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@sotsial/ui/components/button";
 import { cn } from "@sotsial/ui/lib/utils";
+import { IconXmarkOutlineDuo18 } from "nucleo-ui-outline-duo-18";
 import type * as React from "react";
 
 function Dialog({ ...props }: DialogPrimitive.Root.Props) {
@@ -68,7 +67,7 @@ function DialogContent({
               />
             }
           >
-            <HugeiconsIcon icon={Cancel01Icon} strokeWidth={2} />
+            <IconXmarkOutlineDuo18 strokeWidth={2} />
             <span className="sr-only">Close</span>
           </DialogPrimitive.Close>
         )}

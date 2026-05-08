@@ -1,9 +1,11 @@
-import { Delete02Icon, Upload04Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@sotsial/ui/components/button";
 import { Field, FieldLabel } from "@sotsial/ui/components/field";
 import { Input } from "@sotsial/ui/components/input";
 import { useMutation } from "@tanstack/react-query";
+import {
+  IconTrashOutlineDuo18,
+  IconUploadOutlineDuo18,
+} from "nucleo-ui-outline-duo-18";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -94,7 +96,7 @@ export function MediaUpload({
           type="button"
           variant="outline"
         >
-          <HugeiconsIcon icon={Upload04Icon} />
+          <IconUploadOutlineDuo18 strokeWidth={2} />
           {uploadMutation.isPending ? "Uploading…" : "Upload file"}
         </Button>
         <input
@@ -160,7 +162,7 @@ export function MediaUpload({
                 type="button"
                 variant="ghost"
               >
-                <HugeiconsIcon icon={Delete02Icon} />
+                <IconTrashOutlineDuo18 strokeWidth={2} />
               </Button>
             </li>
           ))}

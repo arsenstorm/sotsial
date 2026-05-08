@@ -1,11 +1,10 @@
-import {
-  ArrowDownIcon,
-  ArrowLeftIcon,
-  ArrowRightIcon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { Button, buttonVariants } from "@sotsial/ui/components/button";
 import { cn } from "@sotsial/ui/lib/utils";
+import {
+  IconChevronDownOutlineDuo18,
+  IconChevronLeftOutlineDuo18,
+  IconChevronRightOutlineDuo18,
+} from "nucleo-ui-outline-duo-18";
 import * as React from "react";
 import {
   type DayButton,
@@ -140,9 +139,8 @@ function Calendar({
         Chevron: ({ className, orientation, ...props }) => {
           if (orientation === "left") {
             return (
-              <HugeiconsIcon
+              <IconChevronLeftOutlineDuo18
                 className={cn("size-4", className)}
-                icon={ArrowLeftIcon}
                 strokeWidth={2}
                 {...props}
               />
@@ -151,9 +149,8 @@ function Calendar({
 
           if (orientation === "right") {
             return (
-              <HugeiconsIcon
+              <IconChevronRightOutlineDuo18
                 className={cn("size-4", className)}
-                icon={ArrowRightIcon}
                 strokeWidth={2}
                 {...props}
               />
@@ -161,62 +158,8 @@ function Calendar({
           }
 
           return (
-            <HugeiconsIcon
+            <IconChevronDownOutlineDuo18
               className={cn("size-4", className)}
-              icon={ArrowDownIcon}
-              strokeWidth={2}
-              {...props}
-            />
-          );
-        },
-        DayButton: ({ ...props }) => (
-          <CalendarDayButton locale={locale} {...props} />
-        ),
-        WeekNumber: ({ children, ...props }) => (
-          <td {...props}>
-            <div className="flex size-(--cell-size) items-center justify-center text-center">
-              {children}
-            </div>
-          </td>
-        ),
-        ...components,
-      }}
-      components={{
-        Root: ({ className, rootRef, ...props }) => (
-          <div
-            className={cn(className)}
-            data-slot="calendar"
-            ref={rootRef}
-            {...props}
-          />
-        ),
-        Chevron: ({ className, orientation, ...props }) => {
-          if (orientation === "left") {
-            return (
-              <HugeiconsIcon
-                className={cn("size-4", className)}
-                icon={ArrowLeftIcon}
-                strokeWidth={2}
-                {...props}
-              />
-            );
-          }
-
-          if (orientation === "right") {
-            return (
-              <HugeiconsIcon
-                className={cn("size-4", className)}
-                icon={ArrowRightIcon}
-                strokeWidth={2}
-                {...props}
-              />
-            );
-          }
-
-          return (
-            <HugeiconsIcon
-              className={cn("size-4", className)}
-              icon={ArrowDownIcon}
               strokeWidth={2}
               {...props}
             />

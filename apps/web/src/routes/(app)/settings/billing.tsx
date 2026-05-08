@@ -1,5 +1,3 @@
-import { Invoice01Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { Badge } from "@sotsial/ui/components/badge";
 import { Button } from "@sotsial/ui/components/button";
 import {
@@ -14,6 +12,7 @@ import { PageSubheading } from "@sotsial/ui/components/page-subheading";
 import { Skeleton } from "@sotsial/ui/components/skeleton";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { IconReceipt } from "nucleo-isometric";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
 import { authClient } from "@/lib/auth";
@@ -231,7 +230,7 @@ function BillingPage() {
           <Empty>
             <EmptyHeader>
               <EmptyMedia variant="icon">
-                <HugeiconsIcon icon={Invoice01Icon} />
+                <IconReceipt />
               </EmptyMedia>
               <EmptyTitle>No subscription history</EmptyTitle>
               <EmptyDescription>

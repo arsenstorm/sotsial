@@ -1,18 +1,4 @@
 import {
-  ArrowDown01Icon,
-  Delete02Icon,
-  FacebookFreeIcons,
-  GoogleFreeIcons,
-  InstagramFreeIcons,
-  LinkedinIcon,
-  PlusSignIcon,
-  ThreadsFreeIcons,
-  TiktokIcon,
-  TwitterFreeIcons,
-  YoutubeIcon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-import {
   Avatar,
   AvatarFallback,
   AvatarImage,
@@ -22,6 +8,21 @@ import { PageHeading } from "@sotsial/ui/components/page-heading";
 import { Skeleton } from "@sotsial/ui/components/skeleton";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import {
+  IconFacebook,
+  IconGoogle,
+  IconInstagram,
+  IconLinkedin,
+  IconThreads,
+  IconTikTok,
+  IconXTwitter,
+  IconYoutube,
+} from "nucleo-social-media";
+import {
+  IconChevronDownOutlineDuo18,
+  IconPlusOutlineDuo18,
+  IconTrashOutlineDuo18,
+} from "nucleo-ui-outline-duo-18";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
@@ -30,7 +31,7 @@ export const Route = createFileRoute("/(app)/settings/integrations")({
   component: IntegrationsPage,
 });
 
-type ProviderIcon = Parameters<typeof HugeiconsIcon>[0]["icon"];
+type ProviderIcon = React.ComponentType<{ className?: string }>;
 
 interface Provider {
   icon: ProviderIcon;
@@ -46,17 +47,17 @@ interface AccountRow {
 }
 
 const POPULAR: readonly Provider[] = [
-  { id: "instagram", name: "Instagram", icon: InstagramFreeIcons },
-  { id: "twitter", name: "Twitter", icon: TwitterFreeIcons },
-  { id: "tiktok", name: "TikTok", icon: TiktokIcon },
-  { id: "threads", name: "Threads", icon: ThreadsFreeIcons },
+  { id: "instagram", name: "Instagram", icon: IconInstagram },
+  { id: "twitter", name: "Twitter", icon: IconXTwitter },
+  { id: "tiktok", name: "TikTok", icon: IconTikTok },
+  { id: "threads", name: "Threads", icon: IconThreads },
 ] as const;
 
 const MORE: readonly Provider[] = [
-  { id: "facebook", name: "Facebook", icon: FacebookFreeIcons },
-  { id: "linkedin", name: "LinkedIn", icon: LinkedinIcon },
-  { id: "youtube", name: "YouTube", icon: YoutubeIcon },
-  { id: "google", name: "Google", icon: GoogleFreeIcons },
+  { id: "facebook", name: "Facebook", icon: IconFacebook },
+  { id: "linkedin", name: "LinkedIn", icon: IconLinkedin },
+  { id: "youtube", name: "YouTube", icon: IconYoutube },
+  { id: "google", name: "Google", icon: IconGoogle },
 ] as const;
 
 const connectionsKey = ["connections"] as const;
@@ -143,9 +144,9 @@ function MoreProvidersSection({
             {MORE.map((p) => p.name).join(", ")}
           </p>
         </span>
-        <HugeiconsIcon
+        <IconChevronDownOutlineDuo18
           className={`size-4 shrink-0 text-muted-foreground transition-transform ${expanded ? "rotate-180" : ""}`}
-          icon={ArrowDown01Icon}
+          strokeWidth={2}
         />
       </button>
       {expanded ? (
@@ -174,12 +175,13 @@ function ProviderSection({
   const { connect, isPending } = useConnectProvider(provider);
 
   const hasAccounts = accounts.length > 0;
+  const Icon = provider.icon;
 
   return (
     <li>
       <div className="flex items-center gap-4 px-5 py-3.5">
         <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg border border-border bg-background">
-          <HugeiconsIcon className="size-4" icon={provider.icon} />
+          <Icon className="size-4" />
         </span>
         <div className="min-w-0 flex-1">
           <p className="truncate font-medium text-sm">{provider.name}</p>
@@ -206,9 +208,9 @@ function ProviderSection({
               size="icon-sm"
               variant="ghost"
             >
-              <HugeiconsIcon
+              <IconChevronDownOutlineDuo18
                 className={`size-4 transition-transform ${expanded ? "rotate-180" : ""}`}
-                icon={ArrowDown01Icon}
+                strokeWidth={2}
               />
             </Button>
           </>
@@ -236,7 +238,7 @@ function ProviderSection({
               type="button"
             >
               <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-md border border-border border-dashed bg-background">
-                <HugeiconsIcon className="size-3.5" icon={PlusSignIcon} />
+                <IconPlusOutlineDuo18 className="size-3.5" strokeWidth={2} />
               </span>
               {isPending
                 ? "Connecting…"
@@ -301,7 +303,7 @@ function AccountRowItem({ account }: { account: AccountRow }) {
         size="icon-sm"
         variant="ghost"
       >
-        <HugeiconsIcon className="size-4" icon={Delete02Icon} />
+        <IconTrashOutlineDuo18 className="size-4" strokeWidth={2} />
       </Button>
     </li>
   );

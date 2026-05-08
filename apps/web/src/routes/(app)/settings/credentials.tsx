@@ -1,9 +1,3 @@
-import {
-  CreditCardIcon,
-  Delete02Icon,
-  PlusSignIcon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { Badge } from "@sotsial/ui/components/badge";
 import { Button } from "@sotsial/ui/components/button";
 import {
@@ -43,6 +37,11 @@ import {
 } from "@sotsial/ui/components/table";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { IconWalletCard } from "nucleo-isometric";
+import {
+  IconPlusOutlineDuo18,
+  IconTrashOutlineDuo18,
+} from "nucleo-ui-outline-duo-18";
 import { useState } from "react";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
@@ -156,7 +155,7 @@ function CredentialsPage() {
                     size="icon-sm"
                     variant="ghost"
                   >
-                    <HugeiconsIcon icon={Delete02Icon} />
+                    <IconTrashOutlineDuo18 strokeWidth={2} />
                   </Button>
                 </TableCell>
               </TableRow>
@@ -167,7 +166,7 @@ function CredentialsPage() {
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon">
-              <HugeiconsIcon icon={CreditCardIcon} />
+              <IconWalletCard />
             </EmptyMedia>
             <EmptyTitle>No credentials yet</EmptyTitle>
             <EmptyDescription>
@@ -219,7 +218,7 @@ function CreateCredentialDialog() {
       <DialogTrigger
         render={
           <Button>
-            <HugeiconsIcon icon={PlusSignIcon} />
+            <IconPlusOutlineDuo18 strokeWidth={2} />
             New credential
           </Button>
         }

@@ -1,32 +1,31 @@
 import {
-  FacebookFreeIcons,
-  GoogleFreeIcons,
-  InstagramFreeIcons,
-  LinkedinIcon,
-  ThreadsFreeIcons,
-  TiktokIcon,
-  TwitterFreeIcons,
-  YoutubeIcon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@sotsial/ui/components/avatar";
 import { Skeleton } from "@sotsial/ui/components/skeleton";
+import {
+  IconFacebook,
+  IconGoogle,
+  IconInstagram,
+  IconLinkedin,
+  IconThreads,
+  IconTikTok,
+  IconXTwitter,
+  IconYoutube,
+} from "nucleo-social-media";
 
-type ProviderIcon = Parameters<typeof HugeiconsIcon>[0]["icon"];
+type PlatformIcon = React.ComponentType<{ className?: string }>;
 
-const PLATFORM_ICONS: Record<string, ProviderIcon> = {
-  facebook: FacebookFreeIcons,
-  google: GoogleFreeIcons,
-  instagram: InstagramFreeIcons,
-  linkedin: LinkedinIcon,
-  threads: ThreadsFreeIcons,
-  tiktok: TiktokIcon,
-  twitter: TwitterFreeIcons,
-  youtube: YoutubeIcon,
+const PLATFORM_ICONS: Record<string, PlatformIcon> = {
+  facebook: IconFacebook,
+  google: IconGoogle,
+  instagram: IconInstagram,
+  linkedin: IconLinkedin,
+  threads: IconThreads,
+  tiktok: IconTikTok,
+  twitter: IconXTwitter,
+  youtube: IconYoutube,
 };
 
 const WHITESPACE_RE = /\s+/;
@@ -111,7 +110,7 @@ function AccountChip({
   active: boolean;
   onClick: () => void;
 }) {
-  const icon = PLATFORM_ICONS[account.platform];
+  const Icon = PLATFORM_ICONS[account.platform];
   const displayName =
     account.account?.name ?? account.account?.username ?? account.account_id;
   const handle = account.account?.username
@@ -143,7 +142,7 @@ function AccountChip({
       <div className="min-w-0 flex-1">
         <p className="truncate font-medium text-sm">{displayName}</p>
         <p className="flex items-center gap-1 truncate text-muted-foreground text-xs">
-          {icon ? <HugeiconsIcon className="size-3" icon={icon} /> : null}
+          {Icon ? <Icon className="size-3" /> : null}
           {handle}
         </p>
       </div>

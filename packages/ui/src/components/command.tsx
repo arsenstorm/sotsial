@@ -1,7 +1,5 @@
 "use client";
 
-import { SearchIcon, Tick02Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +13,10 @@ import {
 } from "@sotsial/ui/components/input-group";
 import { cn } from "@sotsial/ui/lib/utils";
 import { Command as CommandPrimitive } from "cmdk";
+import {
+  IconCheckOutlineDuo18,
+  IconMagnifierOutlineDuo18,
+} from "nucleo-ui-outline-duo-18";
 import type * as React from "react";
 
 function Command({
@@ -82,9 +84,8 @@ function CommandInput({
           {...props}
         />
         <InputGroupAddon>
-          <HugeiconsIcon
+          <IconMagnifierOutlineDuo18
             className="size-4 shrink-0 opacity-50"
-            icon={SearchIcon}
             strokeWidth={2}
           />
         </InputGroupAddon>
@@ -166,9 +167,8 @@ function CommandItem({
       {...props}
     >
       {children}
-      <HugeiconsIcon
+      <IconCheckOutlineDuo18
         className="ml-auto opacity-0 group-has-data-[slot=command-shortcut]/command-item:hidden group-data-[checked=true]/command-item:opacity-100"
-        icon={Tick02Icon}
         strokeWidth={2}
       />
     </CommandPrimitive.Item>

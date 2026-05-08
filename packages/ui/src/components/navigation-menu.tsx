@@ -1,8 +1,7 @@
 import { NavigationMenu as NavigationMenuPrimitive } from "@base-ui/react/navigation-menu";
-import { ArrowDown01Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { cn } from "@sotsial/ui/lib/utils";
 import { cva } from "class-variance-authority";
+import { IconChevronDownOutlineDuo18 } from "nucleo-ui-outline-duo-18";
 
 function NavigationMenu({
   align = "start",
@@ -71,10 +70,9 @@ function NavigationMenuTrigger({
       {...props}
     >
       {children}{" "}
-      <HugeiconsIcon
+      <IconChevronDownOutlineDuo18
         aria-hidden="true"
         className="relative top-px ml-1 size-3 transition duration-300 group-data-open/navigation-menu-trigger:rotate-180 group-data-popup-open/navigation-menu-trigger:rotate-180"
-        icon={ArrowDown01Icon}
         strokeWidth={2}
       />
     </NavigationMenuPrimitive.Trigger>

@@ -1,9 +1,3 @@
-import {
-  ArrowRight02Icon,
-  Edit02Icon,
-  LinkSquare02Icon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@sotsial/ui/components/button";
 import {
   Empty,
@@ -13,6 +7,8 @@ import {
 } from "@sotsial/ui/components/empty";
 import { PageHeading } from "@sotsial/ui/components/page-heading";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { IconNet, IconPencil } from "nucleo-isometric";
+import { IconArrowRightOutlineDuo18 } from "nucleo-ui-outline-duo-18";
 
 export const Route = createFileRoute("/(app)/dashboard")({
   component: DashboardPage,
@@ -66,13 +62,16 @@ function DashboardPage() {
               to="/posts"
             >
               View all
-              <HugeiconsIcon className="size-3.5" icon={ArrowRight02Icon} />
+              <IconArrowRightOutlineDuo18
+                className="size-3.5"
+                strokeWidth={2}
+              />
             </Link>
           </header>
           <Empty className="p-8">
             <EmptyHeader>
               <EmptyMedia variant="icon">
-                <HugeiconsIcon icon={Edit02Icon} />
+                <IconPencil />
               </EmptyMedia>
               <EmptyTitle>No posts yet</EmptyTitle>
             </EmptyHeader>
@@ -94,13 +93,16 @@ function DashboardPage() {
               to="/connections"
             >
               Manage
-              <HugeiconsIcon className="size-3.5" icon={ArrowRight02Icon} />
+              <IconArrowRightOutlineDuo18
+                className="size-3.5"
+                strokeWidth={2}
+              />
             </Link>
           </header>
           <Empty className="p-8">
             <EmptyHeader>
               <EmptyMedia variant="icon">
-                <HugeiconsIcon icon={LinkSquare02Icon} />
+                <IconNet />
               </EmptyMedia>
               <EmptyTitle>No accounts connected</EmptyTitle>
             </EmptyHeader>

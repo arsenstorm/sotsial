@@ -1,11 +1,10 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import {
-  ArrowRight01Icon,
-  MoreHorizontalCircle01Icon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { cn } from "@sotsial/ui/lib/utils";
+import {
+  IconChevronRightOutlineDuo18,
+  IconDotsOutlineDuo18,
+} from "nucleo-ui-outline-duo-18";
 import type * as React from "react";
 
 function Breadcrumb({ className, ...props }: React.ComponentProps<"nav">) {
@@ -88,7 +87,7 @@ function BreadcrumbSeparator({
       role="presentation"
       {...props}
     >
-      {children ?? <HugeiconsIcon icon={ArrowRight01Icon} strokeWidth={2} />}
+      {children ?? <IconChevronRightOutlineDuo18 strokeWidth={2} />}
     </li>
   );
 }
@@ -108,7 +107,7 @@ function BreadcrumbEllipsis({
       role="presentation"
       {...props}
     >
-      <HugeiconsIcon icon={MoreHorizontalCircle01Icon} strokeWidth={2} />
+      <IconDotsOutlineDuo18 strokeWidth={2} />
       <span className="sr-only">More</span>
     </span>
   );

@@ -1,33 +1,32 @@
 import {
-  FacebookFreeIcons,
-  GoogleFreeIcons,
-  InstagramFreeIcons,
-  LinkedinIcon,
-  ThreadsFreeIcons,
-  TiktokIcon,
-  TwitterFreeIcons,
-  YoutubeIcon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@sotsial/ui/components/tabs";
+import {
+  IconFacebook,
+  IconGoogle,
+  IconInstagram,
+  IconLinkedin,
+  IconThreads,
+  IconTikTok,
+  IconXTwitter,
+  IconYoutube,
+} from "nucleo-social-media";
 import type { MediaItem } from "@/components/posting/media-upload";
 
-type ProviderIcon = Parameters<typeof HugeiconsIcon>[0]["icon"];
+type PlatformIcon = React.ComponentType<{ className?: string }>;
 
-const PLATFORM_ICONS: Record<string, ProviderIcon> = {
-  facebook: FacebookFreeIcons,
-  google: GoogleFreeIcons,
-  instagram: InstagramFreeIcons,
-  linkedin: LinkedinIcon,
-  threads: ThreadsFreeIcons,
-  tiktok: TiktokIcon,
-  twitter: TwitterFreeIcons,
-  youtube: YoutubeIcon,
+const PLATFORM_ICONS: Record<string, PlatformIcon> = {
+  facebook: IconFacebook,
+  google: IconGoogle,
+  instagram: IconInstagram,
+  linkedin: IconLinkedin,
+  threads: IconThreads,
+  tiktok: IconTikTok,
+  twitter: IconXTwitter,
+  youtube: IconYoutube,
 };
 
 export function PostPreview({
@@ -52,15 +51,15 @@ export function PostPreview({
   return (
     <Tabs defaultValue={platforms[0]}>
       <TabsList className="flex w-full flex-wrap gap-1">
-        {platforms.map((platform) => (
-          <TabsTrigger key={platform} value={platform}>
-            <HugeiconsIcon
-              className="size-3.5"
-              icon={PLATFORM_ICONS[platform] ?? TwitterFreeIcons}
-            />
-            <span className="capitalize">{platform}</span>
-          </TabsTrigger>
-        ))}
+        {platforms.map((platform) => {
+          const Icon = PLATFORM_ICONS[platform] ?? IconXTwitter;
+          return (
+            <TabsTrigger key={platform} value={platform}>
+              <Icon className="size-3.5" />
+              <span className="capitalize">{platform}</span>
+            </TabsTrigger>
+          );
+        })}
       </TabsList>
       {platforms.map((platform) => (
         <TabsContent className="mt-4" key={platform} value={platform}>
@@ -80,15 +79,13 @@ function PreviewCard({
   text: string;
   media: MediaItem[];
 }) {
+  const Icon = PLATFORM_ICONS[platform] ?? IconXTwitter;
   const firstMedia = media[0];
 
   return (
     <article className="overflow-hidden rounded-xl border border-border bg-card">
       <header className="flex items-center gap-2 border-border/70 border-b px-4 py-3">
-        <HugeiconsIcon
-          className="size-4 text-muted-foreground"
-          icon={PLATFORM_ICONS[platform] ?? TwitterFreeIcons}
-        />
+        <Icon className="size-4 text-muted-foreground" />
         <p className="font-medium text-sm capitalize">{platform} preview</p>
       </header>
       <div className="space-y-3 p-4">

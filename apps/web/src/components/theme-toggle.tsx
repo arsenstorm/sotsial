@@ -1,11 +1,14 @@
-import { Moon02Icon, Sun02Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@sotsial/ui/components/button";
+import {
+  IconMoonOutlineDuo18,
+  IconSunOutlineDuo18,
+} from "nucleo-ui-outline-duo-18";
 import { useTheme } from "@/components/theme-provider";
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const isDark = theme === "dark";
+  const Icon = isDark ? IconSunOutlineDuo18 : IconMoonOutlineDuo18;
 
   return (
     <Button
@@ -15,7 +18,7 @@ export function ThemeToggle() {
       size="icon"
       variant="ghost"
     >
-      <HugeiconsIcon icon={isDark ? Sun02Icon : Moon02Icon} strokeWidth={2} />
+      <Icon strokeWidth={2} />
     </Button>
   );
 }

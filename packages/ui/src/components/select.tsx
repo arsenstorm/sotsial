@@ -1,14 +1,13 @@
 "use client";
 
 import { Select as SelectPrimitive } from "@base-ui/react/select";
-import {
-  ArrowDown01Icon,
-  ArrowUp01Icon,
-  Tick02Icon,
-  UnfoldMoreIcon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { cn } from "@sotsial/ui/lib/utils";
+import {
+  IconCheckOutlineDuo18,
+  IconChevronDownOutlineDuo18,
+  IconChevronUpOutlineDuo18,
+  IconSortArrowsOutlineDuo18,
+} from "nucleo-ui-outline-duo-18";
 import type * as React from "react";
 
 const Select = SelectPrimitive.Root;
@@ -54,9 +53,8 @@ function SelectTrigger({
       {children}
       <SelectPrimitive.Icon
         render={
-          <HugeiconsIcon
+          <IconSortArrowsOutlineDuo18
             className="pointer-events-none size-4 text-muted-foreground"
-            icon={UnfoldMoreIcon}
             strokeWidth={2}
           />
         }
@@ -142,9 +140,8 @@ function SelectItem({
           <span className="pointer-events-none absolute right-2 flex size-4 items-center justify-center" />
         }
       >
-        <HugeiconsIcon
+        <IconCheckOutlineDuo18
           className="pointer-events-none"
-          icon={Tick02Icon}
           strokeWidth={2}
         />
       </SelectPrimitive.ItemIndicator>
@@ -181,7 +178,7 @@ function SelectScrollUpButton({
       data-slot="select-scroll-up-button"
       {...props}
     >
-      <HugeiconsIcon icon={ArrowUp01Icon} strokeWidth={2} />
+      <IconChevronUpOutlineDuo18 strokeWidth={2} />
     </SelectPrimitive.ScrollUpArrow>
   );
 }
@@ -199,7 +196,7 @@ function SelectScrollDownButton({
       data-slot="select-scroll-down-button"
       {...props}
     >
-      <HugeiconsIcon icon={ArrowDown01Icon} strokeWidth={2} />
+      <IconChevronDownOutlineDuo18 strokeWidth={2} />
     </SelectPrimitive.ScrollDownArrow>
   );
 }

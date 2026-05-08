@@ -1,15 +1,17 @@
-import { Loading03Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { cn } from "@sotsial/ui/lib/utils";
+import { IconLoadingStatusOutlineDuo18 } from "nucleo-ui-outline-duo-18";
 
-function Spinner({ className, ...props }: React.ComponentProps<"svg">) {
+function Spinner({
+  className,
+  strokeWidth = 2,
+  ...props
+}: React.ComponentProps<typeof IconLoadingStatusOutlineDuo18>) {
   return (
-    <HugeiconsIcon
+    <IconLoadingStatusOutlineDuo18
       aria-label="Loading"
       className={cn("size-4 animate-spin", className)}
-      icon={Loading03Icon}
       role="status"
-      strokeWidth={2}
+      strokeWidth={strokeWidth}
       {...props}
     />
   );

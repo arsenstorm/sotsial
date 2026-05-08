@@ -1,19 +1,4 @@
 import {
-  CreditCardIcon,
-  Edit02Icon,
-  Home01Icon,
-  KeyIcon,
-  LinkSquare02Icon,
-  Logout02Icon,
-  Moon02Icon,
-  PlusSignIcon,
-  Settings02Icon,
-  Store01Icon,
-  Sun02Icon,
-  UserIcon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-import {
   Command,
   CommandDialog,
   CommandEmpty,
@@ -26,6 +11,20 @@ import {
 } from "@sotsial/ui/components/command";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useRouter } from "@tanstack/react-router";
+import {
+  IconCreditCardOutlineDuo18,
+  IconExitDoorOutlineDuo18,
+  IconGearOutlineDuo18,
+  IconHouseOutlineDuo18,
+  IconKeyOutlineDuo18,
+  IconLinkOutlineDuo18,
+  IconMoonOutlineDuo18,
+  IconPencilOutlineDuo18,
+  IconPlusOutlineDuo18,
+  IconShopOutlineDuo18,
+  IconSunOutlineDuo18,
+  IconUserOutlineDuo18,
+} from "nucleo-ui-outline-duo-18";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useTheme } from "@/components/theme-provider";
@@ -44,29 +43,38 @@ type NavDest =
   | "/settings/integrations"
   | "/settings/credentials";
 
-const NAV_ITEMS: { label: string; to: NavDest; icon: unknown }[] = [
-  { label: "Dashboard", to: "/dashboard", icon: Home01Icon },
-  { label: "Connections", to: "/connections", icon: LinkSquare02Icon },
-  { label: "API keys", to: "/keys", icon: KeyIcon },
-  { label: "Posts", to: "/posts", icon: Edit02Icon },
-  { label: "New post", to: "/posts/create", icon: PlusSignIcon },
-  { label: "Settings", to: "/settings", icon: Settings02Icon },
+type IconComponent = React.ComponentType<{
+  className?: string;
+  strokeWidth?: number;
+}>;
+
+const NAV_ITEMS: { label: string; to: NavDest; icon: IconComponent }[] = [
+  { label: "Dashboard", to: "/dashboard", icon: IconHouseOutlineDuo18 },
+  { label: "Connections", to: "/connections", icon: IconLinkOutlineDuo18 },
+  { label: "API keys", to: "/keys", icon: IconKeyOutlineDuo18 },
+  { label: "Posts", to: "/posts", icon: IconPencilOutlineDuo18 },
+  { label: "New post", to: "/posts/create", icon: IconPlusOutlineDuo18 },
+  { label: "Settings", to: "/settings", icon: IconGearOutlineDuo18 },
   {
     label: "Organization settings",
     to: "/settings/organization",
-    icon: Settings02Icon,
+    icon: IconGearOutlineDuo18,
   },
-  { label: "Members", to: "/settings/members", icon: UserIcon },
-  { label: "Billing", to: "/settings/billing", icon: CreditCardIcon },
+  { label: "Members", to: "/settings/members", icon: IconUserOutlineDuo18 },
+  {
+    label: "Billing",
+    to: "/settings/billing",
+    icon: IconCreditCardOutlineDuo18,
+  },
   {
     label: "Integrations",
     to: "/settings/integrations",
-    icon: Store01Icon,
+    icon: IconShopOutlineDuo18,
   },
   {
     label: "Credentials",
     to: "/settings/credentials",
-    icon: CreditCardIcon,
+    icon: IconCreditCardOutlineDuo18,
   },
 ];
 
@@ -123,6 +131,9 @@ export function CommandPalette() {
       navigate({ to: "/sign-in" });
     });
 
+  const ThemeIcon =
+    theme === "dark" ? IconSunOutlineDuo18 : IconMoonOutlineDuo18;
+
   return (
     <CommandDialog onOpenChange={setOpen} open={open}>
       <Command>
@@ -131,20 +142,19 @@ export function CommandPalette() {
           <CommandEmpty>No results found.</CommandEmpty>
 
           <CommandGroup heading="Navigate">
-            {NAV_ITEMS.map((item) => (
-              <CommandItem
-                key={item.to}
-                onSelect={() => goTo(item.to)}
-                value={item.label}
-              >
-                <HugeiconsIcon
-                  icon={
-                    item.icon as Parameters<typeof HugeiconsIcon>[0]["icon"]
-                  }
-                />
-                {item.label}
-              </CommandItem>
-            ))}
+            {NAV_ITEMS.map((item) => {
+              const Icon = item.icon;
+              return (
+                <CommandItem
+                  key={item.to}
+                  onSelect={() => goTo(item.to)}
+                  value={item.label}
+                >
+                  <Icon />
+                  {item.label}
+                </CommandItem>
+              );
+            })}
           </CommandGroup>
 
           {orgs && orgs.length > 1 ? (
@@ -176,13 +186,13 @@ export function CommandPalette() {
               }}
               value="toggle theme"
             >
-              <HugeiconsIcon icon={theme === "dark" ? Sun02Icon : Moon02Icon} />
+              <ThemeIcon />
               {theme === "dark"
                 ? "Switch to light mode"
                 : "Switch to dark mode"}
             </CommandItem>
             <CommandItem onSelect={signOut} value="sign out">
-              <HugeiconsIcon icon={Logout02Icon} />
+              <IconExitDoorOutlineDuo18 />
               Sign out
             </CommandItem>
           </CommandGroup>

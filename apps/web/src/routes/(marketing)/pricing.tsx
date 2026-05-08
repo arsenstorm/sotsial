@@ -1,7 +1,6 @@
-import { Tick02Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@sotsial/ui/components/button";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { IconCheckOutlineDuo18 } from "nucleo-ui-outline-duo-18";
 import { MarketingShell } from "@/components/marketing/shell";
 
 export const Route = createFileRoute("/(marketing)/pricing")({
@@ -126,9 +125,9 @@ function PricingPage() {
                       className="flex items-start gap-2 text-sm leading-6"
                       key={feature}
                     >
-                      <HugeiconsIcon
+                      <IconCheckOutlineDuo18
                         className="mt-1 size-3.5 text-emerald-600 dark:text-emerald-400"
-                        icon={Tick02Icon}
+                        strokeWidth={2}
                       />
                       <span>{feature}</span>
                     </li>

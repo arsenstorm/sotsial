@@ -2,8 +2,6 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import { SidebarLeftIcon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@sotsial/ui/components/button";
 import { Input } from "@sotsial/ui/components/input";
 import { Separator } from "@sotsial/ui/components/separator";
@@ -23,6 +21,7 @@ import {
 import { useIsMobile } from "@sotsial/ui/hooks/use-mobile";
 import { cn } from "@sotsial/ui/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
+import { IconSidebarLeftOutlineDuo18 } from "nucleo-ui-outline-duo-18";
 import * as React from "react";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
@@ -273,7 +272,7 @@ function SidebarTrigger({
       variant="ghost"
       {...props}
     >
-      <HugeiconsIcon icon={SidebarLeftIcon} strokeWidth={2} />
+      <IconSidebarLeftOutlineDuo18 strokeWidth={2} />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );

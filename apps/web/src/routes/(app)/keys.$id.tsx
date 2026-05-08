@@ -1,5 +1,3 @@
-import { ArrowLeft01Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { Badge } from "@sotsial/ui/components/badge";
 import { Button } from "@sotsial/ui/components/button";
 import {
@@ -11,6 +9,7 @@ import { PageHeading } from "@sotsial/ui/components/page-heading";
 import { Skeleton } from "@sotsial/ui/components/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { IconArrowLeftOutlineDuo18 } from "nucleo-ui-outline-duo-18";
 import { authClient } from "@/lib/auth";
 
 export const Route = createFileRoute("/(app)/keys/$id")({
@@ -44,7 +43,7 @@ function KeyDetailPage() {
       <PageHeading
         actions={
           <Button render={<Link to="/keys" />} variant="ghost">
-            <HugeiconsIcon icon={ArrowLeft01Icon} />
+            <IconArrowLeftOutlineDuo18 strokeWidth={2} />
             Back
           </Button>
         }

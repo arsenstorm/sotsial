@@ -2,8 +2,6 @@
 
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
 import { Menubar as MenubarPrimitive } from "@base-ui/react/menubar";
-import { Tick02Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@sotsial/ui/components/dropdown-menu";
 import { cn } from "@sotsial/ui/lib/utils";
+import { IconCheckOutlineDuo18 } from "nucleo-ui-outline-duo-18";
 import type * as React from "react";
 
 function Menubar({ className, ...props }: MenubarPrimitive.Props) {
@@ -128,7 +127,7 @@ function MenubarCheckboxItem({
     >
       <span className="pointer-events-none absolute left-3 flex size-4 items-center justify-center [&_svg:not([class*='size-'])]:size-4">
         <MenuPrimitive.CheckboxItemIndicator>
-          <HugeiconsIcon icon={Tick02Icon} strokeWidth={2} />
+          <IconCheckOutlineDuo18 strokeWidth={2} />
         </MenuPrimitive.CheckboxItemIndicator>
       </span>
       {children}
@@ -162,7 +161,7 @@ function MenubarRadioItem({
     >
       <span className="pointer-events-none absolute left-3 flex size-4 items-center justify-center [&_svg:not([class*='size-'])]:size-4">
         <MenuPrimitive.RadioItemIndicator>
-          <HugeiconsIcon icon={Tick02Icon} strokeWidth={2} />
+          <IconCheckOutlineDuo18 strokeWidth={2} />
         </MenuPrimitive.RadioItemIndicator>
       </span>
       {children}

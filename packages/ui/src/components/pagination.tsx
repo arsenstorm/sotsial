@@ -1,11 +1,10 @@
-import {
-  ArrowLeft01Icon,
-  ArrowRight01Icon,
-  MoreHorizontalCircle01Icon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@sotsial/ui/components/button";
 import { cn } from "@sotsial/ui/lib/utils";
+import {
+  IconChevronLeftOutlineDuo18,
+  IconChevronRightOutlineDuo18,
+  IconDotsOutlineDuo18,
+} from "nucleo-ui-outline-duo-18";
 import type * as React from "react";
 
 function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
@@ -60,14 +59,6 @@ function PaginationLink({
           {...props}
         />
       }
-      render={
-        <a
-          aria-current={isActive ? "page" : undefined}
-          data-active={isActive}
-          data-slot="pagination-link"
-          {...props}
-        />
-      }
       size={size}
     />
   );
@@ -85,9 +76,8 @@ function PaginationPrevious({
       size="default"
       {...props}
     >
-      <HugeiconsIcon
+      <IconChevronLeftOutlineDuo18
         data-icon="inline-start"
-        icon={ArrowLeft01Icon}
         strokeWidth={2}
       />
       <span className="hidden sm:block">{text}</span>
@@ -108,9 +98,8 @@ function PaginationNext({
       {...props}
     >
       <span className="hidden sm:block">{text}</span>
-      <HugeiconsIcon
+      <IconChevronRightOutlineDuo18
         data-icon="inline-end"
-        icon={ArrowRight01Icon}
         strokeWidth={2}
       />
     </PaginationLink>
@@ -131,7 +120,7 @@ function PaginationEllipsis({
       data-slot="pagination-ellipsis"
       {...props}
     >
-      <HugeiconsIcon icon={MoreHorizontalCircle01Icon} strokeWidth={2} />
+      <IconDotsOutlineDuo18 strokeWidth={2} />
       <span className="sr-only">More pages</span>
     </span>
   );

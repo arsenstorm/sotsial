@@ -12,6 +12,7 @@ export const env = createEnv({
 
   runtimeEnv: {
     ...import.meta.env,
+    PUBLIC_APP_BASE_URL: import.meta.env.APP_BASE_URL,
   },
 
   emptyStringAsUndefined: true,

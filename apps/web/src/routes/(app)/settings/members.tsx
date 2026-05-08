@@ -1,11 +1,3 @@
-import {
-  Cancel01Icon,
-  Copy02Icon,
-  Delete02Icon,
-  Mail01Icon,
-  UserIcon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { Badge } from "@sotsial/ui/components/badge";
 import { Button } from "@sotsial/ui/components/button";
 import {
@@ -37,6 +29,12 @@ import {
 } from "@sotsial/ui/components/table";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { IconMailbox, IconUser } from "nucleo-isometric";
+import {
+  IconCopyOutlineDuo18,
+  IconTrashOutlineDuo18,
+  IconXmarkOutlineDuo18,
+} from "nucleo-ui-outline-duo-18";
 import { useState } from "react";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth";
@@ -180,7 +178,7 @@ function MembersPage() {
                       size="icon-sm"
                       variant="ghost"
                     >
-                      <HugeiconsIcon icon={Delete02Icon} />
+                      <IconTrashOutlineDuo18 strokeWidth={2} />
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -191,7 +189,7 @@ function MembersPage() {
           <Empty>
             <EmptyHeader>
               <EmptyMedia variant="icon">
-                <HugeiconsIcon icon={UserIcon} />
+                <IconUser />
               </EmptyMedia>
               <EmptyTitle>No members yet</EmptyTitle>
               <EmptyDescription>
@@ -239,7 +237,7 @@ function MembersPage() {
                           size="icon-sm"
                           variant="ghost"
                         >
-                          <HugeiconsIcon icon={Copy02Icon} />
+                          <IconCopyOutlineDuo18 strokeWidth={2} />
                         </Button>
                         <Button
                           aria-label="Cancel invitation"
@@ -247,7 +245,7 @@ function MembersPage() {
                           size="icon-sm"
                           variant="ghost"
                         >
-                          <HugeiconsIcon icon={Cancel01Icon} />
+                          <IconXmarkOutlineDuo18 strokeWidth={2} />
                         </Button>
                       </div>
                     ) : null}
@@ -260,7 +258,7 @@ function MembersPage() {
           <Empty>
             <EmptyHeader>
               <EmptyMedia variant="icon">
-                <HugeiconsIcon icon={Mail01Icon} />
+                <IconMailbox />
               </EmptyMedia>
               <EmptyTitle>No pending invitations</EmptyTitle>
               <EmptyDescription>

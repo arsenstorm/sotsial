@@ -1,12 +1,3 @@
-import {
-  Building02Icon,
-  Logout02Icon,
-  PlusSignIcon,
-  Settings02Icon,
-  Tick02Icon,
-  UnfoldMoreIcon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { Avatar, AvatarFallback } from "@sotsial/ui/components/avatar";
 import { Button } from "@sotsial/ui/components/button";
 import {
@@ -39,6 +30,14 @@ import {
 } from "@sotsial/ui/components/sidebar";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useRouter } from "@tanstack/react-router";
+import {
+  IconCheckOutlineDuo18,
+  IconExitDoorOutlineDuo18,
+  IconGearOutlineDuo18,
+  IconOfficeOutlineDuo18,
+  IconPlusOutlineDuo18,
+  IconSortArrowsOutlineDuo18,
+} from "nucleo-ui-outline-duo-18";
 import { useState } from "react";
 import { toast } from "sonner";
 import { authClient, sessionQuery } from "@/lib/auth";
@@ -113,9 +112,8 @@ export function NavUser({ name, email }: { name: string; email: string }) {
                   {activeOrg?.name ?? email}
                 </span>
               </div>
-              <HugeiconsIcon
+              <IconSortArrowsOutlineDuo18
                 className="ml-auto size-4"
-                icon={UnfoldMoreIcon}
                 strokeWidth={2}
               />
             </DropdownMenuTrigger>
@@ -146,7 +144,7 @@ export function NavUser({ name, email }: { name: string; email: string }) {
               <DropdownMenuGroup>
                 <DropdownMenuSub>
                   <DropdownMenuSubTrigger>
-                    <HugeiconsIcon icon={Building02Icon} strokeWidth={2} />
+                    <IconOfficeOutlineDuo18 strokeWidth={2} />
                     <span className="flex-1 truncate">
                       {activeOrg?.name ?? "No organization"}
                     </span>
@@ -165,9 +163,8 @@ export function NavUser({ name, email }: { name: string; email: string }) {
                           >
                             <span className="flex-1 truncate">{org.name}</span>
                             {isActive ? (
-                              <HugeiconsIcon
+                              <IconCheckOutlineDuo18
                                 className="size-4 text-muted-foreground"
-                                icon={Tick02Icon}
                                 strokeWidth={2}
                               />
                             ) : null}
@@ -178,7 +175,7 @@ export function NavUser({ name, email }: { name: string; email: string }) {
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
                       <DropdownMenuItem onClick={() => setCreateOpen(true)}>
-                        <HugeiconsIcon icon={PlusSignIcon} strokeWidth={2} />
+                        <IconPlusOutlineDuo18 strokeWidth={2} />
                         Create organization
                       </DropdownMenuItem>
                     </DropdownMenuGroup>
@@ -188,11 +185,11 @@ export function NavUser({ name, email }: { name: string; email: string }) {
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 <DropdownMenuItem render={<Link to="/settings" />}>
-                  <HugeiconsIcon icon={Settings02Icon} strokeWidth={2} />
+                  <IconGearOutlineDuo18 strokeWidth={2} />
                   Settings
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={onSignOut}>
-                  <HugeiconsIcon icon={Logout02Icon} strokeWidth={2} />
+                  <IconExitDoorOutlineDuo18 strokeWidth={2} />
                   Sign out
                 </DropdownMenuItem>
               </DropdownMenuGroup>

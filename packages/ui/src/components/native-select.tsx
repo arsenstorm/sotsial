@@ -1,6 +1,5 @@
-import { UnfoldMoreIcon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { cn } from "@sotsial/ui/lib/utils";
+import { IconSortArrowsOutlineDuo18 } from "nucleo-ui-outline-duo-18";
 import type * as React from "react";
 
 type NativeSelectProps = Omit<React.ComponentProps<"select">, "size"> & {
@@ -27,11 +26,10 @@ function NativeSelect({
         data-slot="native-select"
         {...props}
       />
-      <HugeiconsIcon
+      <IconSortArrowsOutlineDuo18
         aria-hidden="true"
         className="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 select-none text-muted-foreground"
         data-slot="native-select-icon"
-        icon={UnfoldMoreIcon}
         strokeWidth={2}
       />
     </div>

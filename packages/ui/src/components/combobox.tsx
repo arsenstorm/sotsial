@@ -1,10 +1,4 @@
 import { Combobox as ComboboxPrimitive } from "@base-ui/react";
-import {
-  ArrowDown01Icon,
-  Cancel01Icon,
-  Tick02Icon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@sotsial/ui/components/button";
 import {
   InputGroup,
@@ -13,6 +7,11 @@ import {
   InputGroupInput,
 } from "@sotsial/ui/components/input-group";
 import { cn } from "@sotsial/ui/lib/utils";
+import {
+  IconCheckOutlineDuo18,
+  IconChevronDownOutlineDuo18,
+  IconXmarkOutlineDuo18,
+} from "nucleo-ui-outline-duo-18";
 import * as React from "react";
 
 const Combobox = ComboboxPrimitive.Root;
@@ -33,9 +32,8 @@ function ComboboxTrigger({
       {...props}
     >
       {children}
-      <HugeiconsIcon
+      <IconChevronDownOutlineDuo18
         className="pointer-events-none size-4 text-muted-foreground"
-        icon={ArrowDown01Icon}
         strokeWidth={2}
       />
     </ComboboxPrimitive.Trigger>
@@ -47,14 +45,9 @@ function ComboboxClear({ className, ...props }: ComboboxPrimitive.Clear.Props) {
     <ComboboxPrimitive.Clear
       className={cn(className)}
       render={<InputGroupButton size="icon-xs" variant="ghost" />}
-      render={<InputGroupButton size="icon-xs" variant="ghost" />}
       {...props}
     >
-      <HugeiconsIcon
-        className="pointer-events-none"
-        icon={Cancel01Icon}
-        strokeWidth={2}
-      />
+      <IconXmarkOutlineDuo18 className="pointer-events-none" strokeWidth={2} />
     </ComboboxPrimitive.Clear>
   );
 }
@@ -164,9 +157,8 @@ function ComboboxItem({
           <span className="pointer-events-none absolute right-2 flex size-4 items-center justify-center" />
         }
       >
-        <HugeiconsIcon
+        <IconCheckOutlineDuo18
           className="pointer-events-none"
-          icon={Tick02Icon}
           strokeWidth={2}
         />
       </ComboboxPrimitive.ItemIndicator>
@@ -270,9 +262,8 @@ function ComboboxChip({
           data-slot="combobox-chip-remove"
           render={<Button size="icon-xs" variant="ghost" />}
         >
-          <HugeiconsIcon
+          <IconXmarkOutlineDuo18
             className="pointer-events-none"
-            icon={Cancel01Icon}
             strokeWidth={2}
           />
         </ComboboxPrimitive.ChipRemove>

@@ -1,5 +1,3 @@
-import { ArrowLeft02Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@sotsial/ui/components/button";
 import { Field, FieldLabel } from "@sotsial/ui/components/field";
 import { PageHeading } from "@sotsial/ui/components/page-heading";
@@ -7,6 +5,7 @@ import { Skeleton } from "@sotsial/ui/components/skeleton";
 import { Textarea } from "@sotsial/ui/components/textarea";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { IconArrowLeftOutlineDuo18 } from "nucleo-ui-outline-duo-18";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
@@ -169,7 +168,7 @@ function CreatePostPage() {
             size="sm"
             variant="outline"
           >
-            <HugeiconsIcon icon={ArrowLeft02Icon} />
+            <IconArrowLeftOutlineDuo18 strokeWidth={2} />
             Back
           </Button>
         }

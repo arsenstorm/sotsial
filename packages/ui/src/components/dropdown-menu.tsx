@@ -1,7 +1,9 @@
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
-import { ArrowRight01Icon, Tick02Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { cn } from "@sotsial/ui/lib/utils";
+import {
+  IconCheckOutlineDuo18,
+  IconChevronRightOutlineDuo18,
+} from "nucleo-ui-outline-duo-18";
 import type * as React from "react";
 
 function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
@@ -120,11 +122,7 @@ function DropdownMenuSubTrigger({
       {...props}
     >
       {children}
-      <HugeiconsIcon
-        className="ml-auto"
-        icon={ArrowRight01Icon}
-        strokeWidth={2}
-      />
+      <IconChevronRightOutlineDuo18 className="ml-auto" strokeWidth={2} />
     </MenuPrimitive.SubmenuTrigger>
   );
 }
@@ -178,7 +176,7 @@ function DropdownMenuCheckboxItem({
         data-slot="dropdown-menu-checkbox-item-indicator"
       >
         <MenuPrimitive.CheckboxItemIndicator>
-          <HugeiconsIcon icon={Tick02Icon} strokeWidth={2} />
+          <IconCheckOutlineDuo18 strokeWidth={2} />
         </MenuPrimitive.CheckboxItemIndicator>
       </span>
       {children}
@@ -218,7 +216,7 @@ function DropdownMenuRadioItem({
         data-slot="dropdown-menu-radio-item-indicator"
       >
         <MenuPrimitive.RadioItemIndicator>
-          <HugeiconsIcon icon={Tick02Icon} strokeWidth={2} />
+          <IconCheckOutlineDuo18 strokeWidth={2} />
         </MenuPrimitive.RadioItemIndicator>
       </span>
       {children}
