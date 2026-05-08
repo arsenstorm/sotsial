@@ -1,6 +1,7 @@
 import { Button } from "@sotsial/ui/components/button";
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { StarSparkleIcon } from "@/components/icons/star-sparkle";
 
 const FOOTER_LINKS = [
   {
@@ -48,7 +49,7 @@ export function MarketingNav() {
           className="flex items-center gap-2 font-semibold text-sm tracking-tight"
           to="/"
         >
-          <span className="inline-block size-2 rounded-full bg-emerald-500" />
+          <StarSparkleIcon className="size-5" />
           sotsial
         </Link>
         <nav className="flex items-center gap-1">
